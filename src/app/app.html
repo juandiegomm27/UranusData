@@ -1,72 +1,18 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UranusData</title>
-  <link rel="stylesheet" href="app.css">
+  <title>Document</title>
 </head>
 <body>
   
-  <header>
-    <img class="fondo" src="fondo.blanco.png" alt="">
-    <div class="menu conteiner">
-      <a href="#" class="logo">logo</a>
-      <input type="checkbox" id="menu">
-      <label for="menu">
-        <img  class="menu-icono" src="public/menu.png" alt="">
-      </label>
+  <div class="pagina" [class.modo-oscuro]="fondoService.isOscuro()">
+    
+    <app-header></app-header>
+    <app-main></app-main>
 
-      <nav class="navbar">
-          <ul>
-            <li><a href="#">inicio</a></li>
-            <li><a href="#">servicios</a></li>
-            <li><a href="#">productos</a></li>
-            <li><a href="#">contacto</a></li>
-          </ul>
-      </nav>
-
-      <div class="contenido">
-        <ul>
-          <li class="submenu">
-            <img src="public/car.svg" id="img-carrito" alt="">
-            <div id="carrito">
-              <table id="lista-carrito">
-                <thead>
-                 <tr>
-                    <th>Imagen</th>
-                    <th>nombre</th>
-                    <th>precio</th>
-                    <th></th>
-                 </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-              <a href="#" id="vaciar-carrito" class="btb.3">Vaciar Carrito</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-    <div>
-      <div class="header-content conteiner">
-        
-        <div class="header-txt">
-          <h1><span>Bienvenido</span> disfrute de nuestro proyecto</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Impedit, quam delectus. Voluptatem sint nihil ipsam fugit, maiores incidunt doloremque architecto nisi aliquam nobis temporibus molestiae corrupti error. Maiores, praesentium dicta!
-          </p>
-          <a href="#" class="btn-1">informacion</a>
-        </div>
-        <div class="header-img">
-          <img src="public/" alt="">
-        </div>
-      </div>
-
-    </div>
-  </header>
+  </div>
 
   <script src="app.ts"></script>
 </body>

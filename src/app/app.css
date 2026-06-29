@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ .pagina {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; 
+  height: 100vh;
+  z-index: 1;
+
+  background-image: url("fondo/fondo-blanco.png");
+  background-color: white;
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  
+  color: black;
+  transition: background-image 0.3s ease, background-color 0.3s ease;
+}
+
+app-header #fondo {
+  margin: 20px;
+}
+
+app-header #fondo:checked ~ .pagina {
+  background-image: url("fondo/fondo-negro.png");
+  background-color: #232323; 
+  color: white;
+}
