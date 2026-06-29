@@ -1,39 +1,69 @@
 <main class="auth-section">
-  <div class="auth-card" style="max-width: 500px; text-align: left;">
+  <div class="auth-card" style="
+    max-width: 900px; 
+    text-align: left;
+    ">
     
-    <div class="brand-badge" style="text-align: center;">
+    <div class="brand-badge" style="
+    text-align: center;
+    margin-top: 25px;
+    ">
       <img src="logoSIH.png" alt="Logo" class="badge-img">
     </div>
 
-    <h1 class="auth-title" style="text-align: center;">Ajustes de Cuenta</h1>
+    <h1 class="auth-title" style="
+    text-align: center;
+    ">
+      Ajustes de Cuenta
+    </h1>
 
     <form class="auth-form" [formGroup]="settingsForm" (ngSubmit)="guardarAjustes()">
       
       <!--  Preferencias de Correo -->
-      <div class="form-group" style="margin-bottom: 15px;">
+      <div class="form-group" style="
+      margin-bottom: 15px;
+      margin-top: 30px;
+      ">
         <label class="checkbox-label">
           <input type="checkbox" formControlName="notificacionesEmail" class="form-checkbox">
           <span class="custom-checkbox"></span>
-          <span class="checkbox-text">Recibir alertas en mi Correo</span>
+
+          <span class="checkbox-text" style="font-size: 16px;">
+            Recibir alertas en mi Correo
+          </span>
         </label>
       </div>
 
       <!-- Preferencias del Sistema -->
-      <div class="form-group" style="margin-bottom: 25px;">
+      <div class="form-group" style="
+      margin-bottom: 25px;
+      ">
         <label class="checkbox-label">
           <input type="checkbox" formControlName="notificacionesPush" class="form-checkbox">
           <span class="custom-checkbox"></span>
-          <span class="checkbox-text">Habilitar alertas de escritorio</span>
+          <span class="checkbox-text"  style="font-size: 16px;">
+            Habilitar alertas de escritorio
+          </span>
         </label>
       </div>
 
       <!-- Botón Guardar -->
-      <button type="submit" class="btn-submit" style="margin: 0 auto; display: block;">Guardar</button>
+      <button type="submit" class="btn-submit" style="
+      margin: 0 auto;
+       display: block;
+       ">
+       Guardar
+      </button>
       
     </form>
 
-    <div class="auth-footer-links" style="text-align: center; margin-top: 25px;">
-      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">Regresar</a>
+    <div class="auth-footer-links" style="
+    text-align: center;
+    margin-top: 25px;
+    ">
+      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">
+        Regresar
+      </a>
     </div>
     
   </div>

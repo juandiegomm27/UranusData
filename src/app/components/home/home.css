@@ -24,7 +24,7 @@
 
 /* DISEÑO DE BOTONES CON OPACIDAD AL 50% (MODO CLARO) */
 .btn-dash {
-  background-color: rgba(255, 255, 255, 0.5); 
+  background-color: rgba(255, 255, 255, 1); 
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #1C74A0; 
@@ -32,7 +32,7 @@
   border-radius: 16px; 
   height: 179px;
   padding: 0 16px;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -42,10 +42,10 @@
   gap: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-  box-shadow 0.25s ease,
-  background-color 0.25s ease, 
-  border-color 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+  box-shadow 0.3s ease,
+  background-color 0.3s ease, 
+  border-color 0.3s ease;
 }
 
 .btn-dash:hover {
@@ -60,7 +60,7 @@
 }
 
 .btn-dash .icon {
-  font-size: 22px;
+  font-size: 25px;
 }
 
 /* Fila inferior que abarca las dos columnas */
@@ -91,7 +91,7 @@
 }
 
 .calendar-title {
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 700;
 }
 
@@ -132,7 +132,7 @@
   background: transparent;
   border: 1px solid transparent;
   padding: 12px 0;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: #333333;
   border-radius: 8px;
@@ -156,7 +156,7 @@
 /*  ADAPTACIÓN SUTIL PARA EL MODO OSCURO (MODO OSCURO) */
 :host-context(body.dark-mode) .btn-dash,
 :host-context(body.dark-mode) .dashboard-calendar {
-  background-color: rgba(20, 20, 20, 0.5);
+  background-color: rgba(20, 20, 20, 1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 

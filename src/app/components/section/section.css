@@ -20,15 +20,15 @@
 /* --- Tarjeta Central Flotante --- */
 .auth-card {
   /* Fondo blanco */
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 1);
   backdrop-filter: blur(8px); 
   
   width: 100%;
-  max-width: 600px;
+  max-width: 900px;
   padding: 50px 50px;
   border-radius: 12px;
   box-shadow: 0 15px 35px var(--shadow);
-  border: 3px solid rgba(37, 70, 200, 0.5);
+  border: 3px solid rgba(37, 70, 200, 1);
   text-align: center;
   
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -36,13 +36,13 @@
 
 /* Modo Oscuro */
 :host-context(body.dark-mode) .auth-card {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 1);
   border: 3px solid rgba(100, 54, 36, 1); 
 }
 
 /* --- Imagen Superior --- */
 .brand-badge {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 .badge-img {
@@ -55,9 +55,9 @@
 /* Modo Claro */
 .auth-title {
   color: #1C74A0;
-  font-size: 28px;
+  font-size: 60px;
   font-weight: 600;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   transition: color 0.3s ease;
 }
 
@@ -71,21 +71,21 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 10px;
   align-items: center;
-  color: #1C74A0;
+  color: #000000;
 }
 
 .form-group {
   width: 100%;
   text-align: left;
-  color: #1C74A0;
+  color: #000000;
 }
 
 /* (MODO OSCURO) */
 :host-context(body.dark-mode) .auth-form,
 :host-context(body.dark-mode) .form-group {
-  color: #FF9F13; 
+  color: #ffffff; 
 }
 
 
@@ -100,7 +100,7 @@
 
 .form-label-tabs {
   display: block;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
   text-align: left;
 }
@@ -121,12 +121,12 @@
   background: transparent;
   border: none;
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
   color: #1C74A0; 
   cursor: pointer;
   border-radius: 6px;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 .tab-btn:hover {
@@ -137,7 +137,7 @@
 .tab-btn.active {
   background-color: #1C74A0;
   color: #ffffff;
-  box-shadow: 0 2px 6px rgba(28, 116, 160, 0.25);
+  box-shadow: 0 2px 6px rgba(28, 116, 160, 0.5);
 }
 
 /* mensaje de error del rol */
@@ -148,8 +148,8 @@
 
 /* Animacion MODO OSCURO  */
 :host-context(body.dark-mode) .role-tabs {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 159, 19, 0.2);
+  background-color: rgb(14, 14, 14);
+  border-color: rgba(255, 161, 19, 0.5);
 }
 
 :host-context(body.dark-mode) .tab-btn {
@@ -163,7 +163,7 @@
 /* Animacion MODO OSCURO */
 :host-context(body.dark-mode) .tab-btn.active {
   background-color: #FF9F13;
-  color: #121212;
+  color: #000000;
   box-shadow: 0 2px 6px rgba(255, 159, 19, 0.3);
 }
 
@@ -174,7 +174,7 @@
 .form-label {
   display: block;
   color: var(--text-blue);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   margin-bottom: 6px;
   transition: color 0.3s ease;
@@ -186,12 +186,17 @@
   padding: 12px 16px;
   border: 1px solid var(--text-blue);
   border-radius: 6px;
-  background-color: transparent;
+  background-color: #ccd0d27b;
   color: var(--text-main);
-  font-size: 15px;
+  font-size: 17px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
+
+:host-context(body.dark-mode) .form-input {
+  background-color: #2323237b;
+}
+
 
 .form-input:focus {
   border-color: var(--text-blue);
@@ -283,7 +288,7 @@
 
 .checkbox-text-secondary {
   color: var(--text-main);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 
@@ -315,7 +320,7 @@
   
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 25px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(28, 116, 160, 0.2);
@@ -368,7 +373,7 @@
 .footer-link {
   color: var(--text-blue);
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 500;
   transition: color 0.3s ease;
 }
@@ -391,7 +396,7 @@
 /* --- ESTILOS DE VALIDACIÓN ADICIONALES --- */
 .error-msg {
   display: block;
-  font-size: 12px;
+  font-size: 17px;
   margin-top: 4px;
   font-weight: 500;
   color: #e63946; 

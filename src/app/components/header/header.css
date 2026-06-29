@@ -28,7 +28,7 @@ body {
 
 /* Contenedor Alineado */
 .menu-container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
@@ -60,7 +60,7 @@ body {
   text-decoration: none;
   color: inherit;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
   text-transform: capitalize;
   opacity: 0.85;
   padding: 8px 0;
@@ -122,7 +122,7 @@ body {
   display: inline-block;
   width: 46px;
   height: 24px;
-  background-color: rgba(255, 255, 255, 0.25); /* Transparencia elegante sobre el header azul */
+  background-color: rgba(255, 255, 255, 0.25); 
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.4);
 
