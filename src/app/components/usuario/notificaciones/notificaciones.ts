@@ -19,12 +19,7 @@ export class Notificaciones {
   ]);
 
   irAlInicio(): void {
-    if (this.authService.isAutenticado()) {
-      const rolActual = this.authService.getRol();
-      this.router.navigate(['/home', rolActual || 'Docente']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.authService.irAlInicio(this.router);
   }
 }
 

@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import {RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-gerente',

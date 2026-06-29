@@ -147,8 +147,8 @@
 
 /* Celda destacada para el día de hoy */
 .day-number.today {
-  background-color: #1C74A0 !important;
-  color: #ffffff !important;
+  background-color: #1C74A0  ;
+  color: #ffffff  ;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(28, 116, 160, 0.3);
 }
@@ -202,8 +202,8 @@
 
 /* Día actual en Modo Oscuro */
 :host-context(body.dark-mode) .day-number.today {
-  background-color: #FF9F13 !important;
-  color: #121212 !important;
+  background-color: #FF9F13  ;
+  color: #121212  ;
   box-shadow: 0 4px 12px rgba(255, 159, 19, 0.4);
 }
 

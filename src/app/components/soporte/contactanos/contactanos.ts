@@ -13,12 +13,7 @@ export class Contactanos {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  irAlInicio(): void {
-    if (this.authService.isAutenticado()) {
-      const rolActual = this.authService.getRol();
-      this.router.navigate(['/home', rolActual || 'Docente']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+ irAlInicio(): void {
+    this.authService.irAlInicio(this.router);
   }
 }

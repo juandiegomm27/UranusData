@@ -29,7 +29,7 @@ export class Section implements OnInit {
   loginForm = this.fb.group({
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    remember: [false]
+    recordarme: [false]
   });
 
   // Lógica conectada al Endpoint real /api/login

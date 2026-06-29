@@ -27,12 +27,7 @@ export class Header {
 
   // Evalúa si el usuario está logueado para mandarlo a su home o al login
   irAlInicio(): void {
-    if (this.authService.isAutenticado()) {
-      const rolActual = this.authService.getRol(); 
-      this.router.navigate(['/home', rolActual || 'Docente']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.authService.irAlInicio(this.router);
   }
 
   salir(): void {
