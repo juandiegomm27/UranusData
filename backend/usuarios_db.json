@@ -1,12 +1,26 @@
 [
   {
     "rol": "Docente",
-    "primerNombre": "Juan",
-    "segundoNombre": "Juan",
+    "primerNombre": "Juan Diego",
     "apellidos": "Medina Mahecha",
     "documento": "1234567890",
     "correo": "juandiegomedinamahecha@gmail.com",
-    "password": "1234567890",
-    "verificarPassword": "1234567890"
+    "password": "$2b$10$Nm7fgfwjOXvzWmmHIU4kKuQP0BBJLzoBQqJAkOBax4IoEjJ.W2hfW"
+  },
+  {
+    "rol": "Tecnico",
+    "primerNombre": "Juan Diego",
+    "apellidos": "Medina Mahecha",
+    "documento": "1234567891",
+    "correo": "juandiegomedinamahecha@gmail.com",
+    "password": "$2b$10$SpwWD3yXxNs7XZi/BcHZjuUvuPhH3uws4xNjRbKyNXOjsA4qhBOCe"
+  },
+  {
+    "rol": "Gerente",
+    "primerNombre": "Juan Diego",
+    "apellidos": "Medina Mahecha",
+    "documento": "1234567892",
+    "correo": "juandiegomedinamahecha@gmail.com",
+    "password": "$2b$10$vgJDnkgKV.g4A2IO126jv.pllMmxVnqg0pXF0B2oNI4vBVPDM7H0."
   }
 ]

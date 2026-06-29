@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../service/auth.service'; 
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http'; 
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-section',
@@ -26,7 +27,6 @@ export class Section implements OnInit {
 
   // Datos de login del usuario
   loginForm = this.fb.group({
-    rol: ['Docente', [Validators.required]],
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     remember: [false]
@@ -43,8 +43,8 @@ export class Section implements OnInit {
     console.log('Consultando credenciales en la base de datos modular...');
 
     // Petición HTTP POST hacia el servidor Node.js
-    this.http.post<{ status: string, usuario: { documento: string, rol: string } }>(
-      'http://localhost:3000/api/login', 
+   this.http.post<{ status: string, usuario: { documento: string, rol: string } }>(
+      `${environment.apiUrl}/login`, 
       credenciales
     ).subscribe({
       next: (respuesta) => {

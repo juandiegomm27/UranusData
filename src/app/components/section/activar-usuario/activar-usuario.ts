@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http'; // <-- IMPORTAR CLIENTE HTTP
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-activar-usuario',
@@ -17,8 +18,7 @@ export class ActivarUsuario {
 
   activationForm = this.fb.group({
     rol: ['Docente', [Validators.required]],
-    primerNombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
-    segundoNombre: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]], 
+    primerNombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
     apellidos: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
     correo: ['', [Validators.required, Validators.email]], 
@@ -44,7 +44,7 @@ export class ActivarUsuario {
     console.log('Enviando registro a la base de datos...');
 
     // Petición HTTP POST al endpoint de activación
-    this.http.post('http://localhost:3000/api/activar-usuario', datosNuevos)
+    this.http.post(`${environment.apiUrl}/activar-usuario`, datosNuevos)
       .subscribe({
         next: (respuesta) => {
           console.log('Usuario registrado y activado en el archivo JSON con éxito:', respuesta);

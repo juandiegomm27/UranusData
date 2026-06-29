@@ -59,21 +59,6 @@
         }
       </div>
 
-      <!-- Segundo Nombre -->
-      <div class="form-group">
-        <label for="segundoNombre" class="form-label">Segundo Nombre (Opcional)</label>
-        <input 
-          type="text" 
-          id="segundoNombre" 
-          formControlName="segundoNombre" 
-          class="form-input" 
-          placeholder="Segundo nombre (si aplica)"
-        >
-        @if (activationForm.get('segundoNombre')?.invalid && activationForm.get('segundoNombre')?.touched) {
-          <small class="error-msg">El segundo nombre debe tener solo letras.</small>
-        }
-      </div>
-
       <!-- Apellidos -->
       <div class="form-group">
         <label for="apellidos" class="form-label">Apellidos</label>

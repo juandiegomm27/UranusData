@@ -66,6 +66,12 @@ cd sana-uranus-data
 npm install
 ```
 
+Crear el archivo .env en la raíz del proyecto con el contenido:
+
+```bash
+GMAIL_USER=tu_correo_real@gmail.com 
+GMAIL_APP_PASSWORD=tus16letrasdeaplicaciondegoogle
+```
 ## ▶️ Ejecución
 
 **Frontend (Angular)**
@@ -79,6 +85,7 @@ La aplicación quedará disponible en `http://localhost:4200`.
 **Backend (Node/Express)**
 
 ```bash
+cd backend
 node backend/server.js
 ```
 
@@ -92,9 +99,6 @@ El servidor quedará disponible en `http://localhost:3000`.
 | Técnico | Ver inventario, gestionar reservas y mantenimientos |
 | Gerente | Gestión de usuarios, inventario y mantenimientos |
 
-## 📄 Documentación
-
-El detalle de la arquitectura del sistema (vistas de casos de uso, modelo de datos, características de calidad, etc.) se encuentra en el `Documento de Especificación de Arquitectura` del proyecto.
 
 ## 👥 Autores
 

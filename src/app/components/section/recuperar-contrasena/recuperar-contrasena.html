@@ -8,52 +8,68 @@
 
     <h1 class="auth-title">Recuperar Contraseña</h1>
 
-    <!-- Formulario -->
-    <form class="auth-form" [formGroup]="recoveryForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Ingreso de datos -->
-      @if (!codigoEnviado()) {
-        
-        <!-- Documento -->
-        <div class="form-group">
-          <label for="documento" class="form-label">Documento registrado</label>
-          <input 
-            type="text" 
-            id="documento" 
-            formControlName="documento" 
-            class="form-input" 
-            placeholder="Ingresa tu documento"
-            [class.input-error]="recoveryForm.get('documento')?.invalid && recoveryForm.get('documento')?.touched"
-          >
-          @if (recoveryForm.get('documento')?.invalid && recoveryForm.get('documento')?.touched) {
-            <small class="error-msg">Ingresa un número de documento válido (mínimo 10 números).</small>
-          }
-        </div>
+    <!-- Validando token desde el enlace del correo -->
+    @if (estado() === 'validando') {
+      <p style="text-align: center;">Verificando tu enlace, espera un momento...</p>
+    }
 
-        <!-- Correo Electrónico -->
-        <div class="form-group">
-          <label for="correo" class="form-label">Correo Electrónico</label>
-          <input 
-            type="email" 
-            id="correo" 
-            formControlName="correo" 
-            class="form-input" 
-            placeholder="ejemplo@correo.com"
-            [class.input-error]="recoveryForm.get('correo')?.invalid && recoveryForm.get('correo')?.touched"
-          >
-          @if (recoveryForm.get('correo')?.invalid && recoveryForm.get('correo')?.touched) {
-            <small class="error-msg">Ingresa un formato de correo válido (ejemplo@correo.com).</small>
-          }
-        </div>
+    <!-- Token inválido o expirado -->
+    @if (estado() === 'invalido') {
+      <p style="text-align: center;">Este enlace ya no es válido o expiró. Solicita uno nuevo.</p>
+      <div class="auth-footer-links">
+        <a [routerLink]="['/recuperar-contrasena']" class="footer-link">Solicitar nuevo enlace</a>
+      </div>
+    }
 
-        <button type="submit" class="btn-submit">Enviar Enlace</button>
+    <!-- Paso 1: Solicitar el enlace -->
+    @if (estado() === 'solicitud') {
+      @if (!correoEnviado()) {
+        <form class="auth-form" [formGroup]="solicitudForm" (ngSubmit)="onSolicitar()">
+          
+          <div class="form-group">
+            <label for="documento" class="form-label">Documento registrado</label>
+            <input 
+              type="text" 
+              id="documento" 
+              formControlName="documento" 
+              class="form-input" 
+              placeholder="Ingresa tu documento"
+              [class.input-error]="solicitudForm.get('documento')?.invalid && solicitudForm.get('documento')?.touched"
+            >
+            @if (solicitudForm.get('documento')?.invalid && solicitudForm.get('documento')?.touched) {
+              <small class="error-msg">Ingresa un número de documento válido (mínimo 10 números).</small>
+            }
+          </div>
 
+          <div class="form-group">
+            <label for="correo" class="form-label">Correo Electrónico</label>
+            <input 
+              type="email" 
+              id="correo" 
+              formControlName="correo" 
+              class="form-input" 
+              placeholder="ejemplo@correo.com"
+              [class.input-error]="solicitudForm.get('correo')?.invalid && solicitudForm.get('correo')?.touched"
+            >
+            @if (solicitudForm.get('correo')?.invalid && solicitudForm.get('correo')?.touched) {
+              <small class="error-msg">Ingresa un formato de correo válido (ejemplo@correo.com).</small>
+            }
+          </div>
+
+          <button type="submit" class="btn-submit">Enviar Enlace</button>
+
+        </form>
       } @else {
-        
+        <p style="text-align: center;">
+          Si los datos son correctos, te enviamos un enlace a tu correo. Revisa tu bandeja de entrada (y spam) — el enlace es válido por 15 minutos.
+        </p>
+      }
+    }
 
-        <!-- Restablecer Clave  -->
+    <!-- Paso 2: Nueva contraseña (solo si el token fue válido) -->
+    @if (estado() === 'formulario') {
+      <form class="auth-form" [formGroup]="nuevaPasswordForm" (ngSubmit)="onConfirmar()">
         
-        <!-- Nueva Contraseña -->
         <div class="form-group">
           <label for="password" class="form-label">Nueva Contraseña</label>
           <input 
@@ -63,14 +79,13 @@
             formControlName="password" 
             class="form-input" 
             placeholder="Ingresa tu nueva contraseña"
-            [class.input-error]="recoveryForm.get('password')?.invalid && recoveryForm.get('password')?.touched"
+            [class.input-error]="nuevaPasswordForm.get('password')?.invalid && nuevaPasswordForm.get('password')?.touched"
           >
-          @if (recoveryForm.get('password')?.invalid && recoveryForm.get('password')?.touched) {
+          @if (nuevaPasswordForm.get('password')?.invalid && nuevaPasswordForm.get('password')?.touched) {
             <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
           }
         </div>
 
-        <!-- Verificar Contraseña -->
         <div class="form-group">
           <label for="verificarPassword" class="form-label">Verificar Contraseña</label>
           <input 
@@ -80,17 +95,16 @@
             formControlName="verificarPassword" 
             class="form-input" 
             placeholder="Repite tu nueva contraseña"
-            [class.input-error]="(recoveryForm.get('verificarPassword')?.invalid || recoveryForm.hasError('mismatch')) && recoveryForm.get('verificarPassword')?.touched"
+            [class.input-error]="(nuevaPasswordForm.get('verificarPassword')?.invalid || nuevaPasswordForm.hasError('mismatch')) && nuevaPasswordForm.get('verificarPassword')?.touched"
           >
-          @if (recoveryForm.get('verificarPassword')?.touched) {
-            @if (recoveryForm.get('verificarPassword')?.hasError('required')) {
+          @if (nuevaPasswordForm.get('verificarPassword')?.touched) {
+            @if (nuevaPasswordForm.get('verificarPassword')?.hasError('required')) {
               <small class="error-msg">Debes confirmar tu contraseña.</small>
-            } @else if (recoveryForm.hasError('mismatch')) {
+            } @else if (nuevaPasswordForm.hasError('mismatch')) {
               <small class="error-msg">Las contraseñas no coinciden.</small>
             }
           }
 
-          <!-- Checkbox -->
           <label class="show-password-label">
             <input 
               type="checkbox" 
@@ -105,9 +119,8 @@
 
         <button type="submit" class="btn-submit">Restablecer</button>
 
-      }
-      
-    </form>
+      </form>
+    }
 
     <!-- Enlace inferior de retorno -->
     <div class="auth-footer-links">

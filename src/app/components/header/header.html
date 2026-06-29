@@ -52,7 +52,10 @@
           <!-- Menú desplegable flotante Blindado -->
           <div class="usuario-menu-desplegable menu-abierto-forzado">
             <div class="dropdown-header">
-              <span class="user-name">{{ authService.getDocumento() }}</span>
+              <span class="user-name">
+                <P>{{ authService.getRol() }}</P>
+                <P>{{ authService.getDocumento() }}</P>
+              </span>
             </div>
             
             <ul class="dropdown-links lista-enlaces">

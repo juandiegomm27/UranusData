@@ -47,6 +47,11 @@ export const routes: Routes = [
     loadComponent: () => import('./inicio/inicio/inicio').then(m => m.Inicio) 
   },
 
+  { 
+  path: 'recuperar-contrasena/:token', 
+  loadComponent: () => import('./components/section/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasena) 
+  },
+
   // 2. CORREGIDO: Ruta comodín segura (Cualquier URL rota te regresa a la presentación)
   { path: '**', redirectTo: '' }
 ];
