@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http'; // <-- IMPORTAR CLIENTE HTTP
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-recuperar-contrasena',
@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http'; // <-- IMPORTAR CLIENTE HTTP
 export class RecuperarContrasena {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
-  private http = inject(HttpClient); // <-- INYECTAR HTTP
+  private http = inject(HttpClient); 
 
   public codigoEnviado = signal<boolean>(false);
 
@@ -33,7 +33,7 @@ export class RecuperarContrasena {
   }
 
   onSubmit(): void {
-    // FLUJO PASO 1: Comunicar con el servidor Node.js para mandar el correo real
+    // Comunicar con el servidor Node.js para mandar el correo real
     if (!this.codigoEnviado()) {
       const documentoValido = this.recoveryForm.get('documento')?.valid;
       const correoValido = this.recoveryForm.get('correo')?.valid;
@@ -66,7 +66,7 @@ export class RecuperarContrasena {
       return;
     }
 
-    // FLUJO PASO 2: Confirmar las nuevas claves (Local en Angular)
+    // Confirmar las nuevas claves (Local en Angular)
     if (this.recoveryForm.invalid) {
       this.recoveryForm.markAllAsTouched();
       return;

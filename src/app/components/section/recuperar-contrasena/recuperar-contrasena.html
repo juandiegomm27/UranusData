@@ -1,20 +1,20 @@
 <main class="auth-section">
   <div class="auth-card">
     
-    <!-- Escudo / Logo institucional -->
+    <!-- Imagen Superior -->
     <div class="brand-badge">
       <img src="logoSIH.png" alt="Escudo Institucional" class="badge-img">
     </div>
 
     <h1 class="auth-title">Recuperar Contraseña</h1>
 
-    <!-- Formulario enlazado a la lógica reactiva -->
+    <!-- Formulario -->
     <form class="auth-form" [formGroup]="recoveryForm" (ngSubmit)="onSubmit()">
       
-      <!-- PASO 1: Ingreso de datos (Se oculta cuando se valida con éxito) -->
+      <!-- Ingreso de datos -->
       @if (!codigoEnviado()) {
         
-        <!-- Campo: Documento -->
+        <!-- Documento -->
         <div class="form-group">
           <label for="documento" class="form-label">Documento registrado</label>
           <input 
@@ -30,7 +30,7 @@
           }
         </div>
 
-        <!-- Campo: Correo Electrónico -->
+        <!-- Correo Electrónico -->
         <div class="form-group">
           <label for="correo" class="form-label">Correo Electrónico</label>
           <input 
@@ -50,9 +50,10 @@
 
       } @else {
         
-        <!-- PASO 2: Restablecer Clave (Aparece automáticamente tras pulsar el botón) -->
+
+        <!-- Restablecer Clave  -->
         
-        <!-- Campo: Nueva Contraseña -->
+        <!-- Nueva Contraseña -->
         <div class="form-group">
           <label for="password" class="form-label">Nueva Contraseña</label>
           <input 
@@ -69,7 +70,7 @@
           }
         </div>
 
-        <!-- Campo: Verificar Contraseña -->
+        <!-- Verificar Contraseña -->
         <div class="form-group">
           <label for="verificarPassword" class="form-label">Verificar Contraseña</label>
           <input 
@@ -89,7 +90,7 @@
             }
           }
 
-          <!-- Checkbox para alternar visibilidad de contraseñas -->
+          <!-- Checkbox -->
           <label class="show-password-label">
             <input 
               type="checkbox" 

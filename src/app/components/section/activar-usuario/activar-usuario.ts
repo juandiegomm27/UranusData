@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // <-- IMPORTAR CLIENTE HTTP
 
 @Component({
   selector: 'app-activar-usuario',
@@ -12,15 +13,15 @@ import { Router, RouterLink } from '@angular/router';
 export class ActivarUsuario {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
+  private http = inject(HttpClient); // <-- INYECTAR HTTP
 
-  // Formulario sincronizado con la vista incluyendo el nuevo control de correo
   activationForm = this.fb.group({
     rol: ['Docente', [Validators.required]],
     primerNombre: ['', [Validators.required]],
     segundoNombre: [''], 
     apellidos: ['', [Validators.required]],
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
-    correo: ['', [Validators.required, Validators.email]], // <-- AGREGADO CON VALIDACIÓN DE EMAIL
+    correo: ['', [Validators.required, Validators.email]], 
     password: ['', [Validators.required, Validators.minLength(6)]],
     verificarPassword: ['', [Validators.required]]
   }, {
@@ -36,14 +37,24 @@ export class ActivarUsuario {
   onActivate(): void {
     if (this.activationForm.invalid) {
       this.activationForm.markAllAsTouched();
-      console.warn('Formulario de activación inválido.');
       return;
     }
 
     const datosNuevos = this.activationForm.getRawValue();
-    console.log('¡Usuario registrado y activado con éxito! Datos cargados:', datosNuevos);
-    
-    this.router.navigate(['/login']);
+    console.log('Enviando registro a la base de datos...');
+
+    // Petición HTTP POST al endpoint de activación
+    this.http.post('http://localhost:3000/api/activar-usuario', datosNuevos)
+      .subscribe({
+        next: (respuesta) => {
+          console.log('Usuario registrado y activado en el archivo JSON con éxito:', respuesta);
+          alert('¡Usuario registrado con éxito! Ya puedes iniciar sesión de forma normal.');
+          this.router.navigate(['/login']);
+        },
+        error: (fallo) => {
+          console.error('Error al registrar en la BD:', fallo);
+          alert(fallo.error?.mensaje || 'Error en el servidor backend.');
+        }
+      });
   }
 }
-

@@ -1,116 +1,216 @@
-/* --- ESTRUCTURA GENERAL DE LA PANTALLA --- */
+/* CONFIGURACIÓN DE LA PANTALLA PRINCIPAL */
 .dashboard-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1.1fr; 
+  gap: 50px;
   max-width: 1200px;
-  
-  height: calc(100vh - 80px)  ;
-  width: 100%  ;
-  margin: 0 auto  ;
-  padding: 40px 20px;
+  height: calc(100vh - 80px) ;
+  width: 100% ;
+  margin: 0 auto ; 
+  padding: 180px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  align-items: start;
 }
 
-/* Rejilla de botones para los roles */
+/* Rejilla de botones compartida para los roles */
 .buttons-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  width: 100%;
 }
 
-/* --- BOTONES CON OPACIDAD AL 50% (MODO CLARO) --- */
+/* DISEÑO DE BOTONES CON OPACIDAD AL 50% (MODO CLARO) */
 .btn-dash {
-  background-color: rgba(255, 255, 255, 0.5);
-  
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  
+  background-color: rgba(255, 255, 255, 0.5); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #1C74A0; 
-  border: 2px solid rgba(28, 116, 160, 0.4); 
+  border: 2px solid rgba(28, 116, 160, 0.35); 
   border-radius: 16px; 
-  padding: 22px;
+  height: 179px;
+  padding: 0 16px;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  
-  /* Transición fluida para todos los efectos */
+
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
   box-shadow 0.25s ease,
   background-color 0.25s ease, 
-               border-color 0.25s ease;
+  border-color 0.25s ease;
 }
 
-/* Efecto hover al pasar el ratón (Modo Claro) */
 .btn-dash:hover {
-  background-color: rgba(255, 255, 255, 0.75); /* Sube la opacidad al pasar el cursor */
+  background-color: rgba(255, 255, 255, 0.75); 
   border-color: rgba(28, 116, 160, 0.8);
-  box-shadow: 0 8px 20px rgba(28, 116, 160, 0.15);
-  transform: translateY(-4px); /* Se eleva con estilo */
+  box-shadow: 0 8px 20px rgba(28, 116, 160, 0.2);
+  transform: translateY(-4px); 
 }
 
-/* Efecto al presionar (Active) */
 .btn-dash:active {
   transform: translateY(-1px) scale(0.97);
 }
 
-/* Contenedor del icono dentro del botón */
 .btn-dash .icon {
-  font-size: 18px;
+  font-size: 22px;
 }
 
-/* Botón ancho de la fila inferior */
+/* Fila inferior que abarca las dos columnas */
 .btn-wide {
   grid-column: span 2;
   padding: 26px;
+  flex-direction: row; 
+  gap: 12px;
 }
 
-/* Contenedor del calendario (A juego con la estética translúcida) */
+/* MAQUETACIÓN DEL CALENDARIO INSTITUCIONAL (MODO CLARO) */
 .dashboard-calendar {
   background-color: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 2px solid rgba(28, 116, 160, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(28, 116, 160, 0.35);
   border-radius: 16px;
   padding: 24px;
-  min-height: 380px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-
-/* --- BOTONES CON OPACIDAD AL 50% (MODO OSCURO) --- */
-:host-context(body.dark-mode) .btn-dash {
-  /* Fondo negro/oscuro con 50% de opacidad (0.5) */
-  background-color: rgba(20, 20, 20, 0.5);
-  
-  color: #FF9F13; /* Naranja institucional de tu login oscuro */
-  border: 2px solid rgba(255, 159, 19, 0.3); /* Borde naranja traslúcido */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #1C74A0;
 }
 
-/* Efecto hover al pasar el ratón (Modo Oscuro) */
-:host-context(body.dark-mode) .btn-dash:hover {
-  background-color: rgba(30, 30, 30, 0.75);
-  border-color: rgba(255, 159, 19, 0.8);
-  box-shadow: 0 8px 25px rgba(255, 159, 19, 0.25);
+.calendar-title {
+  font-size: 18px;
+  font-weight: 700;
 }
 
-/* Contenedor del calendario (Modo Oscuro) */
+.btn-cal-nav {
+  background: rgba(28, 116, 160, 0.1);
+  border: none;
+  color: #1C74A0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: background 0.2s;
+}
+
+.btn-cal-nav:hover {
+  background: rgba(28, 116, 160, 0.25);
+}
+
+/* Rejilla interna de días */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.day-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1C74A0;
+  padding-bottom: 8px;
+}
+
+/* Estilo para los botones de los números */
+.day-number {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.day-number:not(.empty):hover {
+  background-color: rgba(28, 116, 160, 0.15);
+  color: #1C74A0;
+}
+
+/* Celda destacada para el día de hoy */
+.day-number.today {
+  background-color: #1C74A0 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(28, 116, 160, 0.3);
+}
+
+/*  ADAPTACIÓN SUTIL PARA EL MODO OSCURO (MODO OSCURO) */
+:host-context(body.dark-mode) .btn-dash,
 :host-context(body.dark-mode) .dashboard-calendar {
   background-color: rgba(20, 20, 20, 0.5);
-  border: 2px solid rgba(255, 159, 19, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
+/* Botones en Modo Oscuro  */
+:host-context(body.dark-mode) .btn-dash {
+  color: #FF9F13; 
+  border-color: rgba(255, 159, 19, 0.3); 
+}
 
-/* --- ADAPTACIÓN RESPONSIVA PARA MÓVILES --- */
-@media (max-width: 768px) {
+:host-context(body.dark-mode) .btn-dash:hover {
+  background-color: rgba(35, 35, 35, 0.75);
+  border-color: rgba(255, 159, 19, 0.8);
+  box-shadow: 0 8px 25px rgba(255, 159, 19, 0.3);
+}
+
+/* Calendario en Modo Oscuro */
+:host-context(body.dark-mode) .dashboard-calendar {
+  border-color: rgba(255, 159, 19, 0.3);
+}
+
+:host-context(body.dark-mode) .calendar-header,
+:host-context(body.dark-mode) .day-name,
+:host-context(body.dark-mode) .btn-cal-nav {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .btn-cal-nav {
+  background: rgba(255, 159, 19, 0.1);
+}
+
+:host-context(body.dark-mode) .btn-cal-nav:hover {
+  background: rgba(255, 159, 19, 0.25);
+}
+
+:host-context(body.dark-mode) .day-number {
+  color: #eeeeee;
+}
+
+:host-context(body.dark-mode) .day-number:not(.empty):hover {
+  background-color: rgba(255, 159, 19, 0.15);
+  color: #FF9F13;
+}
+
+/* Día actual en Modo Oscuro */
+:host-context(body.dark-mode) .day-number.today {
+  background-color: #FF9F13 !important;
+  color: #121212 !important;
+  box-shadow: 0 4px 12px rgba(255, 159, 19, 0.4);
+}
+
+/* RESPONSIVE DESIGN (MÓVILES) */
+@media (max-width: 850px) {
   .dashboard-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; 
     gap: 30px;
   }
 }

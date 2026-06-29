@@ -1,18 +1,18 @@
 <main class="auth-section">
   <div class="auth-card">
     
-    <!-- Escudo / Logo institucional -->
+    <!-- Imagen superior -->
     <div class="brand-badge">
       <img src="logoSIH.png" alt="Escudo Institucional" class="badge-img">
     </div>
 
-    <!-- Título Principal -->
+    <!-- Título -->
     <h1 class="auth-title">Activar Usuario</h1>
 
-    <!-- Formulario enlazado a la nueva lógica -->
+    <!-- Formulario -->
     <form class="auth-form" [formGroup]="activationForm" (ngSubmit)="onActivate()">
       
-      <!-- Selector de Rol tipo Pestañas Estéticas (Reutiliza tus estilos) -->
+      <!-- Selector de Rol -->
       <div class="role-tabs-container">
         <label class="form-label-tabs">Selecciona tu Rol</label>
         <div class="role-tabs">
@@ -43,7 +43,7 @@
         }
       </div>
 
-      <!-- Campo: Primer Nombre -->
+      <!-- Primer Nombre -->
       <div class="form-group">
         <label for="primerNombre" class="form-label">Primer Nombre</label>
         <input 
@@ -59,7 +59,7 @@
         }
       </div>
 
-      <!-- Campo: Segundo Nombre (Opcional) -->
+      <!-- Segundo Nombre -->
       <div class="form-group">
         <label for="segundoNombre" class="form-label">Segundo Nombre (Opcional)</label>
         <input 
@@ -71,7 +71,7 @@
         >
       </div>
 
-      <!-- Campo: Apellidos -->
+      <!-- Apellidos -->
       <div class="form-group">
         <label for="apellidos" class="form-label">Apellidos</label>
         <input 
@@ -87,7 +87,7 @@
         }
       </div>
 
-      <!-- Campo: Documento -->
+      <!-- Documento -->
       <div class="form-group">
         <label for="documento" class="form-label">Documento</label>
         <input 
@@ -103,7 +103,7 @@
         }
       </div>
 
-      <!-- AGREGADO: Campo Correo Electrónico -->
+      <!-- Correo Electrónico -->
       <div class="form-group">
         <label for="correo" class="form-label">Correo Electrónico</label>
         <input 
@@ -119,7 +119,7 @@
         }
       </div>
 
-      <!-- Campo: Contraseña -->
+      <!-- Contraseña -->
       <div class="form-group">
         <label for="password" class="form-label">Contraseña</label>
         <input 
@@ -136,7 +136,7 @@
         }
       </div>
 
-      <!-- Campo: Verificar Contraseña -->
+      <!-- Verificar Contraseña -->
       <div class="form-group">
         <label for="verificarPassword" class="form-label">Verificar Contraseña</label>
         <input 
@@ -156,7 +156,7 @@
           }
         }
 
-        <!-- Checkbox para alternar visibilidad de ambas contraseñas -->
+        <!-- Checkbox -->
         <label class="show-password-label">
           <input 
             type="checkbox" 

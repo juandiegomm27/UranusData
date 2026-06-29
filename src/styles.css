@@ -1,4 +1,3 @@
-/* --- RESETEO LIMPIO DE RAÍZ --- */
 * {
   margin: 0;
   padding: 0;
@@ -15,18 +14,18 @@ html, body {
   background-color: #f4f6f9;
 }
 
-/* El nodo raíz de Angular fluye libre sin bloqueos */
 app-root {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+
 /*--- DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL --- */
 
-/* Grosor y ancho de la barra de scroll */
+/* Grosor de la barra de scroll */
 ::-webkit-scrollbar {
-  width: 10px; /* Grosor ultra fino y elegante */
+  width: 10px; 
   height: 10px;
 }
 

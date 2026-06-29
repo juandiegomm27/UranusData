@@ -1,80 +1,76 @@
-<!DOCTYPE html>
-<html lang="es">
-<body>
-  <header class="main-header">
-    <div class="menu-container">
-      
-      <!-- Bloque Izquierdo: Logo -->
-      <a href="#" class="logo">
-        <img src="logo-todoNegro.png" alt="Logo" class="logo-img">
-        <img src="logoSIH.png" alt="Logo" class="logo-img">
-      </a>
+<header class="main-header">
+  <div class="menu-container">
+    
+    <!-- Bloque Izquierdo: Logo interactivo que te regresa al panel principal -->
+    <a (click)="irAlInicio()" style="cursor: pointer;" class="logo">
+      <img src="logo-todoNegro.png" alt="Logo" class="logo-img">
+      <img src="logoSIH.png" alt="Logo" class="logo-img">
+    </a>
 
-      <!-- Hamburguesa para Móviles -->
-      <input type="checkbox" id="menu-toggle" class="menu-checkbox">
-      <label for="menu-toggle" class="menu-icono-btn">
-        <img class="menu-icono" src="menu.png" alt="Menu">
+    <!-- Hamburguesa para Móviles -->
+    <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+    <label for="menu-toggle" class="menu-icono-btn">
+      <img class="menu-icono" src="menu.png" alt="Menu">
+    </label>
+
+    <!-- Bloque Central: Navegación Principal Conectada -->
+    <nav class="navbar">
+      <ul>
+        <li>
+          <!-- Al hacer clic ejecuta la comprobación de rol -->
+          <a (click)="irAlInicio()" style="cursor: pointer;" class="nav-link">inicio</a>
+        </li>
+        <li>
+          <!-- Manda a la pantalla unificada de información institucional -->
+          <a [routerLink]="['/contactanos']" class="nav-link">contactanos</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Bloque Derecho: Acciones (Modo Oscuro + Menú Usuario) -->
+    <div class="header-actions">
+      
+      <!-- Interruptor de Cambio de Color -->
+      <label class="switch-modo">
+        <input type="checkbox" (change)="cambiarModo()" id="dark-mode-toggle">
+        <span class="switch-slider"></span>
+        <span class="switch-label-text">Modo Oscuro</span>
       </label>
 
-      <!-- Bloque Central: Navegación Principal -->
-      <nav class="navbar">
-        <ul>
-          <li><a href="#" class="nav-link">inicio</a></li>
-          <li><a href="#" class="nav-link">contactanos</a></li>
-        </ul>
-      </nav>
-
-      <!-- Bloque Derecho: (checkbox + Menú Usuario) -->
-      <div class="header-actions">
-        
-        <!-- Comunicador de cambio de color -->
-        <label class="switch-modo">
-          <input type="checkbox" (change)="cambiarModo()" id="dark-mode-toggle">
-            <span class="switch-slider"></span>
-            <span class="switch-label-text">Modo Oscuro</span>
-          </label>
-
-
-
-        <!-- Contenedor del Usuario (Dropdown Estilizado) -->
-        <!-- Oculto por defecto. Solo se genera si el usuario inició sesión correctamente -->
-                <!-- Contenedor del Usuario (Dropdown Estilizado) -->
-        <!-- Oculto por defecto. Solo se genera si el usuario inició sesión correctamente -->
-        @if (authService.isAutenticado()) {
-          <div class="usuario-dropdown">
-            <div class="usuario-trigger">
-              <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
+      <!-- Contenedor del Usuario (Dropdown Estilizado) -->
+      @if (authService.isAutenticado()) {
+        <div class="usuario-dropdown">
+          <div class="usuario-trigger">
+            <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
+          </div>
+          
+          <!-- Menú desplegable flotante Blindado -->
+          <div class="usuario-menu-desplegable menu-abierto-forzado">
+            <div class="dropdown-header">
+              <span class="user-name">{{ authService.getDocumento() }}</span>
             </div>
             
-            <!-- Menú desplegable flotante -->
-            <!-- AGREGADO: menu-abierto-forzado -->
-            <div class="usuario-menu-desplegable menu-abierto-forzado">
-              <div class="dropdown-header">
-                <!-- Reemplazo dinámico: Muestra el documento real guardado en el servicio -->
-                <span class="user-name">{{ authService.getDocumento() }}</span>
-              </div>
-              <!-- AGREGADO: lista-enlaces -->
-              <ul class="dropdown-links lista-enlaces">
-                <li><a href="#">Ajustes</a></li>
-                <li><a href="#">Notificaciones</a></li>
-                <li><a href="#">Preguntas frecuentes</a></li>
-              </ul>
-              <!-- AGREGADO: cuerpo-footer -->
-              <div class="dropdown-footer cuerpo-footer">
-                <a (click)="salir()" style="cursor: pointer;" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
-              </div>
+            <ul class="dropdown-links lista-enlaces">
+              <li>
+                <a [routerLink]="['/usuario/ajustes']">Ajustes</a>
+              </li>
+              <li>
+                <a [routerLink]="['/usuario/notificaciones']">Notificaciones</a>
+              </li>
+              <li>
+                <!-- Siguiendo tu idea, preguntas frecuentes comparte la vista informativa de contáctanos -->
+                <a [routerLink]="['/contactanos']">Preguntas frecuentes</a>
+              </li>
+            </ul>
+            
+            <div class="dropdown-footer cuerpo-footer">
+              <a (click)="salir()" style="cursor: pointer;" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
             </div>
           </div>
-        }
-
-
-
-      </div>
+        </div>
+      }
 
     </div>
-  </header>
-</body>
-</html>
 
-
-
+  </div>
+</header>

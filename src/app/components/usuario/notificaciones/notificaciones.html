@@ -1,0 +1,30 @@
+<main class="auth-section">
+  <div class="auth-card" style="max-width: 550px; text-align: left;">
+    
+    <div class="brand-badge" style="text-align: center;">
+      <img src="logoSIH.png" alt="Logo" class="badge-img">
+    </div>
+
+    <h1 class="auth-title" style="text-align: center; margin-bottom: 25px;">Buzón de Notificaciones</h1>
+
+    <div class="auth-form">
+      
+      @if (alertas().length > 0) {
+        @for (alerta of alertas(); track alerta.id) {
+          <div style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.1); border-left: 4px solid #1C74A0; border-radius: 4px; margin-bottom: 15px;">
+            <small style="display: block; opacity: 0.6; margin-bottom: 4px;">{{ alerta.fecha }}</small>
+            <p style="font-size: 14px; line-height: 1.4;">{{ alerta.mensaje }}</p>
+          </div>
+        }
+      } @else {
+        <p style="text-align: center; opacity: 0.7;">No tienes notificaciones pendientes.</p>
+      }
+
+    </div>
+
+    <div class="auth-footer-links" style="text-align: center; margin-top: 25px;">
+      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">Regresar</a>
+    </div>
+    
+  </div>
+</main>

@@ -1,18 +1,18 @@
 <main class="auth-section">
   <div class="auth-card">
     
-    <!-- Escudo / Logo institucional -->
+    <!-- imagen superior -->
     <div class="brand-badge">
       <img src="logoSIH.png" alt="Escudo Institucional" class="badge-img">
     </div>
 
-    <!-- Título Principal -->
+    <!-- Título -->
     <h1 class="auth-title">Iniciar sesion</h1>
 
-    <!-- Formulario enlazado a la lógica de Angular -->
+    <!-- Formulario enlazado -->
     <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       
-      <!-- NUEVO: Selector de Rol tipo Pestañas Estéticas -->
+      <!-- Selector de Rol -->
       <div class="role-tabs-container">
         <label class="form-label-tabs">Selecciona tu Rol</label>
         <div class="role-tabs">
@@ -38,13 +38,13 @@
             Gerente
           </button>
         </div>
-        <!-- Validación de Rol si es necesario -->
+        <!-- Validación de Rol -->
         @if (loginForm.get('rol')?.invalid && loginForm.get('rol')?.touched) {
           <small class="error-msg text-center">Debes seleccionar un rol para ingresar.</small>
         }
       </div>
 
-      <!-- Grupo: Documento -->
+      <!-- Documento -->
       <div class="form-group">
         <label for="documento" class="form-label">Documento</label>
         <input 
@@ -55,13 +55,13 @@
           placeholder="Documento"
           [class.input-error]="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched"
         >
-        <!-- Mensaje de Validación Dinámico -->
+        <!-- Mensaje de Validación -->
         @if (loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched) {
           <small class="error-msg">El documento es obligatorio que sea numerico (mínimo 10 caracteres).</small>
         }
       </div>
 
-      <!-- Grupo: Contraseña -->
+      <!-- Contraseña -->
       <div class="form-group">
         <label for="password" class="form-label">Contraseña</label>
         <input 
@@ -73,12 +73,12 @@
           placeholder="Contraseña"
           [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
         >
-        <!-- Mensaje de Validación Dinámico -->
+        <!-- Mensaje de Validación  -->
         @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
           <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
         }
 
-        <!-- Checkbox estético para alternar visibilidad -->
+        <!-- Checkbox -->
         <label class="show-password-label">
           <input 
             type="checkbox" 
@@ -96,7 +96,7 @@
       
     </form>
 
-    <!-- Enlaces de Ayuda Inferiores -->
+    <!-- Enlaces Inferiores -->
     <div class="auth-footer-links">
       <a [routerLink]="['/recuperar-contrasena']" class="footer-link">¿Olvidaste tu contraseña?</a>
       <a [routerLink]="['/activar-usuario']" class="footer-link">Activar usuario</a>

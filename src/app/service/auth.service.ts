@@ -4,26 +4,37 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  // Al iniciar, revisa si ya existía un documento guardado de antes
-  private documentoInicial = localStorage.getItem('usuario_documento');
-  private usuarioDocumento = signal<string | null>(this.documentoInicial);
+  // Validación de entorno seguro (Evita fallos si usas Angular moderno con SSR)
+  private documentoInicial = typeof window !== 'undefined' ? localStorage.getItem('usuario_documento') : null;
+  private rolInicial = typeof window !== 'undefined' ? localStorage.getItem('usuario_rol') : null;
 
-  login(documento: string): void {
-    // 1. Guardamos en el almacenamiento local del navegador (persistencia)
+  private usuarioDocumento = signal<string | null>(this.documentoInicial);
+  private usuarioRol = signal<string | null>(this.rolInicial); 
+
+  // comparecion con la informacion de la base de datos
+  login(documento: string, rol: string): void {
     localStorage.setItem('usuario_documento', documento);
-    // 2. Actualizamos la señal reactiva
+    localStorage.setItem('usuario_rol', rol); 
+    
     this.usuarioDocumento.set(documento);
+    this.usuarioRol.set(rol);
   }
 
   logout(): void {
-    // 1. Borramos el dato del almacenamiento local
     localStorage.removeItem('usuario_documento');
-    // 2. Limpiamos la señal
+    localStorage.removeItem('usuario_rol'); 
+    
     this.usuarioDocumento.set(null);
+    this.usuarioRol.set(null);
   }
 
   getDocumento(): string | null {
     return this.usuarioDocumento();
+  }
+
+  // Retorna el rol activo
+  getRol(): string | null {
+    return this.usuarioRol();
   }
 
   isAutenticado(): boolean {

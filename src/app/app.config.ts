@@ -8,6 +8,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient() // <-- AGREGADO AL FINAL CON SU RESPECTIVA COMA
+    provideHttpClient()
   ]
 };
