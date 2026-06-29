@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // 1. CORREGIDO: Al entrar a la web, carga de inmediato tu interfaz de presentación
+  { 
+    path: '', 
+    loadComponent: () => import('./inicio/inicio/inicio').then(m => m.Inicio) 
+  },
   
   { 
     path: 'login', 
@@ -38,5 +42,6 @@ export const routes: Routes = [
     loadComponent: () => import('./components/usuario/notificaciones/notificaciones').then(m => m.Notificaciones) 
   },
 
-  { path: '**', redirectTo: 'login' }
+  // 2. CORREGIDO: Ruta comodín segura (Cualquier URL rota te regresa a la presentación)
+  { path: '**', redirectTo: '' }
 ];
