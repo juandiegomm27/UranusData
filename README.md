@@ -103,9 +103,5 @@ El detalle de la arquitectura del sistema (vistas de casos de uso, modelo de dat
 - Juan David Bernal Torres
 - Juan Camilo Aguirre Rojas
 
-## 📦 Recursos
-
-- Drive: https://drive.google.com/drive/folders/1jvakcoW35gRuD4laJ5x48pz6JtSXzDqj?usp=drive_link
-
 ---
 SENA - Sistema Integrado de Gestión
