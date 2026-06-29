@@ -42,6 +42,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/usuario/notificaciones/notificaciones').then(m => m.Notificaciones) 
   },
 
+  { 
+    path: 'info', 
+    loadComponent: () => import('./inicio/inicio/inicio').then(m => m.Inicio) 
+  },
+
   // 2. CORREGIDO: Ruta comodín segura (Cualquier URL rota te regresa a la presentación)
   { path: '**', redirectTo: '' }
 ];

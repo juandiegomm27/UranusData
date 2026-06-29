@@ -13,13 +13,13 @@ import { HttpClient } from '@angular/common/http'; // <-- IMPORTAR CLIENTE HTTP
 export class ActivarUsuario {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
-  private http = inject(HttpClient); // <-- INYECTAR HTTP
+  private http = inject(HttpClient); 
 
   activationForm = this.fb.group({
     rol: ['Docente', [Validators.required]],
-    primerNombre: ['', [Validators.required]],
-    segundoNombre: [''], 
-    apellidos: ['', [Validators.required]],
+    primerNombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
+    segundoNombre: ['', [Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]], 
+    apellidos: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
     correo: ['', [Validators.required, Validators.email]], 
     password: ['', [Validators.required, Validators.minLength(6)]],

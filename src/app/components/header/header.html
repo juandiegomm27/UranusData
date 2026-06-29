@@ -24,10 +24,11 @@
           <!-- Manda a la pantalla unificada de información institucional -->
           <a [routerLink]="['/contactanos']" class="nav-link">contactanos</a>
         </li>
-        <li>
-          <!-- Manda a la pantalla unificada de información institucional -->
-          <a [routerLink]="['/contactanos']" class="nav-link">info</a>
-        </li>
+         @if (!authService.isAutenticado()) {
+          <li>
+            <a [routerLink]="['/info']" class="nav-link">info</a>
+          </li>
+        }
       </ul>
     </nav>
 

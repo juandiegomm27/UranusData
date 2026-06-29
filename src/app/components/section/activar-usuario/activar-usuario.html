@@ -55,7 +55,7 @@
           [class.input-error]="activationForm.get('primerNombre')?.invalid && activationForm.get('primerNombre')?.touched"
         >
         @if (activationForm.get('primerNombre')?.invalid && activationForm.get('primerNombre')?.touched) {
-          <small class="error-msg">El primer nombre es obligatorio.</small>
+          <small class="error-msg">El primer nombre debe tener solo letras.</small>
         }
       </div>
 
@@ -69,6 +69,9 @@
           class="form-input" 
           placeholder="Segundo nombre (si aplica)"
         >
+        @if (activationForm.get('segundoNombre')?.invalid && activationForm.get('segundoNombre')?.touched) {
+          <small class="error-msg">El segundo nombre debe tener solo letras.</small>
+        }
       </div>
 
       <!-- Apellidos -->
@@ -83,7 +86,7 @@
           [class.input-error]="activationForm.get('apellidos')?.invalid && activationForm.get('apellidos')?.touched"
         >
         @if (activationForm.get('apellidos')?.invalid && activationForm.get('apellidos')?.touched) {
-          <small class="error-msg">Los apellidos son obligatorios.</small>
+          <small class="error-msg">Los apellidos debe tener solo letras.</small>
         }
       </div>
 
