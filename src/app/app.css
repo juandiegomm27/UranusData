@@ -7,7 +7,7 @@
   overflow: hidden; 
 
   /* imágenes de fondo */
-  background-image: url("fondo/fondo-blanco.png");
+  background-image: url("../../public/fondo-blanco.png");
   background-color: white;
   background-size: cover;
   background-position: left;
@@ -18,7 +18,7 @@
 }
 
 .pagina.modo-oscuro {
-  background-image: url("fondo/fondo-negro.png");
+  background-image: url("../../public/fondo-negro.png");
   background-color: #232323; 
   color: white;
 }

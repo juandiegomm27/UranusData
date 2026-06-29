@@ -25,32 +25,37 @@ El sistema cuenta con tres roles de usuario, cada uno con su propio panel de con
 **Backend**
 - Node.js
 - Express
+- Bcrypt (hash de contraseñas)
 - Nodemailer (envío de correos)
 - CORS
-
-**Testing**
-- Vitest
+- Dotenv (variables de entorno)
 
 ## 📂 Estructura del Proyecto
 
 ```
 src/
 ├── app/
-│   ├── components/
-│   │   ├── header/              # Barra de navegación global
-│   │   ├── home/                # Paneles por rol (Docente, Tecnico, Gerente)
-│   │   ├── section/              # Login, activación y recuperación de contraseña
-│   │   ├── soporte/contactanos/  # Información institucional y contacto
-│   │   └── usuario/              # Ajustes y notificaciones del usuario
-│   ├── inicio/                   # Landing page del sistema
-│   ├── service/                  # Servicios (autenticación, modo oscuro)
+│   ├── auth/                     # Login, activación y recuperación de contraseña
+│   │   ├── login/
+│   │   ├── activar-usuario/
+│   │   └── recuperar-contrasena/
+│   ├── core/                     # Lógica transversal de la aplicación
+│   │   ├── guards/                # Protección de rutas (sesión y rol)
+│   │   └── services/               # Servicios (autenticación, modo oscuro)
+│   ├── home/                     # Paneles por rol (Docente, Tecnico, Gerente)
+│   ├── layout/                   # Estructura visual fija de la app
+│   │   ├── header/                # Barra de navegación global
+│   │   └── inicio/                 # Landing page del sistema
+│   ├── modulos/                  # Módulos de negocio (en construcción / futuro MySQL)
+│   ├── soporte/contactanos/      # Información institucional y contacto
+│   ├── usuario/                  # Ajustes y notificaciones del usuario
 │   ├── app.routes.ts             # Definición de rutas
 │   └── app.config.ts             # Configuración de la aplicación
 └── styles.css
 
 backend/
 ├── server.js                # Servidor Express y endpoints
-├── usuarios.service.js      # Lógica de usuarios (registro, login, recuperación)
+├── usuarios.service.js      # Lógica de usuarios (registro, login, recuperación con hash y tokens)
 ├── email.service.js         # Envío de correos (bienvenida y recuperación)
 └── usuarios_db.json         # Base de datos local de usuarios
 ```
@@ -66,30 +71,22 @@ cd sana-uranus-data
 npm install
 ```
 
-Crear el archivo .env en la raíz del proyecto con el contenido:
+Crear el archivo `.env` en la raíz del proyecto con el contenido:
 
 ```bash
 GMAIL_USER=tu_correo_real@gmail.com 
 GMAIL_APP_PASSWORD=tus16letrasdeaplicaciondegoogle
 ```
-## ▶️ Ejecución
 
-**Frontend (Angular)**
+## ▶️ Ejecución
 
 ```bash
 npm start
 ```
 
-La aplicación quedará disponible en `http://localhost:4200`.
-
-**Backend (Node/Express)**
-
-```bash
-cd backend
-node backend/server.js
-```
-
-El servidor quedará disponible en `http://localhost:3000`.
+Este comando levanta **frontend y backend al mismo tiempo**:
+- Frontend (Angular) en `http://localhost:4200`
+- Backend (Node/Express) en `http://localhost:3000`
 
 ## 🔑 Roles y Acceso
 
@@ -98,7 +95,6 @@ El servidor quedará disponible en `http://localhost:3000`.
 | Docente | Crear, consultar y editar reservas |
 | Técnico | Ver inventario, gestionar reservas y mantenimientos |
 | Gerente | Gestión de usuarios, inventario y mantenimientos |
-
 
 ## 👥 Autores
 
