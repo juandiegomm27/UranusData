@@ -13,8 +13,16 @@ export class Header {
    private fondoService = inject(FondoService);
 
   cambiarModo(): void {
-    // Añade este console.log para ver en el navegador si responde al clic
     console.log('¡Botón pulsado! Estado actual:', this.fondoService.isOscuro());
+    
+    // comunicador de cambio de color a app.css
     this.fondoService.toggleFondo();
+    
+    // comunicador de cambio de color a header.css
+    if (this.fondoService.isOscuro()) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }
 }

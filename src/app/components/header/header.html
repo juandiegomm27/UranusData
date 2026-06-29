@@ -1,77 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+<html lang="es">
 <body>
-  <header>
-    
-    <label>
-      <input type="checkbox" (change)="cambiarModo()">
-        Modo Oscuro
-    </label>
+  <header class="main-header">
+    <div class="menu-container">
+      
+      <!-- Bloque Izquierdo: Logo -->
+      <a href="#" class="logo">
+        <img src="logo-todoNegro.png" alt="Logo" class="logo-img">
+      </a>
 
-    <div class="menu conteiner">
-      <a href="#" class="logo">logo</a>
-      <input type="checkbox" id="menu">
-      <label for="menu">
-        <img  class="menu-icono" src="menu.png" alt="">
+      <!-- Hamburguesa para Móviles -->
+      <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+      <label for="menu-toggle" class="menu-icono-btn">
+        <img class="menu-icono" src="menu.png" alt="Menu">
       </label>
 
+      <!-- Bloque Central: Navegación Principal -->
       <nav class="navbar">
-
-          <ul>
-            <li><a href="#">inicio</a></li>
-            <li><a href="#">servicios</a></li>
-            <li><a href="#">contacto</a></li>
-          </ul>
-          
+        <ul>
+          <li><a href="#" class="nav-link">inicio</a></li>
+          <li><a href="#" class="nav-link">contacto</a></li>
+        </ul>
       </nav>
 
-      <div class="contenido">
-        <ul>
-          <li class="submenu">
-            <img src="car.svg" id="img-carrito" alt="">
-            <div id="carrito">
-              <table id="lista-carrito">
-                <thead>
-                 <tr>
-                    <th>Imagen</th>
-                    <th>nombre</th>
-                    <th>precio</th>
-                    <th></th>
-                 </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-              <a href="#" id="vaciar-carrito" class="btb.3">Vaciar Carrito</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-    <div>
-      <div class="header-content conteiner">
+      <!-- Bloque Derecho: Acciones (Tu Switch de Angular + Menú Usuario) -->
+      <div class="header-actions">
         
-        <div class="header-txt">
-          <h1><span>Bienvenido</span> disfrute de nuestro proyecto</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Impedit, quam delectus. Voluptatem sint nihil ipsam fugit, maiores incidunt doloremque architecto nisi aliquam nobis temporibus molestiae corrupti error. Maiores, praesentium dicta!
-          </p>
-          <a href="#" class="btn-1">informacion</a>
+        <!-- Comunicador de cambio de color -->
+        <label class="switch-modo">
+          <input type="checkbox" (change)="cambiarModo()">
+            Modo Oscuro
+        </label>
+
+        <!-- Contenedor del Usuario (Dropdown Estilizado) -->
+        <div class="usuario-dropdown">
+          <div class="usuario-trigger">
+            <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
+          </div>
+          
+          <!-- Menú desplegable flotante basado en tu HTML original -->
+          <div class="usuario-menu-desplegable">
+            <div class="dropdown-header">
+              <span class="user-name">nombre</span>
+            </div>
+            <ul class="dropdown-links">
+              <li><a href="#">Ajustes</a></li>
+              <li><a href="#">Preguntas frecuentes</a></li>
+              <li><a href="#">Notificaciones</a></li>
+            </ul>
+            <div class="dropdown-footer">
+              <a href="#" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
+            </div>
+          </div>
         </div>
-        <div class="header-img">
-          <img src="assets/logo.png" alt="">
-        </div>
+
       </div>
 
     </div>
   </header>
 </body>
 </html>
+
 
 

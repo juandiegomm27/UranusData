@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './components/header/header';
-import { Main } from "./components/main/main";
 import { FormsModule } from '@angular/forms';
 import { FondoService } from './fondo';
+import { Section } from './components/section/section';
 
 @Component({
   selector: 'app-root',
   imports: [
-    Header, 
-    Main, 
+    Header,
+    Section,
     FormsModule
 
   ],

@@ -1,0 +1,213 @@
+/* --- ESTILOS DE LA SECCIÓN PRINCIPAL --- */
+.auth-section {
+  min-height: calc(100vh - 80px); /* Ocupa el resto de la pantalla restando el header */
+  background-color: var(--bg-page);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-image: radial-gradient(var(--text-blue) 0.5px, transparent 0.5px); /* Simula el fondo de red de la imagen de forma sutil */
+  background-size: 24px 24px;
+  opacity: 0.95;
+  transition: background-color 0.3s ease;
+}
+
+/* Tarjeta Central Flotante */
+.auth-card {
+  /* Fondo blanco */
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px); 
+  
+  width: 100%;
+  max-width: 550px;
+  padding: 45px 50px;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px var(--shadow);
+  border: 3px solid rgba(37, 70, 200, 0.5); /* Borde*/
+  text-align: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Modo Oscuro */
+:host-context(body.dark-mode) .auth-card {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 3px solid rgba(100, 54, 36, 1); /* Borde*/
+}
+
+/* Escudo Superior */
+.brand-badge {
+  margin-bottom: 20px;
+}
+
+.badge-img {
+  max-height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Titulo de Inicio de Sesión */
+/* Titulo Modo Claro */
+.auth-title {
+  color: #1C74A0;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 35px;
+  transition: color 0.3s ease;
+}
+
+/* Titulo Modo Oscuro) */
+:host-context(body.dark-mode) .auth-title {
+  color: #FF9F13;
+}
+
+
+
+/* --- CONTENEDORES DE FORMULARIO (MODO CLARO POR DEFECTO) --- */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;
+  color: #1C74A0; /* Azul en modo claro */
+}
+
+.form-group {
+  width: 100%;
+  text-align: left;
+  color: #1C74A0; /* Azul en modo claro */
+}
+
+/* --- CONTENEDORES DE FORMULARIO (MODO OSCURO) --- */
+:host-context(body.dark-mode) .auth-form,
+:host-context(body.dark-mode) .form-group {
+  color: #FF9F13; /* Naranja en modo oscuro */
+}
+
+
+
+/* Etiquetas (Documento / Contraseña) */
+.form-label {
+  display: block;
+  color: var(--text-blue);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-decoration: underline; /* Mantiene la estética del boceto */
+  transition: color 0.3s ease;
+}
+
+/* Cajas de Texto (Inputs) */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--text-blue);
+  box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.15);
+}
+
+/* Opción Recordarme */
+.form-options {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Botón Ingresar */
+.btn-submit {
+  width: 180px;
+  padding: 12px;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-submit:hover {
+  filter: brightness(0.95);
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+/* Enlaces del Pie de la Tarjeta */
+.auth-footer-links {
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid var(--input-border);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.footer-link {
+  color: var(--text-blue);
+  text-decoration: underline;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  filter: brightness(1.2);
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+  
+  .btn-submit {
+    width: 100%; /* Botón ancho completo en teléfonos */
+  }
+}
+
+/* --- ESTILOS DE VALIDACIÓN ADICIONALES --- */
+.error-msg {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+  color: #e63946; /* Color rojo de advertencia estándar */
+}
+
+/* Bordes rojos inmediatos en inputs si el usuario se equivoca */
+.form-input.input-error {
+  border-color: #e63946 !important;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15) !important;
+}

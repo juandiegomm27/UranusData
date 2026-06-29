@@ -1,0 +1,301 @@
+/* --- RESETEO GENERAL --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- CONFIGURACIÓN DEL HEADER --- */
+.main-header {
+  background-color: #1C74A0; 
+  color: #ffffff;
+  padding: 15px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+/* Modo Oscuro con Angular :host-context */
+:host-context(body.dark-mode) .main-header {
+  background-color: #FF9F13; 
+  color: #121212;
+}
+
+/* Contenedor Alineado */
+.menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- LOGO --- */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 35px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* --- NAVEGACIÓN --- */
+.navbar ul {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  font-size: 15px;
+  text-transform: capitalize;
+  opacity: 0.85;
+  padding: 8px 0;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+/* Línea animada inferior al pasar el cursor */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* --- BLOQUE DE ACCIONES (MODO Y USUARIO) --- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Tu Switch de Modo (Estilos aplicados a tu clase original) */
+.switch-modo {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.switch-modo:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+:host-context(body.dark-mode) .switch-modo {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+:host-context(body.dark-mode) .switch-modo:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.switch-modo input {
+  margin-right: 6px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* --- DROPDOWN DE USUARIO --- */
+.usuario-dropdown {
+  position: relative;
+}
+
+.usuario-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.usuario-trigger:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Tarjeta desplegable oculta por defecto */
+.usuario-menu-desplegable {
+  position: absolute;
+  top: 130%;
+  right: 0;
+  background-color: #ffffff;
+  color: #333333;
+  width: 240px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: none; 
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Mostrar Menú al pasar el mouse por el contenedor */
+.usuario-dropdown:hover .usuario-menu-desplegable {
+  display: block;
+}
+
+/* Estilos internos de la tarjeta de usuario */
+.dropdown-header {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eeeeee;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.dropdown-links {
+  list-style: none;
+}
+
+.dropdown-links li a {
+  display: block;
+  padding: 12px 15px;
+  color: #555555;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.dropdown-links li a:hover {
+  background-color: #f1f3f5;
+  color: #1C74A0;
+}
+
+.dropdown-footer {
+  padding: 12px 15px;
+  border-top: 1px solid #eeeeee;
+  text-align: center;
+}
+
+.btn-clear {
+  display: block;
+  text-decoration: none;
+  background-color: #e63946;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-clear:hover {
+  background-color: #cb2d3a;
+}
+
+/* Ajustes de tarjeta para Modo Oscuro */
+:host-context(body.dark-mode) .usuario-menu-desplegable {
+  background-color: #1e1e1e;
+  color: #eeeeee;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+:host-context(body.dark-mode) .dropdown-header {
+  background-color: #2a2a2a;
+  border-bottom-color: #333333;
+}
+:host-context(body.dark-mode) .dropdown-links li a {
+  color: #cccccc;
+}
+:host-context(body.dark-mode) .dropdown-links li a:hover {
+  background-color: #2a2a2a;
+  color: #FF9F13;
+}
+:host-context(body.dark-mode) .dropdown-footer {
+  border-top-color: #333333;
+}
+
+/* --- MENÚ MÓVIL ELEMENTOS --- */
+.menu-checkbox {
+  display: none;
+}
+
+.menu-icono-btn {
+  display: none;
+  cursor: pointer;
+}
+
+.menu-icono {
+  width: 28px;
+  height: auto;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- RESPONSIVE DESIGN (MÓVILES) --- */
+@media (max-width: 768px) {
+  .menu-icono-btn {
+    display: block;
+    order: 2;
+  }
+
+  .header-actions {
+    order: 3;
+  }
+
+  .navbar {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #1C74A0;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  :host-context(body.dark-mode) .navbar {
+    background-color: #FF9F13;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  /* Mostrar menú de navegación al presionar la hamburguesa */
+  .menu-checkbox:checked ~ .navbar {
+    display: block;
+  }
+}

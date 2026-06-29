@@ -1,0 +1,69 @@
+<main class="auth-section">
+  <div class="auth-card">
+    
+    <!-- Escudo / Logo institucional -->
+    <div class="brand-badge">
+      <img src="escudo-colegio.png" alt="Escudo Institucional" class="badge-img">
+    </div>
+
+    <!-- Título Principal -->
+    <h1 class="auth-title">Iniciar sesion</h1>
+
+    <!-- Formulario enlazado a la lógica de Angular -->
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Grupo: Documento -->
+      <div class="form-group">
+        <label for="documento" class="form-label">Documento</label>
+        <input 
+          type="text" 
+          id="documento" 
+          formControlName="documento" 
+          class="form-input" 
+          placeholder="Documento"
+          [class.input-error]="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched"
+        >
+        <!-- Mensaje de Validación Dinámico -->
+        @if (loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched) {
+          <small class="error-msg">El documento es obligatorio (mínimo 10 caracteres).</small>
+        }
+      </div>
+
+      <!-- Grupo: Contraseña -->
+      <div class="form-group">
+        <label for="password" class="form-label">Contraseña</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-input" 
+          placeholder="Contraseña"
+          [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        >
+        <!-- Mensaje de Validación Dinámico -->
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
+        }
+      </div>
+
+      <!-- Opciones Recordarme -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="remember" formControlName="remember" class="form-checkbox">
+          <span class="checkbox-text">Recordarme</span>
+        </label>
+      </div>
+
+      <!-- Botón Ingresar -->
+      <button type="submit" class="btn-submit">Ingresar</button>
+      
+    </form>
+
+    <!-- Enlaces de Ayuda Inferiores -->
+    <div class="auth-footer-links">
+      <a href="#" class="footer-link">¿Olvidaste tu contraseña?</a>
+      <a href="#" class="footer-link">¿Necesitas ayuda para iniciar sesion?</a>
+    </div>
+
+  </div>
+</main>
