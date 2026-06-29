@@ -8,26 +8,5 @@
     "correo": "juandiegomedinamahecha@gmail.com",
     "password": "1234567890",
     "verificarPassword": "1234567890"
-  },
-  {
-    "rol": "Tecnico",
-    "primerNombre": "Juan",
-    "segundoNombre": "Juan",
-    "apellidos": "Medina Mahecha",
-    "documento": "1234567891",
-    "correo": "juandiegomedinamahecha@gmail.com",
-    "password": "1234567890",
-    "verificarPassword": "1234567890"
-  },
-  {
-    "rol": "Gerente",
-    "primerNombre": "Juan",
-    "segundoNombre": "Juan",
-    "apellidos": "Medina Mahecha",
-    "documento": "1234567892",
-    "correo": "juandiegomedinamahecha@gmail.com",
-    "password": "1234567890",
-    "verificarPassword": "1234567890"
   }
-
 ]

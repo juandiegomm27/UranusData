@@ -6,8 +6,8 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './inicio.html',
-  styleUrl: '../../components/section/section.css' // <-- Corregido: Sube 2 niveles para buscar el CSS del login
+  styleUrl: '../../components/section/section.css' 
 })
 export class Inicio {
-  // Maneja la presentación inicial de forma limpia
+  
 }
