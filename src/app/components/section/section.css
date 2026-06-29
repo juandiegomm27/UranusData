@@ -1,6 +1,6 @@
 /* --- ESTILOS DE LA SECCIÓN PRINCIPAL --- */
 .auth-section {
-  min-height: calc(100vh - 80px); /* Ocupa el resto de la pantalla restando el header */
+  min-height: calc(100vh - 80px); 
   background-color: var(--bg-page);
   display: flex;
   justify-content: center;
@@ -12,29 +12,30 @@
   transition: background-color 0.3s ease;
 }
 
-/* Tarjeta Central Flotante */
+/* --- Tarjeta Central Flotante --- */
 .auth-card {
   /* Fondo blanco */
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(8px); 
   
   width: 100%;
-  max-width: 550px;
-  padding: 45px 50px;
+  max-width: 600px;
+  padding: 50px 50px;
   border-radius: 12px;
   box-shadow: 0 15px 35px var(--shadow);
-  border: 3px solid rgba(37, 70, 200, 0.5); /* Borde*/
+  border: 3px solid rgba(37, 70, 200, 0.5);
   text-align: center;
+  
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Modo Oscuro */
 :host-context(body.dark-mode) .auth-card {
   background-color: rgba(0, 0, 0, 0.5);
-  border: 3px solid rgba(100, 54, 36, 1); /* Borde*/
+  border: 3px solid rgba(100, 54, 36, 1); 
 }
 
-/* Escudo Superior */
+/* --- Escudo Superior --- */
 .brand-badge {
   margin-bottom: 20px;
 }
@@ -45,7 +46,7 @@
   object-fit: contain;
 }
 
-/* Titulo de Inicio de Sesión */
+/* --- Titulo de Inicio de Sesión --- */
 /* Titulo Modo Claro */
 .auth-title {
   color: #1C74A0;
@@ -55,44 +56,122 @@
   transition: color 0.3s ease;
 }
 
-/* Titulo Modo Oscuro) */
+/* Titulo Modo Oscuro */
 :host-context(body.dark-mode) .auth-title {
   color: #FF9F13;
 }
 
-
-
-/* --- CONTENEDORES DE FORMULARIO (MODO CLARO POR DEFECTO) --- */
+/* --- CONTENEDORES DE FORMULARIO (MODO CLARO) --- */
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 22px;
   align-items: center;
-  color: #1C74A0; /* Azul en modo claro */
+  color: #1C74A0;
 }
 
 .form-group {
   width: 100%;
   text-align: left;
-  color: #1C74A0; /* Azul en modo claro */
+  color: #1C74A0;
 }
 
-/* --- CONTENEDORES DE FORMULARIO (MODO OSCURO) --- */
+/* (MODO OSCURO) */
 :host-context(body.dark-mode) .auth-form,
 :host-context(body.dark-mode) .form-group {
-  color: #FF9F13; /* Naranja en modo oscuro */
+  color: #FF9F13; 
+}
+
+
+/* --- CONTENEDOR Y DISEÑO DE PESTAÑAS DE ROL --- */
+.role-tabs-container {
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label-tabs {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Barra base contenedora de los botones */
+.role-tabs {
+  display: flex;
+  background-color: rgba(28, 116, 160, 0.08); /* Fondo azul muy sutil */
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(28, 116, 160, 0.15);
+  width: 100%;
+}
+
+/* Botón individual de pestaña (Por defecto inactivo) */
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1C74A0; /* Color azul original */
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+  background-color: rgba(28, 116, 160, 0.12);
+}
+
+/* PESTAÑA ACTIVA - MODO CLARO (Azul sólido con texto blanco) */
+.tab-btn.active {
+  background-color: #1C74A0;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(28, 116, 160, 0.25);
+}
+
+/* Centrado para el mensaje de error del rol */
+.text-center {
+  text-align: center;
+  width: 100%;
+}
+
+/* --- ADAPTACIÓN DE PESTAÑAS PARA MODO OSCURO --- */
+:host-context(body.dark-mode) .role-tabs {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 159, 19, 0.2);
+}
+
+:host-context(body.dark-mode) .tab-btn {
+  color: #FF9F13; /* Naranja institucional */
+}
+
+:host-context(body.dark-mode) .tab-btn:hover {
+  background-color: rgba(255, 159, 19, 0.1);
+}
+
+/* PESTAÑA ACTIVA - MODO OSCURO (Naranja sólido con texto oscuro) */
+:host-context(body.dark-mode) .tab-btn.active {
+  background-color: #FF9F13;
+  color: #121212;
+  box-shadow: 0 2px 6px rgba(255, 159, 19, 0.3);
 }
 
 
 
-/* Etiquetas (Documento / Contraseña) */
+
+/* --- Etiquetas (Documento / Contraseña) --- */
 .form-label {
   display: block;
   color: var(--text-blue);
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
-  text-decoration: underline; /* Mantiene la estética del boceto */
+  text-decoration: underline;
   transition: color 0.3s ease;
 }
 
@@ -114,11 +193,20 @@
   box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.15);
 }
 
-/* Opción Recordarme */
 .form-options {
   width: 100%;
   text-align: left;
   margin-bottom: 10px;
+}
+
+/* --- Contenedor del checkbox de mostrar contraseña --- */
+.show-password-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 12px; 
+  user-select: none;
+  gap: 8px;
 }
 
 .checkbox-label {
@@ -126,45 +214,145 @@
   align-items: center;
   cursor: pointer;
   user-select: none;
+  gap: 8px;
 }
 
 .form-checkbox {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
-  cursor: pointer;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #b0bec5;
+  border-radius: 4px;
+  background-color: #ffffff;
+  position: relative;
+  display: inline-block;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto Hover general al pasar el mouse */
+.checkbox-label:hover .custom-checkbox,
+.show-password-label:hover .custom-checkbox {
+  border-color: #1C74A0;
+}
+
+.form-checkbox:focus-visible + .custom-checkbox {
+  box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.25);
+}
+
+/* Checkbox activo (Checked) - Modo Claro (Azul) */
+.form-checkbox:checked + .custom-checkbox {
+  background-color: #1C74A0;
+  border-color: #1C74A0;
+}
+
+/* Palomita/Visto blanco interno */
+.custom-checkbox::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.form-checkbox:checked + .custom-checkbox::after {
+  display: block;
+}
+
+/* Textos de las etiquetas */
 .checkbox-text {
   color: var(--text-main);
   font-size: 14px;
   font-weight: 500;
 }
 
-/* Botón Ingresar */
+.checkbox-text-secondary {
+  color: var(--text-main);
+  font-size: 13px; /* Ligeramente más pequeño para el texto secundario */
+  font-weight: 500;
+}
+
+/* Adaptación de los Checkboxes para Modo Oscuro */
+:host-context(body.dark-mode) .custom-checkbox {
+  background-color: #2a2a2a;
+  border-color: #555555;
+}
+
+:host-context(body.dark-mode) .form-checkbox:checked + .custom-checkbox {
+  background-color: #FF9F13; /* Naranja en modo oscuro */
+  border-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .checkbox-label:hover .custom-checkbox,
+:host-context(body.dark-mode) .show-password-label:hover .custom-checkbox {
+  border-color: #FF9F13;
+}
+/* ---------------------------------------------------- */
+
+
+
+/* --- BOTÓN DE INGRESAR --- */
 .btn-submit {
   width: 180px;
-  padding: 12px;
-  background-color: var(--btn-bg);
-  color: var(--btn-text);
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 12px 24px;
+  
+  /* Modo Claro */
+  background-color: #1C74A0;
+  color: #ffffff;
+  
+  border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.1s ease, background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(28, 116, 160, 0.2);
+  
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+/* Efecto al pasar el cursor - Modo Claro */
 .btn-submit:hover {
-  filter: brightness(0.95);
+  background-color: #155b7f;
+  box-shadow: 0 6px 14px rgba(28, 116, 160, 0.35);
+  transform: translateY(-2px); 
 }
 
+/* Efecto al hacer clic */
 .btn-submit:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 2px 5px rgba(28, 116, 160, 0.2);
 }
 
-/* Enlaces del Pie de la Tarjeta */
+/* --- CONFIGURACIÓN DEL BOTÓN PARA MODO OSCURO --- */
+:host-context(body.dark-mode) .btn-submit {
+  background-color: #FF9F13;
+  color: #121212; 
+  box-shadow: 0 4px 10px rgba(255, 159, 19, 0.2);
+}
+
+/* Efecto al pasar el cursor - Modo Oscuro */
+:host-context(body.dark-mode) .btn-submit:hover {
+  background-color: #e08b0f; 
+  box-shadow: 0 6px 14px rgba(255, 159, 19, 0.4);
+}
+
+/* Efecto al hacer clic - Modo Oscuro */
+:host-context(body.dark-mode) .btn-submit:active {
+  box-shadow: 0 2px 5px rgba(255, 159, 19, 0.2);
+}
+
+
+/* --- Enlaces del Pie de la Tarjeta --- */
 .auth-footer-links {
   margin-top: 35px;
   padding-top: 25px;
@@ -193,7 +381,7 @@
   }
   
   .btn-submit {
-    width: 100%; /* Botón ancho completo en teléfonos */
+    width: 100%;
   }
 }
 
@@ -203,7 +391,7 @@
   font-size: 12px;
   margin-top: 4px;
   font-weight: 500;
-  color: #e63946; /* Color rojo de advertencia estándar */
+  color: #e63946; 
 }
 
 /* Bordes rojos inmediatos en inputs si el usuario se equivoca */

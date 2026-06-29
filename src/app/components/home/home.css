@@ -1,0 +1,114 @@
+/* --- ESTRUCTURA GENERAL DE LA PANTALLA --- */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  align-items: start;
+}
+
+/* Rejilla de botones para los roles */
+.buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* --- BOTONES CON OPACIDAD AL 50% (MODO CLARO) --- */
+.btn-dash {
+  background-color: rgba(255, 255, 255, 0.5);
+  
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  color: #1C74A0; 
+  border: 2px solid rgba(28, 116, 160, 0.4); 
+  border-radius: 16px; 
+  padding: 22px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  
+  /* Transición fluida para todos los efectos */
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+  box-shadow 0.25s ease,
+  background-color 0.25s ease, 
+               border-color 0.25s ease;
+}
+
+/* Efecto hover al pasar el ratón (Modo Claro) */
+.btn-dash:hover {
+  background-color: rgba(255, 255, 255, 0.75); /* Sube la opacidad al pasar el cursor */
+  border-color: rgba(28, 116, 160, 0.8);
+  box-shadow: 0 8px 20px rgba(28, 116, 160, 0.15);
+  transform: translateY(-4px); /* Se eleva con estilo */
+}
+
+/* Efecto al presionar (Active) */
+.btn-dash:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
+/* Contenedor del icono dentro del botón */
+.btn-dash .icon {
+  font-size: 18px;
+}
+
+/* Botón ancho de la fila inferior */
+.btn-wide {
+  grid-column: span 2;
+  padding: 26px;
+}
+
+/* Contenedor del calendario (A juego con la estética translúcida) */
+.dashboard-calendar {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(28, 116, 160, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  min-height: 380px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+
+/* --- BOTONES CON OPACIDAD AL 50% (MODO OSCURO) --- */
+:host-context(body.dark-mode) .btn-dash {
+  /* Fondo negro/oscuro con 50% de opacidad (0.5) */
+  background-color: rgba(20, 20, 20, 0.5);
+  
+  color: #FF9F13; /* Naranja institucional de tu login oscuro */
+  border: 2px solid rgba(255, 159, 19, 0.3); /* Borde naranja traslúcido */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Efecto hover al pasar el ratón (Modo Oscuro) */
+:host-context(body.dark-mode) .btn-dash:hover {
+  background-color: rgba(30, 30, 30, 0.75);
+  border-color: rgba(255, 159, 19, 0.8);
+  box-shadow: 0 8px 25px rgba(255, 159, 19, 0.25);
+}
+
+/* Contenedor del calendario (Modo Oscuro) */
+:host-context(body.dark-mode) .dashboard-calendar {
+  background-color: rgba(20, 20, 20, 0.5);
+  border: 2px solid rgba(255, 159, 19, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+/* --- ADAPTACIÓN RESPONSIVA PARA MÓVILES --- */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}

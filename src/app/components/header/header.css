@@ -20,7 +20,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
-/* Modo Oscuro con Angular :host-context */
+/* Modo Oscuro */
 :host-context(body.dark-mode) .main-header {
   background-color: #FF9F13; 
   color: #121212;
@@ -95,36 +95,88 @@ body {
   gap: 20px;
 }
 
-/* Tu Switch de Modo (Estilos aplicados a tu clase original) */
+/* --- SWITCH DE MODO --- */
 .switch-modo {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px; /* Distancia entre la cápsula y el texto */
   cursor: pointer;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 6px 14px;
-  border-radius: 20px;
   font-size: 14px;
-  transition: background 0.3s ease;
+  font-weight: 600;
+  user-select: none;
   white-space: nowrap;
 }
 
-.switch-modo:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-:host-context(body.dark-mode) .switch-modo {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-:host-context(body.dark-mode) .switch-modo:hover {
-  background: rgba(0, 0, 0, 0.15);
-}
-
+/* Ocultar por completo el checkbox original del navegador */
 .switch-modo input {
-  margin-right: 6px;
-  cursor: pointer;
-  vertical-align: middle;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
+
+/* Cuerpo de la cápsula (Fondo deslizante) */
+.switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.25); /* Transparencia elegante sobre el header azul */
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+}
+
+/* El círculo interior (La bolita deslizante) */
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+}
+
+/* --- ESTADOS CUANDO EL CHECKBOX ESTÁ ACTIVADO --- */
+.switch-modo input:checked + .switch-slider {
+  background-color: #145270;
+  border-color: #1C74A0;
+}
+
+.switch-modo input:checked + .switch-slider::before {
+  transform: translateX(22px);
+}
+
+.switch-label-text {
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+:host-context(body.dark-mode) .switch-slider {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
+:host-context(body.dark-mode) .switch-modo input:checked + .switch-slider {
+  background-color: #bd7810;
+  border-color: #FF9F13;
+}
+:host-context(body.dark-mode) .switch-modo input:checked + .switch-slider::before {
+  background-color: #121212;
+}
+
+:host-context(body.dark-mode) .switch-modo:hover .switch-slider {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/*-------------------------------------*/
 
 /* --- DROPDOWN DE USUARIO --- */
 .usuario-dropdown {
@@ -137,7 +189,7 @@ body {
   align-items: center;
   padding: 4px;
   border-radius: 50%;
-  transition: background 0.2s;
+  transition: background 1s;
 }
 
 .usuario-trigger:hover {
@@ -151,7 +203,7 @@ body {
   object-fit: cover;
 }
 
-/* Tarjeta desplegable oculta por defecto */
+/* Tarjeta desplegable oculta */
 .usuario-menu-desplegable {
   position: absolute;
   top: 130%;

@@ -1,0 +1,79 @@
+<div class="dashboard-layout">
+  
+  <!-- CONTENEDOR IZQUIERDO: Renderiza el bloque correspondiente según el rol -->
+  <div class="dashboard-actions">
+    
+    @if (rolUsuario() === 'Docente') {
+      <!-- Angular procesa este bloque si el usuario es Docente -->
+      <ng-container *ngTemplateOutlet="docenteTemplate"></ng-container>
+    } 
+    @else if (rolUsuario() === 'Tecnico') {
+      <!-- Angular procesa este bloque si el usuario es Técnico -->
+      <ng-container *ngTemplateOutlet="tecnicoTemplate"></ng-container>
+    } 
+    @else if (rolUsuario() === 'Gerente') {
+      <!-- Angular procesa este bloque si el usuario es Gerente -->
+      <ng-container *ngTemplateOutlet="gerenteTemplate"></ng-container>
+    }
+
+  </div>
+
+  <div class="dashboard-layout">
+  
+  <!-- CONTENEDOR IZQUIERDO: Muestra los botones del rol activo con opacidad -->
+  <div class="dashboard-actions">
+    
+    @switch (rolUsuario()) {
+      @case ('Docente') {
+        <app-docente></app-docente>
+      }
+      @case ('Tecnico') {
+        <app-tecnico></app-tecnico>
+      }
+      @case ('Gerente') {
+        <app-gerente></app-gerente>
+      }
+    }
+
+  </div>
+
+  <!-- CONTENEDOR DERECHO: El calendario fijo común translúcido -->
+  <div class="dashboard-calendar">
+    <div class="calendar-mock">
+      <p style="font-weight: 700; margin-bottom: 15px;">Calendario Institucional</p>
+      <!-- Tu maquetación del calendario va aquí -->
+    </div>
+  </div>
+
+</div>
+
+
+<!-- === INYECCIÓN DE TUS ARCHIVOS INDEPENDIENTES === -->
+<!-- Para no mezclar código, Angular leerá las estructuras de tus otros archivos aquí -->
+
+<ng-template #docenteTemplate>
+  <div class="buttons-grid">
+    <!-- Aquí meterás los botones de tu archivo docente.html -->
+    <button class="btn-dash btn-small" /*---[routerLink]="['/reserva/crear']"---*/>RESERVA</button>
+    <button class="btn-dash btn-small" /*---[routerLink]="['/reserva/consultar']"---*/>CONSULTA RESERVA</button>
+    <button class="btn-dash btn-wide" /*---[routerLink]="['/reserva/editar']"---*/>EDITAR RESERVA</button>
+  </div>
+</ng-template>
+
+<ng-template #tecnicoTemplate>
+  <div class="buttons-grid">
+    <!-- Aquí meterás los botones de tu archivo tecnico.html -->
+    <button class="btn-dash btn-small" /*---[routerLink]="['/inventario/ver']"---*/>Inventario</button>
+    <button class="btn-dash btn-small" /*---[routerLink]="['/reserva/ver']"---*/>Reserva</button>
+    <button class="btn-dash btn-wide" /*---[routerLink]="['/mantenimiento/gestion']"---*/>Mantenimiento</button>
+  </div>
+</ng-template>
+
+<ng-template #gerenteTemplate>
+  <div class="buttons-grid">
+    <!-- Aquí meterás los botones de tu archivo gerente.html -->
+    <button class="btn-dash btn-small" /*---[routerLink]="['/usuarios/gestion']"---*/>Gestión de usuarios</button>
+    <button class="btn-dash btn-small" /*---[routerLink]="['/inventario/reportes']"---*/>Inventario</button>
+    <button class="btn-dash btn-wide" /*---[routerLink]="['/mantenimiento/reportes']"---*/>Mantenimientos</button>
+  </div>
+</ng-template>

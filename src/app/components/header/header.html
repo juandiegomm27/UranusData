@@ -7,6 +7,7 @@
       <!-- Bloque Izquierdo: Logo -->
       <a href="#" class="logo">
         <img src="logo-todoNegro.png" alt="Logo" class="logo-img">
+        <img src="logoSIH.png" alt="Logo" class="logo-img">
       </a>
 
       <!-- Hamburguesa para Móviles -->
@@ -19,40 +20,48 @@
       <nav class="navbar">
         <ul>
           <li><a href="#" class="nav-link">inicio</a></li>
-          <li><a href="#" class="nav-link">contacto</a></li>
+          <li><a href="#" class="nav-link">contactanos</a></li>
         </ul>
       </nav>
 
-      <!-- Bloque Derecho: Acciones (Tu Switch de Angular + Menú Usuario) -->
+      <!-- Bloque Derecho: (checkbox + Menú Usuario) -->
       <div class="header-actions">
         
         <!-- Comunicador de cambio de color -->
         <label class="switch-modo">
-          <input type="checkbox" (change)="cambiarModo()">
-            Modo Oscuro
-        </label>
+          <input type="checkbox" (change)="cambiarModo()" id="dark-mode-toggle">
+            <span class="switch-slider"></span>
+            <span class="switch-label-text">Modo Oscuro</span>
+          </label>
 
-        <!-- Contenedor del Usuario (Dropdown Estilizado) -->
-        <div class="usuario-dropdown">
-          <div class="usuario-trigger">
-            <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
-          </div>
-          
-          <!-- Menú desplegable flotante basado en tu HTML original -->
-          <div class="usuario-menu-desplegable">
-            <div class="dropdown-header">
-              <span class="user-name">nombre</span>
+
+
+                <!-- Contenedor del Usuario (Dropdown Estilizado) -->
+        <!-- Oculto por defecto. Solo se genera si el usuario inició sesión correctamente -->
+        @if (authService.isAutenticado()) {
+          <div class="usuario-dropdown">
+            <div class="usuario-trigger">
+              <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
             </div>
-            <ul class="dropdown-links">
-              <li><a href="#">Ajustes</a></li>
-              <li><a href="#">Preguntas frecuentes</a></li>
-              <li><a href="#">Notificaciones</a></li>
-            </ul>
-            <div class="dropdown-footer">
-              <a href="#" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
+            
+            <!-- Menú desplegable flotante -->
+            <div class="usuario-menu-desplegable">
+              <div class="dropdown-header">
+                <!-- Reemplazo dinámico: Muestra el documento real guardado en el servicio -->
+                <span class="user-name">{{ authService.getDocumento() }}</span>
+              </div>
+              <ul class="dropdown-links">
+                <li><a href="#">Ajustes</a></li>
+                <li><a href="#">Notificaciones</a></li>
+                <li><a href="#">Preguntas frecuentes</a></li>
+              </ul>
+              <div class="dropdown-footer">
+                <a (click)="salir()" style="cursor: pointer;" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
+              </div>
             </div>
           </div>
-        </div>
+        }
+
 
       </div>
 
