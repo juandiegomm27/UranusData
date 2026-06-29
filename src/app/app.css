@@ -1,10 +1,10 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
- .pagina {
+.pagina {
   position: fixed;
   top: 0;
   left: 0;
@@ -22,11 +22,7 @@
   transition: background-image 0.3s ease, background-color 0.3s ease;
 }
 
-app-header #fondo {
-  margin: 20px;
-}
-
-app-header #fondo:checked ~ .pagina {
+.pagina.modo-oscuro {
   background-image: url("fondo/fondo-negro.png");
   background-color: #232323; 
   color: white;

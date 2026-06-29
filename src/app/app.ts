@@ -8,7 +8,6 @@ import { FondoService } from './fondo';
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet, 
     Header, 
     Main, 
     FormsModule
