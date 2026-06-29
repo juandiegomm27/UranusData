@@ -1,0 +1,57 @@
+/* --- RESETEO LIMPIO DE RAÍZ --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #f4f6f9;
+}
+
+/* El nodo raíz de Angular fluye libre sin bloqueos */
+app-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*--- DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL --- */
+
+/* Grosor y ancho de la barra de scroll */
+::-webkit-scrollbar {
+  width: 10px; /* Grosor ultra fino y elegante */
+  height: 10px;
+}
+
+/* El fondo de scroll */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Modo Claro */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(28, 116, 160, 0.5);
+  border-radius: 10px;
+}
+
+/* Efecto Modo Claro */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(28, 116, 160, 0.8);
+}
+
+/* MODO OSCURO */
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 159, 19, 0.5);
+} 
+
+/* Efecto en Modo Oscuro */
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 159, 19, 0.8);
+}

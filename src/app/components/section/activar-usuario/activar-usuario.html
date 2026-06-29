@@ -1,0 +1,183 @@
+<main class="auth-section">
+  <div class="auth-card">
+    
+    <!-- Escudo / Logo institucional -->
+    <div class="brand-badge">
+      <img src="logoSIH.png" alt="Escudo Institucional" class="badge-img">
+    </div>
+
+    <!-- Título Principal -->
+    <h1 class="auth-title">Activar Usuario</h1>
+
+    <!-- Formulario enlazado a la nueva lógica -->
+    <form class="auth-form" [formGroup]="activationForm" (ngSubmit)="onActivate()">
+      
+      <!-- Selector de Rol tipo Pestañas Estéticas (Reutiliza tus estilos) -->
+      <div class="role-tabs-container">
+        <label class="form-label-tabs">Selecciona tu Rol</label>
+        <div class="role-tabs">
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activationForm.get('rol')?.value === 'Docente'"
+            (click)="activationForm.get('rol')?.setValue('Docente')">
+            Docente
+          </button>
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activationForm.get('rol')?.value === 'Tecnico'"
+            (click)="activationForm.get('rol')?.setValue('Tecnico')">
+            Técnico
+          </button>
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activationForm.get('rol')?.value === 'Gerente'"
+            (click)="activationForm.get('rol')?.setValue('Gerente')">
+            Gerente
+          </button>
+        </div>
+        @if (activationForm.get('rol')?.invalid && activationForm.get('rol')?.touched) {
+          <small class="error-msg text-center">Debes seleccionar un rol.</small>
+        }
+      </div>
+
+      <!-- Campo: Primer Nombre -->
+      <div class="form-group">
+        <label for="primerNombre" class="form-label">Primer Nombre</label>
+        <input 
+          type="text" 
+          id="primerNombre" 
+          formControlName="primerNombre" 
+          class="form-input" 
+          placeholder="Primer nombre"
+          [class.input-error]="activationForm.get('primerNombre')?.invalid && activationForm.get('primerNombre')?.touched"
+        >
+        @if (activationForm.get('primerNombre')?.invalid && activationForm.get('primerNombre')?.touched) {
+          <small class="error-msg">El primer nombre es obligatorio.</small>
+        }
+      </div>
+
+      <!-- Campo: Segundo Nombre (Opcional) -->
+      <div class="form-group">
+        <label for="segundoNombre" class="form-label">Segundo Nombre (Opcional)</label>
+        <input 
+          type="text" 
+          id="segundoNombre" 
+          formControlName="segundoNombre" 
+          class="form-input" 
+          placeholder="Segundo nombre (si aplica)"
+        >
+      </div>
+
+      <!-- Campo: Apellidos -->
+      <div class="form-group">
+        <label for="apellidos" class="form-label">Apellidos</label>
+        <input 
+          type="text" 
+          id="apellidos" 
+          formControlName="apellidos" 
+          class="form-input" 
+          placeholder="Apellidos completos"
+          [class.input-error]="activationForm.get('apellidos')?.invalid && activationForm.get('apellidos')?.touched"
+        >
+        @if (activationForm.get('apellidos')?.invalid && activationForm.get('apellidos')?.touched) {
+          <small class="error-msg">Los apellidos son obligatorios.</small>
+        }
+      </div>
+
+      <!-- Campo: Documento -->
+      <div class="form-group">
+        <label for="documento" class="form-label">Documento</label>
+        <input 
+          type="text" 
+          id="documento" 
+          formControlName="documento" 
+          class="form-input" 
+          placeholder="Número de documento"
+          [class.input-error]="activationForm.get('documento')?.invalid && activationForm.get('documento')?.touched"
+        >
+        @if (activationForm.get('documento')?.invalid && activationForm.get('documento')?.touched) {
+          <small class="error-msg">El documento debe ser numérico (mínimo 10 caracteres).</small>
+        }
+      </div>
+
+      <!-- AGREGADO: Campo Correo Electrónico -->
+      <div class="form-group">
+        <label for="correo" class="form-label">Correo Electrónico</label>
+        <input 
+          type="email" 
+          id="correo" 
+          formControlName="correo" 
+          class="form-input" 
+          placeholder="ejemplo@correo.com"
+          [class.input-error]="activationForm.get('correo')?.invalid && activationForm.get('correo')?.touched"
+        >
+        @if (activationForm.get('correo')?.invalid && activationForm.get('correo')?.touched) {
+          <small class="error-msg">Ingresa un formato de correo válido (ejemplo@correo.com).</small>
+        }
+      </div>
+
+      <!-- Campo: Contraseña -->
+      <div class="form-group">
+        <label for="password" class="form-label">Contraseña</label>
+        <input 
+          #passInput
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-input" 
+          placeholder="Crea una contraseña"
+          [class.input-error]="activationForm.get('password')?.invalid && activationForm.get('password')?.touched"
+        >
+        @if (activationForm.get('password')?.invalid && activationForm.get('password')?.touched) {
+          <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
+        }
+      </div>
+
+      <!-- Campo: Verificar Contraseña -->
+      <div class="form-group">
+        <label for="verificarPassword" class="form-label">Verificar Contraseña</label>
+        <input 
+          #confirmPassInput
+          type="password" 
+          id="verificarPassword" 
+          formControlName="verificarPassword" 
+          class="form-input" 
+          placeholder="Repite la contraseña"
+          [class.input-error]="(activationForm.get('verificarPassword')?.invalid || activationForm.hasError('mismatch')) && activationForm.get('verificarPassword')?.touched"
+        >
+        @if (activationForm.get('verificarPassword')?.touched) {
+          @if (activationForm.get('verificarPassword')?.hasError('required')) {
+            <small class="error-msg">Debes confirmar tu contraseña.</small>
+          } @else if (activationForm.hasError('mismatch')) {
+            <small class="error-msg">Las contraseñas no coinciden.</small>
+          }
+        }
+
+        <!-- Checkbox para alternar visibilidad de ambas contraseñas -->
+        <label class="show-password-label">
+          <input 
+            type="checkbox" 
+            class="form-checkbox" 
+            #togglePass 
+            (change)="passInput.type = confirmPassInput.type = togglePass.checked ? 'text' : 'password'"
+          >
+          <span class="custom-checkbox"></span>
+          <span class="checkbox-text-secondary">Mostrar contraseñas</span>
+        </label>
+      </div>
+
+      <!-- Botón Activar -->
+      <button type="submit" class="btn-submit">Activar</button>
+      
+    </form>
+
+    <!-- Enlace de regreso -->
+    <div class="auth-footer-links">
+      <a [routerLink]="['/login']" class="footer-link">Regresar al Iniciar Sesión</a>
+    </div>
+    
+  </div>
+</main>

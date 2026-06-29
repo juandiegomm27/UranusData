@@ -1,44 +1,43 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core'; // <-- AGREGAR: OnInit
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../service/auth.service'; 
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink
+  ],
   templateUrl: './section.html',
   styleUrl: './section.css',
 })
-export class Section {
+export class Section implements OnInit { // <-- AGREGAR: implements OnInit
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  // Forzar a limpiar la sesión vieja en cuanto cargue el formulario de Login
+  ngOnInit(): void {
+    this.authService.logout();
+  }
+
   loginForm = this.fb.group({
-    rol: ['Docente', [Validators.required]], 
+    rol: ['Docente', [Validators.required]],
     documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     remember: [false]
   });
 
-    onSubmit(): void {
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      console.warn('Formulario inválido. Revisa las restricciones de los campos.');
       return;
     }
-
     const datosUsuario = this.loginForm.getRawValue();
-    
-    // 1. Guardamos el documento en el estado global
     this.authService.login(datosUsuario.documento);
-    
-    console.log('¡Validación exitosa! Datos:', datosUsuario);
-    
-    // 2. Redirección dinámica usando el rol capturado
-    // Esto mandará a rutas como: /home/Docente, /home/Tecnico o /home/Gerente
     this.router.navigate(['/home', datosUsuario.rol]);
   }
-
 }
+

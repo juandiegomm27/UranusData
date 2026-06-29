@@ -1,16 +1,21 @@
-/* --- ESTILOS DE LA SECCIÓN PRINCIPAL --- */
 .auth-section {
-  min-height: calc(100vh - 80px); 
+  height: calc(100vh - 80px);
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
   background-color: var(--bg-page);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  background-image: radial-gradient(var(--text-blue) 0.5px, transparent 0.5px); /* Simula el fondo de red de la imagen de forma sutil */
+  padding: 40px 20px; 
+  
+  background-image: radial-gradient(var(--text-blue) 0.5px, transparent 0.5px); 
   background-size: 24px 24px;
   opacity: 0.95;
   transition: background-color 0.3s ease;
 }
+
 
 /* --- Tarjeta Central Flotante --- */
 .auth-card {
@@ -396,6 +401,6 @@
 
 /* Bordes rojos inmediatos en inputs si el usuario se equivoca */
 .form-input.input-error {
-  border-color: #e63946 !important;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15) !important;
+  border-color: #e63946  ;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15)  ;
 }

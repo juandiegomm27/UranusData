@@ -36,6 +36,8 @@
 
 
 
+        <!-- Contenedor del Usuario (Dropdown Estilizado) -->
+        <!-- Oculto por defecto. Solo se genera si el usuario inició sesión correctamente -->
                 <!-- Contenedor del Usuario (Dropdown Estilizado) -->
         <!-- Oculto por defecto. Solo se genera si el usuario inició sesión correctamente -->
         @if (authService.isAutenticado()) {
@@ -45,22 +47,26 @@
             </div>
             
             <!-- Menú desplegable flotante -->
-            <div class="usuario-menu-desplegable">
+            <!-- AGREGADO: menu-abierto-forzado -->
+            <div class="usuario-menu-desplegable menu-abierto-forzado">
               <div class="dropdown-header">
                 <!-- Reemplazo dinámico: Muestra el documento real guardado en el servicio -->
                 <span class="user-name">{{ authService.getDocumento() }}</span>
               </div>
-              <ul class="dropdown-links">
+              <!-- AGREGADO: lista-enlaces -->
+              <ul class="dropdown-links lista-enlaces">
                 <li><a href="#">Ajustes</a></li>
                 <li><a href="#">Notificaciones</a></li>
                 <li><a href="#">Preguntas frecuentes</a></li>
               </ul>
-              <div class="dropdown-footer">
+              <!-- AGREGADO: cuerpo-footer -->
+              <div class="dropdown-footer cuerpo-footer">
                 <a (click)="salir()" style="cursor: pointer;" id="vaciar-carrito" class="btn-clear">Salir de la sesión</a>
               </div>
             </div>
           </div>
         }
+
 
 
       </div>

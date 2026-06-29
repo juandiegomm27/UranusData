@@ -1,17 +1,14 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .pagina {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative; /* CAMBIO CLAVE: Permite el cálculo correcto de posiciones de los hijos */
+  display: flex;
+  flex-direction: column;
   width: 100vw; 
   height: 100vh;
-  z-index: 1;
+  
+  /* Bloquea el fondo e impide que la aplicación completa haga scroll general */
+  overflow: hidden; 
 
+  /* Tus estilos e imágenes de fondo originales se mantienen intactos */
   background-image: url("fondo/fondo-blanco.png");
   background-color: white;
   background-size: cover;
@@ -27,3 +24,4 @@
   background-color: #232323; 
   color: white;
 }
+
