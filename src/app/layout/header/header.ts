@@ -3,11 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { FondoService } from '../../core/service/fondo';
 import { AuthService } from '../../core/service/auth.service'; 
 import { Router, RouterLink } from '@angular/router';
+import { ProfileSidebar } from './profile-sidebar/profile-sidebar';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ProfileSidebar],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -27,10 +28,5 @@ export class Header {
 
   irAlInicio(): void {
     this.authService.irAlInicio(this.router);
-  }
-
-  salir(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

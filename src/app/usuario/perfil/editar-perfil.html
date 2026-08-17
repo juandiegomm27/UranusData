@@ -1,0 +1,179 @@
+<main class="auth-section">
+  <div class="auth-card" style="max-width: 700px; text-align: left;">
+    
+    <div class="brand-badge" style="text-align: center; margin-bottom: 20px;">
+      <img src="logo-nada.svg" alt="Logo" class="badge-img">
+    </div>
+
+    <h1 class="auth-title" style="text-align: center;">
+      Mi Información
+    </h1>
+
+    <!-- Foto de Perfil -->
+    <div style="text-align: center; margin: 25px 0;">
+      <img 
+        [src]="obtenerUrlGravatar()" 
+        alt="Foto de Perfil" 
+        class="profile-avatar"
+        style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #1C74A0;">
+      <p style="font-size: 12px; color: #999999; margin-top: 8px;">
+        Foto de perfil vía Gravatar
+      </p>
+    </div>
+
+    <!-- Mensaje de Éxito -->
+    @if (mostrarMensajeExito) {
+      <div style="
+        background: #d4edda; 
+        border: 1px solid #c3e6cb; 
+        color: #155724; 
+        padding: 12px; 
+        border-radius: 6px; 
+        margin-bottom: 20px;
+      ">
+        ✓ {{ mensajeExito }}
+      </div>
+    }
+
+    <!-- Formulario -->
+    <form class="auth-form" [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+      
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre" class="form-label">Primer Nombre</label>
+        <input 
+          type="text" 
+          id="nombre" 
+          formControlName="nombre" 
+          class="form-input" 
+          placeholder="Tu nombre"
+          [class.input-error]="perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched"
+        >
+        @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
+          <small class="error-msg">Solo letras permitidas</small>
+        }
+      </div>
+
+      <!-- Apellido -->
+      <div class="form-group">
+        <label for="apellido" class="form-label">Apellidos</label>
+        <input 
+          type="text" 
+          id="apellido" 
+          formControlName="apellido" 
+          class="form-input" 
+          placeholder="Tus apellidos"
+          [class.input-error]="perfilForm.get('apellido')?.invalid && perfilForm.get('apellido')?.touched"
+        >
+        @if (perfilForm.get('apellido')?.invalid && perfilForm.get('apellido')?.touched) {
+          <small class="error-msg">Solo letras permitidas</small>
+        }
+      </div>
+
+      <!-- Correo Electrónico -->
+      <div class="form-group">
+        <label for="correo" class="form-label">Correo Electrónico</label>
+        <input 
+          type="email" 
+          id="correo" 
+          formControlName="correo" 
+          class="form-input" 
+          placeholder="tu@correo.com"
+          [class.input-error]="perfilForm.get('correo')?.invalid && perfilForm.get('correo')?.touched"
+        >
+        @if (perfilForm.get('correo')?.invalid && perfilForm.get('correo')?.touched) {
+          <small class="error-msg">Ingresa un correo válido</small>
+        }
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono" class="form-label">Teléfono (Opcional)</label>
+        <input 
+          type="text" 
+          id="telefono" 
+          formControlName="telefono" 
+          class="form-input" 
+          placeholder="3105551234"
+          [class.input-error]="perfilForm.get('telefono')?.invalid && perfilForm.get('telefono')?.touched"
+        >
+        @if (perfilForm.get('telefono')?.invalid && perfilForm.get('telefono')?.touched) {
+          <small class="error-msg">Teléfono inválido (10-15 dígitos)</small>
+        }
+      </div>
+
+      <!-- Separador -->
+      <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999999; margin-bottom: 15px;">
+        Déjalo en blanco si no deseas cambiar tu contraseña
+      </p>
+
+      <!-- Nueva Contraseña -->
+      <div class="form-group">
+        <label for="password" class="form-label">Nueva Contraseña</label>
+        <input 
+          #passInput
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-input" 
+          placeholder="Deja en blanco para no cambiar"
+          [class.input-error]="perfilForm.get('password')?.invalid && perfilForm.get('password')?.touched"
+        >
+        @if (perfilForm.get('password')?.invalid && perfilForm.get('password')?.touched) {
+          <small class="error-msg">Mínimo 6 caracteres</small>
+        }
+      </div>
+
+      <!-- Verificar Contraseña -->
+      <div class="form-group">
+        <label for="verificarPassword" class="form-label">Verificar Contraseña</label>
+        <input 
+          #confirmPassInput
+          type="password" 
+          id="verificarPassword" 
+          formControlName="verificarPassword" 
+          class="form-input" 
+          placeholder="Repite la contraseña"
+          [class.input-error]="(perfilForm.get('verificarPassword')?.invalid || perfilForm.hasError('mismatch')) && perfilForm.get('verificarPassword')?.touched"
+        >
+        @if (perfilForm.hasError('mismatch') && perfilForm.get('verificarPassword')?.touched) {
+          <small class="error-msg">Las contraseñas no coinciden</small>
+        }
+
+        <!-- Checkbox mostrar contraseña -->
+        <label class="show-password-label">
+          <input 
+            type="checkbox" 
+            class="form-checkbox" 
+            #togglePass 
+            (change)="passInput.type = confirmPassInput.type = togglePass.checked ? 'text' : 'password'"
+          >
+          <span class="custom-checkbox"></span>
+          <span class="checkbox-text-secondary">Mostrar contraseñas</span>
+        </label>
+      </div>
+
+      <!-- Botones -->
+      <div style="display: flex; gap: 10px; margin-top: 25px;">
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="cargando"
+          style="flex: 1;">
+          {{ cargando ? 'Guardando...' : 'Guardar Cambios' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn-submit"
+          (click)="regresar()"
+          style="flex: 1; background-color: #6c757d;"
+          [disabled]="cargando">
+          Cancelar
+        </button>
+      </div>
+      
+    </form>
+
+  </div>
+</main>

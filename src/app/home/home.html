@@ -1,6 +1,5 @@
 <div class="dashboard-layout">
   
-  <!-- CONTENEDOR IZQUIERDO: Paneles de botones dinámicos según el Rol -->
   <div class="dashboard-actions">
     @switch (rolUsuario()) {
       @case ('Docente') {
@@ -15,7 +14,6 @@
     }
   </div>
 
-  <!-- CONTENEDOR DERECHO: Calendario Autónomo e Inteligente -->
   <div class="dashboard-calendar">
     <div class="calendar-header">
       <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
@@ -27,7 +25,6 @@
 
     
     <div class="calendar-grid">
-      <!-- Cabecera de días de la semana -->
       <span class="day-name">Dom</span>
       <span class="day-name">Lun</span>
       <span class="day-name">Mar</span>
@@ -36,13 +33,10 @@
       <span class="day-name">Vie</span>
       <span class="day-name">Sáb</span>
       
-      <!-- CORREGIDO: Bucle Reactivo que sustituye los 30 botones estáticos fijos -->
       @for (celda of matrizDias(); track $index) {
         @if (celda.numero === null) {
-          <!-- Celda vacía para cuadrar el inicio de la semana de forma exacta -->
           <span class="day-number empty"></span>
         } @else {
-          <!-- Botón interactivo con detector automático para resaltar el día de hoy -->
           <button 
             type="button" 
             class="day-number" 

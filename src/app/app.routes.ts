@@ -37,14 +37,26 @@ export const routes: Routes = [
   },
 
   { 
-    path: 'usuario/ajustes', 
-    loadComponent: () => import('./usuario/ajustes/ajustes').then(m => m.Ajustes),
-    canActivate: [authGuard]
+  path: 'usuario/ajustes', 
+  loadComponent: () => import('./usuario/ajustes/ajustes').then(m => m.Ajustes),
+  canActivate: [authGuard]
   },
   
   { 
     path: 'usuario/notificaciones', 
     loadComponent: () => import('./usuario/notificaciones/notificaciones').then(m => m.Notificaciones),
+    canActivate: [authGuard]
+  },
+  
+  { 
+    path: 'perfil/editar/:documento', 
+    loadComponent: () => import('./usuario/perfil/editar-perfil').then(m => m.EditarPerfil),
+    canActivate: [authGuard]
+  },
+
+  { 
+    path: 'modulos/gestion-usuarios', 
+    loadComponent: () => import('./modulos/gestion-usuarios/pages/gestion-usuarios-page').then(m => m.GestionUsuariosPage),
     canActivate: [authGuard]
   },
 
@@ -114,6 +126,5 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // Ruta comodín segura (Cualquier URL rota te regresa a la presentación)
   { path: '**', redirectTo: '' }
 ];

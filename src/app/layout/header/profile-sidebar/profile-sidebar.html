@@ -1,0 +1,81 @@
+<!-- Trigger Button (Avatar) -->
+<button 
+  type="button" 
+  class="usuario-trigger" 
+  (click)="toggleSidebar()"
+  title="Mi Perfil">
+  <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
+</button>
+
+<!-- Overlay - Cierra el sidebar al hacer clic fuera -->
+@if (mostrarSidebar) {
+  <div class="sidebar-overlay" (click)="cerrarSidebar()"></div>
+}
+
+<!-- Sidebar Lateral -->
+<div class="profile-sidebar" [class.open]="mostrarSidebar">
+  
+  <!-- Header del Sidebar -->
+  <div class="sidebar-header">
+    <button 
+      type="button" 
+      class="btn-cerrar-sidebar" 
+      (click)="cerrarSidebar()"
+      title="Cerrar">
+      ✕
+    </button>
+    <h3 class="sidebar-title">Mi Perfil</h3>
+  </div>
+
+  <!-- Información del Usuario -->
+  <div class="sidebar-user-info">
+    <img 
+      [src]="'https://www.gravatar.com/avatar/' + (documento || '?s=80')" 
+      alt="Avatar" 
+      class="sidebar-avatar">
+    <div class="user-details">
+      <p class="user-name">{{ nombre }} {{ apellido }}</p>
+      <p class="user-role">{{ rol }}</p>
+      <p class="user-documento">Doc: {{ documento }}</p>
+    </div>
+  </div>
+
+  <!-- Separador -->
+  <hr class="sidebar-divider">
+
+  <!-- Menú -->
+  <nav class="sidebar-menu">
+    <button 
+      type="button" 
+      class="menu-item"
+      (click)="irAMiInformacion()">
+      <span class="menu-text">Mi Información</span>
+    </button>
+    
+    <button 
+      type="button" 
+      class="menu-item"
+      (click)="irAAjustes()">
+      <span class="menu-text">Ajustes</span>
+    </button>
+
+    <button 
+      type="button" 
+      class="menu-item"
+      (click)="irANotificaciones()">
+      <span class="menu-text">Notificaciones</span>
+    </button>
+  </nav>
+
+  <!-- Separador -->
+  <hr class="sidebar-divider">
+
+  <!-- Botón Salir -->
+  <button 
+    type="button" 
+    class="btn-salir"
+    (click)="salir()">
+    Salir de sesión
+  </button>
+
+</div>

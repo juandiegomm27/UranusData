@@ -44,3 +44,38 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+#LARAVEL
+laravel-backend/vendor/
+laravel-backend/.env
+laravel-backend/.env.local
+laravel-backend/.env.*.local
+laravel-backend/storage/
+laravel-backend/bootstrap/cache/
+laravel-backend/node_modules/
+laravel-backend/npm-debug.log
+laravel-backend/yarn-error.log
+
+#ANGULAR 
+node_modules/
+dist/
+.angular/
+npm-debug.log
+yarn-error.log
+
+# GENERAL
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/settings.json
+.idea/
+*.log
+
+# ARCHIVOS SENSIBLES 
+*.pem
+*.key
+.env.example
+
+# TEMPORAL
+.tmp/
+temp/

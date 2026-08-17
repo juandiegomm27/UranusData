@@ -4,10 +4,8 @@
   flex-direction: column;
   width: 100vw; 
   height: 100vh;
-  overflow: hidden; 
-
-  /* imágenes de fondo */
-  background-image: url("../../public/fondo-blanco.png");
+  overflow: hidden;
+  background-image: url("../../public/fondo-blanco.svg");
   background-color: white;
   background-size: cover;
   background-position: left;
@@ -18,7 +16,7 @@
 }
 
 .pagina.modo-oscuro {
-  background-image: url("../../public/fondo-negro.png");
+  background-image: url("../../public/fondo-negro.svg");
   background-color: #232323; 
   color: white;
 }

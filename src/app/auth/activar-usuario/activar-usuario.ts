@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-activar-usuario',
@@ -14,7 +13,7 @@ import { environment } from '../../../environments/environment';
 export class ActivarUsuario {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
-  private http = inject(HttpClient); 
+  private authService = inject(AuthService);
 
   activationForm = this.fb.group({
     rol: ['Docente', [Validators.required]],
@@ -41,19 +40,17 @@ export class ActivarUsuario {
     }
 
     const datosNuevos = this.activationForm.getRawValue();
-    console.log('Enviando registro a la base de datos...');
+    console.log('Enviando registro a Laravel...');
 
-    this.http.post(`${environment.apiUrl}/activar-usuario`, datosNuevos)
-      .subscribe({
-        next: (respuesta) => {
-          console.log('Usuario registrado y activado en el archivo JSON con éxito:', respuesta);
-          alert('¡Usuario registrado con éxito! Ya puedes iniciar sesión de forma normal.');
-          this.router.navigate(['/login']);
-        },
-        error: (fallo) => {
-          console.error('Error al registrar en la BD:', fallo);
-          alert(fallo.error?.mensaje || 'Error en el servidor backend.');
-        }
+    this.authService.register(datosNuevos)
+      .then(respuesta => {
+        console.log('Usuario registrado en Laravel:', respuesta);
+        alert('¡Usuario registrado con éxito! Ya puedes iniciar sesión de forma normal.');
+        this.router.navigate(['/login']);
+      })
+      .catch(fallo => {
+        console.error('Error al registrar en Laravel:', fallo);
+        alert(fallo.error?.mensaje || 'Error en el servidor backend.');
       });
   }
 }

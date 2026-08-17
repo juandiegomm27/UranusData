@@ -1,100 +1,109 @@
-# UranusData
-
-Sistema de gestión de inventario, préstamos y mantenimiento de equipos tecnológicos, desarrollado para la **Institución Educativa Santa Isabel de Hungría**.
-
-![preview](public/logo.png)
-
-## 📋 Descripción
-
-UranusData centraliza el control de los activos tecnológicos institucionales, permitiendo registrar, consultar y dar seguimiento al estado, ubicación y vida útil de los equipos, reemplazando el manejo manual mediante hojas de cálculo.
-
-El sistema cuenta con tres roles de usuario, cada uno con su propio panel de control:
-
-- **Docente** — Gestión de reservas de espacios y recursos.
-- **Técnico** — Control de inventario y mantenimiento de equipos.
-- **Gerente** — Administración de usuarios, inventario y mantenimientos a nivel general.
-
-## 🛠️ Tecnologías
-
-**Frontend**
-- Angular 22 (Standalone Components)
-- TypeScript
-- RxJS
-- Reactive Forms
-
-**Backend**
-- Node.js
-- Express
-- Bcrypt (hash de contraseñas)
-- Nodemailer (envío de correos)
-- CORS
-- Dotenv (variables de entorno)
-
-## 📂 Estructura del Proyecto
-
-```
-src/
-├── app/
-│   ├── auth/                     # Login, activación y recuperación de contraseña
-│   │   ├── login/
-│   │   ├── activar-usuario/
-│   │   └── recuperar-contrasena/
-│   ├── core/                     # Lógica transversal de la aplicación
-│   │   ├── guards/                # Protección de rutas (sesión y rol)
-│   │   └── services/               # Servicios (autenticación, modo oscuro)
-│   ├── home/                     # Paneles por rol (Docente, Tecnico, Gerente)
-│   ├── layout/                   # Estructura visual fija de la app
-│   │   ├── header/                # Barra de navegación global
-│   │   └── inicio/                 # Landing page del sistema
-│   ├── modulos/                  # Módulos de negocio (en construcción / futuro MySQL)
-│   ├── soporte/contactanos/      # Información institucional y contacto
-│   ├── usuario/                  # Ajustes y notificaciones del usuario
-│   ├── app.routes.ts             # Definición de rutas
-│   └── app.config.ts             # Configuración de la aplicación
-└── styles.css
-
-backend/
-├── server.js                # Servidor Express y endpoints
-├── usuarios.service.js      # Lógica de usuarios (registro, login, recuperación con hash y tokens)
-├── email.service.js         # Envío de correos (bienvenida y recuperación)
-└── usuarios_db.json         # Base de datos local de usuarios
-```
 
 ## 🚀 Instalación
 
+### Requisitos previos
+- Node.js 18+
+- PHP 8.2+
+- MySQL 8.0+
+- XAMPP (para desarrollo local)
+- Composer
+
+### Pasos
+
 ```bash
-# Clonar el repositorio
+# 1. Clonar el repositorio
 git clone <url-del-repositorio>
 cd sana-uranus-data
 
-# Instalar dependencias
+# 2. Instalar dependencias del frontend
 npm install
+
+# 3. Configurar Laravel backend
+cd laravel-backend
+composer install
+cp .env.example .env
+php artisan key:generate
+
+# 4. Configurar base de datos en .env
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=UranusData
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 5. Crear tablas y cargar datos iniciales
+php artisan migrate
+php artisan db:seed
+
+# 6. Crear carpeta de almacenamiento de sesiones
+php artisan storage:link
 ```
 
-Crear el archivo `.env` en la raíz del proyecto con el contenido:
+### Configurar correos (SMTP)
+
+En `laravel-backend/.env`:
 
 ```bash
-GMAIL_USER=tu_correo_real@gmail.com 
-GMAIL_APP_PASSWORD=tus16letrasdeaplicaciondegoogle
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=tu_correo@gmail.com
+MAIL_PASSWORD=tu_contraseña_de_aplicacion
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=tu_correo@gmail.com
 ```
 
 ## ▶️ Ejecución
 
 ```bash
+# Terminal 1: Angular Frontend (puerto 4200)
 npm start
+
+# Terminal 2: Laravel Backend (puerto 3000)
+cd laravel-backend
+php artisan serve --port=3000
 ```
 
-Este comando levanta **frontend y backend al mismo tiempo**:
-- Frontend (Angular) en `http://localhost:4200`
-- Backend (Node/Express) en `http://localhost:3000`
+**Acceso a la aplicación:**
+- Frontend: `http://localhost:4200`
+- API Backend: `http://localhost:3000/api`
 
-## 🔑 Roles y Acceso
+## 🔑 Roles y Funcionalidades
 
-| Rol | Funcionalidades principales |
+| Rol | Funcionalidades |
 | --- | --- |
-| Docente | Crear, consultar y editar reservas |
-| Técnico | Ver inventario, gestionar reservas y mantenimientos |
-| Gerente | Gestión de usuarios, inventario y mantenimientos |
+| **Docente** | Crear reservas, ver historial de préstamos, editar perfil |
+| **Técnico** | Gestionar inventario, registrar mantenimientos, ver reservas |
+| **Gerente** | Administrar usuarios, inventario, reservas, mantenimientos, generar reportes |
+
+## 👤 Credenciales de Prueba
+
+| Documento | Nombre | Rol | Contraseña |
+| --- | --- | --- | --- |
+| 1234567890 | Juan Diego Medina | Docente | 123456 |
+| 1234567893 | Juan Camilo Aguirre | Técnico | 123456 |
+| 1234567895 | Maria Garcia | Gerente | 123456 |
+
+## 📧 Características
+
+- ✅ Autenticación con hash Bcrypt
+- ✅ Sistema de perfiles de usuario (Gravatar)
+- ✅ Notificaciones por correo
+- ✅ Modo claro/oscuro
+- ✅ Respuestas adaptativas (mobile-first)
+- ✅ Gestión de sesiones
+- ✅ API RESTful con Laravel
+- ✅ Paginación en tablas
+- ✅ Filtrado y búsqueda avanzada
+- ✅ Edición de perfiles con validación
+
+## 🔐 Seguridad
+
+- Contraseñas hasheadas con Bcrypt
+- Guards de autenticación en rutas
+- Validación CSRF en formularios
+- CORS configurado
+- Validación en servidor y cliente
 
 ## 👥 Autores
 
@@ -103,5 +112,8 @@ Este comando levanta **frontend y backend al mismo tiempo**:
 - Juan David Bernal Torres
 - Juan Camilo Aguirre Rojas
 
+## 📄 Licencia
+
+Proyecto académico para SENA - Sistema Integrado de Gestión
+
 ---
-SENA - Sistema Integrado de Gestión

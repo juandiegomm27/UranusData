@@ -2,12 +2,10 @@
   "name": "sana-uranus-data",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "ng serve",
-    "start:backend": "node backend/server.js",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+  "ng": "ng",
+  "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+  "start:frontend": "ng serve",
+  "start:backend": "cd laravel-backend && php artisan serve --port=3000"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
