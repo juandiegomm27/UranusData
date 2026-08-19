@@ -9,6 +9,8 @@ class Telefono extends Model
     protected $table = 'telefono';
     protected $primaryKey = 'telefono';
     public $timestamps = false;
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['telefono', 'documento'];
 
     public function usuario()

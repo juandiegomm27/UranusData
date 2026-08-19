@@ -1,0 +1,348 @@
+/* MODAL OVERLAY */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/*   MODAL HEADER   */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #1C74A0 0%, #155b7f 100%);
+  color: #ffffff;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.btn-cerrar:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/*   MODAL BODY   */
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1C74A0;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/*   INFO GRID   */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1C74A0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.info-item p {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border-left: 3px solid #1C74A0;
+}
+
+/*   ESTADO BADGE   */
+
+.estado-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.estado-activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-inactivo {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-bloqueado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/*   FORMULARIO DE EDICIÓN   */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #1C74A0;
+  box-shadow: 0 0 5px rgba(28, 116, 160, 0.2);
+}
+
+.aviso-edicion {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  padding: 12px;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.aviso-edicion p {
+  margin: 0;
+}
+
+/*   MODAL FOOTER   */
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cerrar-modal,
+.btn-editar,
+.btn-reservas,
+.btn-guardar,
+.btn-cancelar {
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cerrar-modal {
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
+.btn-cerrar-modal:hover {
+  background-color: #5a6268;
+}
+
+.btn-editar {
+  background-color: #1C74A0;
+  color: #ffffff;
+  flex: 1;
+}
+
+.btn-editar:hover {
+  background-color: #155b7f;
+}
+
+.btn-reservas {
+  background-color: #28a745;
+  color: #ffffff;
+  flex: 1;
+}
+
+.btn-reservas:hover {
+  background-color: #218838;
+}
+
+.btn-guardar {
+  background-color: #28a745;
+  color: #ffffff;
+  flex: 1;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.btn-guardar:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.btn-cancelar:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/*   MODO OSCURO   */
+
+:host-context(body.dark-mode) .modal-content {
+  background: #1e1e1e;
+}
+
+:host-context(body.dark-mode) .modal-header {
+  background: linear-gradient(135deg, #FF9F13 0%, #e08b0f 100%);
+}
+
+:host-context(body.dark-mode) .modal-body h3 {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .info-item label {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .info-item p {
+  background: #2a2a2a;
+  color: #e0e0e0;
+  border-left-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .form-control {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .aviso-edicion {
+  background: #332701;
+  border-color: #FF9F13;
+  color: #FFD700;
+}
+
+:host-context(body.dark-mode) .btn-editar,
+:host-context(body.dark-mode) .btn-reservas,
+:host-context(body.dark-mode) .btn-guardar {
+  background-color: #FF9F13;
+  color: #000;
+}
+
+:host-context(body.dark-mode) .btn-editar:hover,
+:host-context(body.dark-mode) .btn-reservas:hover,
+:host-context(body.dark-mode) .btn-guardar:hover:not(:disabled) {
+  background-color: #e08b0f;
+}
+
+/*   RESPONSIVE   */
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 100%;
+    max-height: 90vh;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .btn-editar,
+  .btn-reservas,
+  .btn-guardar {
+    width: 100%;
+  }
+}

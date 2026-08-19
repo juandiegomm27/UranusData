@@ -9,22 +9,20 @@ use App\Models\EstadoUsuario;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\VUsuariosCompletos;
 
 class UsuarioGestorController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $perPage = $request->get('per_page', 10);
         $rol = $request->get('rol');
         $estado = $request->get('estado');
         $documento = $request->get('documento');
 
-        $query = Usuario::with('rol', 'estadoUsuario', 'correos', 'telefonos');
+        $query = VUsuariosCompletos::query();
 
         if ($rol) {
-            $query->whereHas('rol', function ($q) use ($rol) {
-                $q->where('cod_rol', $rol);
-            });
+            $query->where('cod_rol', $rol);
         }
 
         if ($estado) {
@@ -47,9 +45,8 @@ class UsuarioGestorController extends Controller
         ]);
     }
 
-    public function show($documento)
-    {
-        $usuario = Usuario::with('rol', 'estadoUsuario', 'correos', 'telefonos')->find($documento);
+    public function show($documento){
+        $usuario = VUsuariosCompletos::find($documento);
 
         if (!$usuario) {
             return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
@@ -62,10 +59,10 @@ class UsuarioGestorController extends Controller
                 'nombre' => $usuario->nombre,
                 'apellido' => $usuario->apellido,
                 'cod_rol' => $usuario->cod_rol,
-                'rol' => $usuario->rol->cargo,
-                'correo' => $usuario->correos->first()?->correo,
-                'telefono' => $usuario->telefonos->first()?->telefono,
-                'estado' => $usuario->estadoUsuario->estado,
+                'rol' => $usuario->rol,
+                'correo' => $usuario->correo,
+                'telefono' => $usuario->telefono,
+                'estado' => $usuario->estado_usuario,
                 'cod_estado_usuario' => $usuario->cod_estado_usuario
             ]
         ]);

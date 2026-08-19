@@ -9,34 +9,32 @@ use App\Mail\ProfileUpdateMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;  // ← Agregar esta línea
+use Illuminate\Support\Facades\DB; 
+use App\Models\VIngresoLogin;
+use App\Models\VUsuariosCompletos;
 
 class ProfileController extends Controller
 {
-    public function getProfile($documento)
-{
-    $usuario = Usuario::find($documento);
+    public function getProfile($documento){
+        $usuario = VUsuariosCompletos::find($documento);
 
-    if (!$usuario) {
-        return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
+        if (!$usuario) {
+            return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'usuario' => [
+                'documento' => $usuario->documento,
+                'nombre' => $usuario->nombre,
+                'apellido' => $usuario->apellido,
+                'rol' => $usuario->rol,
+                'correo' => $usuario->correo ?? '',
+                'telefono' => $usuario->telefono ?? '',
+                'estado' => $usuario->estado_usuario
+            ]
+        ]);
     }
-
-    // Usar raw query en lugar de Eloquent
-    $correo = DB::table('correo')->where('documento', $documento)->value('correo');
-    $telefono = DB::table('telefono')->where('documento', $documento)->value('telefono');
-
-    return response()->json([
-        'status' => 'success',
-        'usuario' => [
-            'documento' => $usuario->documento,
-            'nombre' => $usuario->nombre,
-            'apellido' => $usuario->apellido,
-            'rol' => $usuario->rol->cargo,
-            'correo' => $correo ?? '',
-            'telefono' => $telefono ?? ''
-        ]
-    ]);
-}
 
     public function updateProfile(Request $request, $documento)
     {

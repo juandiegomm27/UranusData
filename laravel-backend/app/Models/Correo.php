@@ -9,9 +9,9 @@ class Correo extends Model
     protected $table = 'correo';
     protected $primaryKey = 'correo';
     public $timestamps = false;
-    protected $fillable = ['correo', 'documento'];
-    protected $keyType = 'string';
     public $incrementing = false;
+    protected $keyType = 'string';
+    protected $fillable = ['correo', 'documento'];
 
     public function usuario()
     {

@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\DB;
 Route::get('/', function () { return view('welcome'); });
 Route::get('/inicio', function () { return view('welcome'); });
 
-// =====================================================
+//    
 // RUTAS GET (Para consultar y mostrar las tablas)
-// =====================================================
+//    
 
 Route::get('/rol', function () {
     $roles = DB::table('rol')->get();
@@ -81,9 +81,9 @@ Route::get('/cantidad', function () {
     return view('cantidad', compact('cantidades'));
 });
 
-// =====================================================
+//    
 // RUTAS POST (Ejemplos para guardar nuevos registros)
-// =====================================================
+//    
 
 Route::post('/rol', function (\Illuminate\Http\Request $request) {
     DB::table('rol')->insert($request->except('_token'));

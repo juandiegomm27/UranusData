@@ -1,0 +1,86 @@
+<div class="modal-overlay" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Información del Usuario</h2>
+      <button class="btn-cerrar" (click)="onCerrar()">✕</button>
+    </div>
+
+    @if (!mostrarEdicion) {
+      <!-- Vista Normal -->
+      <div class="modal-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Documento:</label>
+            <p>{{ usuario.documento }}</p>
+          </div>
+          <div class="info-item">
+            <label>Nombre:</label>
+            <p>{{ usuario.nombre }}</p>
+          </div>
+          <div class="info-item">
+            <label>Apellido:</label>
+            <p>{{ usuario.apellido }}</p>
+          </div>
+          <div class="info-item">
+            <label>Rol:</label>
+            <p>{{ usuario.rol }}</p>
+          </div>
+          <div class="info-item">
+            <label>Correo:</label>
+            <p>{{ usuario.correo || 'N/A' }}</p>
+          </div>
+          <div class="info-item">
+            <label>Teléfono:</label>
+            <p>{{ usuario.telefono || 'N/A' }}</p>
+          </div>
+          <div class="info-item">
+            <label>Estado:</label>
+            <p>
+              <span class="estado-badge" [ngClass]="usuario.cod_estado_usuario === 1 ? 'estado-activo' : usuario.cod_estado_usuario === 2 ? 'estado-inactivo' : 'estado-bloqueado'">
+                {{ usuario.estado }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-editar" (click)="toggleEdicion()">✏️ Editar Usuario</button>
+        <button class="btn-reservas" (click)="onVerReservas()">📅 Ver Reservas</button>
+        <button class="btn-cerrar-modal" (click)="onCerrar()">Cerrar</button>
+      </div>
+
+    } @else {
+      <!-- Formulario de Edición -->
+      <div class="modal-body">
+        <h3>Editar Estado del Usuario</h3>
+        
+        <div class="form-group">
+          <label for="estado-select">Estado:</label>
+          <select [(ngModel)]="usuarioEditando.cod_estado_usuario" id="estado-select" class="form-control">
+            @for (estado of estados; track estado.cod_estado_usuario) {
+              <option [value]="estado.cod_estado_usuario">
+                {{ estado.estado }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="aviso-edicion">
+          <p>⚠️ Cambiar el estado puede afectar el acceso del usuario al sistema.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-guardar" (click)="guardarCambios()" [disabled]="cargando">
+          {{ cargando ? 'Guardando...' : '💾 Guardar' }}
+        </button>
+        <button class="btn-cancelar" (click)="cancelarEdicion()" [disabled]="cargando">
+          Cancelar
+        </button>
+      </div>
+    }
+
+  </div>
+</div>

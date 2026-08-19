@@ -1,0 +1,118 @@
+<div class="modal-overlay" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Historial de Reservas</h2>
+      <button class="btn-cerrar" (click)="onCerrar()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Filtros de Reservas -->
+      <div class="filtros-reservas">
+        
+        <div class="filtro-reserva-item">
+          <label>Estado:</label>
+          <select [(ngModel)]="filtroEstadoReserva" (change)="aplicarFiltroReservas()">
+            <option value="">Todos los estados</option>
+            @for (estado of estadosReserva; track estado.Num_estado) {
+              <option [value]="estado.Num_estado">{{ estado.estado }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filtro-reserva-item">
+          <label>Elemento:</label>
+          <input 
+            type="text" 
+            placeholder="Buscar elemento..." 
+            [(ngModel)]="filtroElementoReserva"
+            (keyup.enter)="aplicarFiltroReservas()"
+            class="input-filtro-reserva">
+        </div>
+
+        <div class="filtro-reserva-item">
+          <label>Fecha:</label>
+          <input 
+            type="date" 
+            [(ngModel)]="filtroFechaReserva"
+            (change)="aplicarFiltroReservas()"
+            class="input-filtro-reserva">
+        </div>
+
+        <button class="btn-limpiar-filtros" (click)="limpiarFiltros()">
+          🔄 Limpiar
+        </button>
+
+      </div>
+
+      <!-- Tabla de Reservas -->
+      @if (cargando) {
+        <p class="cargando">Cargando reservas...</p>
+      } @else if (reservasUsuario.length > 0) {
+        <div class="tabla-reservas-wrapper">
+          <table class="tabla-reservas">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Elemento</th>
+                <th>Cantidad</th>
+                <th>Fecha Reserva</th>
+                <th>Plazo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (reserva of reservasUsuario; track reserva.id_Reserva; let i = $index) {
+                <tr>
+                  <td>{{ (paginaReservas - 1) * perPageReservas + i + 1 }}</td>
+                  <td>{{ reserva.elemento }}</td>
+                  <td>{{ reserva.cantidad }}</td>
+                  <td>{{ reserva.fecha }}</td>
+                  <td>{{ reserva.plazo }}</td>
+                  <td>
+                    <span class="estado-badge" [ngClass]="obtenerClaseEstadoReserva(reserva.Num_estado)">
+                      {{ obtenerNombreEstadoReserva(reserva.Num_estado) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación de Reservas -->
+        @if (totalPaginasReservas > 0) {
+          <div class="paginacion-reservas">
+            <button 
+              class="btn-paginacion-reserva" 
+              (click)="cambiarPaginaReservas(paginaReservas - 1)"
+              [disabled]="paginaReservas === 1">
+              ← Anterior
+            </button>
+
+            <span class="indicador-pagina-reserva">
+              Página {{ paginaReservas }} de {{ totalPaginasReservas }} ({{ totalReservas }} reservas)
+            </span>
+
+            <button 
+              class="btn-paginacion-reserva" 
+              (click)="cambiarPaginaReservas(paginaReservas + 1)"
+              [disabled]="paginaReservas === totalPaginasReservas">
+              Siguiente →
+            </button>
+          </div>
+        }
+
+      } @else {
+        <p class="sin-reservas">No hay reservas para este usuario</p>
+      }
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cerrar-modal" (click)="onCerrar()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

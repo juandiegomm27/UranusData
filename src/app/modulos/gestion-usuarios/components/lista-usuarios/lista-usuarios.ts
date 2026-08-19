@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DetalleUsuario } from '../detalle-usuario/detalle-usuario';
+import { HistorialReservas } from '../historial-reservas/historial-reservas';
 import { UsuarioGestorService } from '../../services/usuario-gestor.service';
 import { AuthService } from '../../../../core/service/auth.service';
 import { Router } from '@angular/router';
@@ -8,7 +10,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-lista-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DetalleUsuario, HistorialReservas],
   templateUrl: './lista-usuarios.html',
   styleUrl: './lista-usuarios.css'
 })
@@ -20,6 +22,7 @@ export class ListaUsuarios implements OnInit {
   usuarios: any[] = [];
   roles: any[] = [];
   estados: any[] = [];
+  estadosReserva: any[] = [];
   
   paginaActual = 1;
   perPage = 10;
@@ -35,19 +38,7 @@ export class ListaUsuarios implements OnInit {
   mostrarModalCrear = false;
   mostrarDetalleUsuario = false;
   usuarioSeleccionado: any = null;
-
-  // Reservas del usuario
-  reservasUsuario: any[] = [];
-  estadosReserva: any[] = [];
-  paginaReservas = 1;
-  perPageReservas = 5;
-  totalReservas = 0;
-  totalPaginasReservas = 0;
-
-  // Filtros de reservas
-  filtroEstadoReserva = '';
-  filtroElementoReserva = '';
-  filtroFechaReserva = '';
+  mostrarHistorialReservas = false;
 
   // Validación
   rolUsuario = this.authService.getRol();
@@ -61,6 +52,7 @@ export class ListaUsuarios implements OnInit {
 
     this.cargarEstados();
     this.cargarRoles();
+    this.cargarEstadosReserva();
     this.cargarUsuarios();
   }
 
@@ -109,8 +101,13 @@ export class ListaUsuarios implements OnInit {
   }
 
   cargarEstadosReserva(): void {
-    // Los estados ya se cargaron en cargarEstados()
-    // Este método no es necesario si usamos la misma tabla
+    this.usuarioGestorService.getEstadosReserva()
+      .then((response: any) => {
+        if (response.status === 'success') {
+          this.estadosReserva = response.data;
+        }
+      })
+      .catch((error: any) => console.error('Error cargando estados de reserva:', error));
   }
 
   buscar(): void {
@@ -137,49 +134,31 @@ export class ListaUsuarios implements OnInit {
   }
 
   abrirDetalleUsuario(documento: string): void {
-    this.usuarioGestorService.getUsuario(documento)
-      .then((response: any) => {
-        if (response.status === 'success') {
-          this.usuarioSeleccionado = response.usuario;
-          this.cargarHistorialReservas(documento);
-          this.mostrarDetalleUsuario = true;
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error cargando detalles:', error);
-        alert('Error al cargar información del usuario');
-      });
-  }
+  this.usuarioGestorService.getUsuario(documento)
+    .then((response: any) => {
+      if (response.status === 'success') {
+        this.usuarioSeleccionado = response.usuario;
+        this.mostrarDetalleUsuario = true;
+      }
+    })
+    .catch((error: any) => {
+      console.error('Error cargando detalles:', error);
+      alert('Error al cargar información del usuario');
+    });
+}
 
-  cargarHistorialReservas(documento: string): void {
-    const filtros = {
-      estado: this.filtroEstadoReserva || undefined,
-      elemento: this.filtroElementoReserva || undefined,
-      fecha: this.filtroFechaReserva || undefined
-    };
-
-    // Por ahora dejamos vacío el historial de reservas
-    // Se implementará en el siguiente paso
-    this.reservasUsuario = [];
-  }
-
-  aplicarFiltroReservas(): void {
-    this.paginaReservas = 1;
-    this.cargarHistorialReservas(this.usuarioSeleccionado.documento);
-  }
-
-  cambiarPaginaReservas(pagina: number): void {
-    if (pagina >= 1 && pagina <= this.totalPaginasReservas) {
-      this.paginaReservas = pagina;
-      this.cargarHistorialReservas(this.usuarioSeleccionado.documento);
-    }
-  }
+abrirHistorialReservas(): void {
+  this.mostrarHistorialReservas = true;
+  this.mostrarDetalleUsuario = false;
+}
 
   cerrarDetalleUsuario(): void {
-    this.mostrarDetalleUsuario = false;
-    this.usuarioSeleccionado = null;
-    this.reservasUsuario = [];
-    this.paginaReservas = 1;
+  this.mostrarDetalleUsuario = false;
+  this.usuarioSeleccionado = null;
+  }
+
+  cerrarHistorialReservas(): void {
+    this.mostrarHistorialReservas = false;
   }
 
   eliminarUsuario(documento: string): void {
@@ -219,18 +198,6 @@ export class ListaUsuarios implements OnInit {
     if (estado === 'Activo') return 'estado-activo';
     if (estado === 'Inactivo') return 'estado-inactivo';
     if (estado === 'Bloqueado') return 'estado-bloqueado';
-    return '';
-  }
-
-  obtenerNombreEstadoReserva(numEstado: number): string {
-    return this.estadosReserva.find(e => e.Num_estado === numEstado)?.estado || 'N/A';
-  }
-
-  obtenerClaseEstadoReserva(numEstado: number): string {
-    const estado = this.estadosReserva.find(e => e.Num_estado === numEstado)?.estado;
-    if (estado === 'Aprobada' || estado === 'Completada') return 'estado-aprobada';
-    if (estado === 'Pendiente') return 'estado-pendiente';
-    if (estado === 'Rechazada') return 'estado-rechazada';
     return '';
   }
 }

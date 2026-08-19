@@ -9,7 +9,7 @@ class Prestamo extends Model
     protected $table = 'prestamo';
     protected $primaryKey = 'id_Reserva';
     public $timestamps = false;
-    protected $fillable = ['id_Reserva', 'fecha_inicio', 'fecha_entrega', 'cantidad'];
+    protected $fillable = ['id_Reserva', 'cod_estado_prestamo', 'fecha_inicio', 'fecha_entrega', 'cantidad'];
 
     public function reserva()
     {

@@ -84,6 +84,31 @@
   transition: background-color 0.3s ease;
 }
 
+.btn-limpiar-busqueda {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-limpiar-busqueda:hover {
+  background-color: #5a6268;
+}
+
+:host-context(body.dark-mode) .btn-limpiar-busqueda {
+  background-color: #FF9F13;
+  color: #000;
+}
+
+:host-context(body.dark-mode) .btn-limpiar-busqueda:hover {
+  background-color: #e08b0f;
+}
+
 .btn-buscar:hover {
   background-color: #155b7f;
 }
@@ -219,19 +244,61 @@
 .btn-eliminar {
   background: none;
   border: none;
-  font-size: 16px;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-info:hover {
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  filter: invert(0.2);
+  transition: filter 0.2s ease;
+}
+
+.btn-info {
   background-color: rgba(28, 116, 160, 0.1);
 }
 
+.btn-info:hover {
+  background-color: #1C74A0;
+}
+
+.btn-info:hover .btn-icon {
+  filter: invert(1) brightness(1);
+}
+
+.btn-eliminar {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
 .btn-eliminar:hover {
-  background-color: rgba(230, 57, 70, 0.1);
+  background-color: #dc3545;
+}
+
+.btn-eliminar:hover .btn-icon {
+  filter: invert(1) brightness(1);
+}
+
+/* Modo oscuro */
+:host-context(body.dark-mode) .btn-info {
+  background-color: rgba(255, 159, 19, 0.1);
+}
+
+:host-context(body.dark-mode) .btn-info:hover {
+  background-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .btn-eliminar {
+  background-color: rgba(255, 159, 19, 0.1);
+}
+
+:host-context(body.dark-mode) .btn-eliminar:hover {
+  background-color: #FF9F13;
 }
 
 /* PAGINACIÓN  */

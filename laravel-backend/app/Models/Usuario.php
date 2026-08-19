@@ -9,7 +9,9 @@ class Usuario extends Model
     protected $table = 'usuario';
     protected $primaryKey = 'documento';
     public $timestamps = false;
-    protected $fillable = ['documento', 'nombre', 'apellido', 'cod_rol', 'password', 'cod_estado_usuario'];
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $fillable = ['documento', 'nombre', 'apellido', 'cod_rol', 'cod_estado_usuario', 'password'];
 
     public function rol()
     {
