@@ -1,0 +1,52 @@
+
+
+/* página de módulo */
+.modulo-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 20px;
+}
+
+/* Tarjeta principal */
+.modulo-tarjeta {
+  background-color: var(--bg-tarjeta);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--sombra);
+  padding: 30px;
+  width: 100%;
+  height: auto;
+  color: var(--texto-principal);
+  border: 2px solid var(--borde-tarjeta);
+  transition: background-color var(--transicion), border-color var(--transicion), box-shadow var(--transicion);
+}
+
+/* Botones genéricos */
+.btn-primario {
+  background-color: var(--color-primario);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radio-borde);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transicion), transform 0.2s;
+}
+
+/* modo oscuro */
+:host-context(body.dark-mode) .btn-primario {
+  color: #121212; 
+}
+
+.btn-primario:hover:not(:disabled) {
+  background-color: var(--color-primario-hover);
+  transform: translateY(-2px);
+}
+
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

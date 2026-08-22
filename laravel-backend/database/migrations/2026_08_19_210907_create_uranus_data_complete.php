@@ -9,7 +9,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        //  TABLAS BASE =====================
+        // La base existente puede haber sido creada previamente fuera de Laravel.
+        // En ese caso, no repetir la creación del esquema completo.
+        if (Schema::hasTable('rol')) {
+            return;
+        }
+
+        //  TABLAS BASE
         
         // Tabla: rol
         Schema::create('rol', function (Blueprint $table) {
@@ -158,7 +164,7 @@ return new class extends Migration
             $table->index('id_elemento');
         });
 
-        //  VIEWs =====================
+        //  VIEWs 
 
         DB::statement('
             CREATE VIEW v_ingreso_login AS
@@ -228,7 +234,7 @@ return new class extends Migration
             LEFT JOIN usuario u ON r.documento = u.documento
         ');
 
-        //  STORED PROCEDURES =====================
+        //  STORED PROCEDURES 
 
         DB::unprepared('
             CREATE PROCEDURE IF NOT EXISTS sp_generar_usuarios()

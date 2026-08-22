@@ -40,7 +40,6 @@ export class Login implements OnInit {
     this.authService.login(credenciales.documento, credenciales.password)
       .then(respuesta => {
       console.log('Acceso concedido por Laravel:', respuesta);
-      this.authService.setNombreApellido(respuesta.usuario.nombre, respuesta.usuario.apellido);
       this.router.navigate(['/home', respuesta.usuario.rol]);
     })
       .catch(fallo => {

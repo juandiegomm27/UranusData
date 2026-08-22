@@ -1,8 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-recuperar-contrasena',
@@ -15,14 +14,14 @@ export class RecuperarContrasena implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private http = inject(HttpClient); 
+  private authService = inject(AuthService);
 
   public estado = signal<'solicitud' | 'validando' | 'formulario' | 'invalido'>('solicitud');
   public correoEnviado = signal<boolean>(false);
   private token: string | null = null;
 
   solicitudForm = this.fb.group({
-    documento: ['', [Validators.required, Validators.minLength(10), Validators.pattern('^[0-9]*$')]],
+    documento: ['', [Validators.required, Validators.minLength(5), Validators.pattern('^[0-9]*$')]],
     correo: ['', [Validators.required, Validators.email]]
   });
 
@@ -44,11 +43,9 @@ export class RecuperarContrasena implements OnInit {
 
     if (this.token) {
       this.estado.set('validando');
-      this.http.get(`${environment.apiUrl}/recuperar-contrasena/verificar/${this.token}`)
-        .subscribe({
-          next: () => this.estado.set('formulario'),
-          error: () => this.estado.set('invalido')
-        });
+      this.authService.verificarTokenRecuperacion(this.token)
+        .then(() => this.estado.set('formulario'))
+        .catch(() => this.estado.set('invalido'));
     }
   }
 
@@ -60,14 +57,10 @@ export class RecuperarContrasena implements OnInit {
 
     const payload = this.solicitudForm.getRawValue();
 
-    this.http.post(`${environment.apiUrl}/recuperar-contrasena/solicitar`, payload)
-      .subscribe({
-        next: () => {
-          this.correoEnviado.set(true);
-        },
-        error: (fallo) => {
-          alert(fallo.error?.mensaje || 'Error al procesar la solicitud.');
-        }
+    this.authService.solicitarRecuperacion(payload)
+      .then(() => this.correoEnviado.set(true))
+      .catch((fallo: any) => {
+        alert(fallo.error?.mensaje || 'Error al procesar la solicitud.');
       });
   }
 
@@ -82,15 +75,13 @@ export class RecuperarContrasena implements OnInit {
       password: this.nuevaPasswordForm.get('password')?.value
     };
 
-    this.http.post(`${environment.apiUrl}/recuperar-contrasena/confirmar`, payload)
-      .subscribe({
-        next: () => {
-          alert('Tu contraseña fue actualizada correctamente.');
-          this.router.navigate(['/login']);
-        },
-        error: (fallo) => {
-          alert(fallo.error?.mensaje || 'No se pudo actualizar la contraseña.');
-        }
+    this.authService.confirmarRecuperacion(payload)
+      .then(() => {
+        alert('Tu contraseña fue actualizada correctamente.');
+        this.router.navigate(['/login']);
+      })
+      .catch((fallo: any) => {
+        alert(fallo.error?.mensaje || 'No se pudo actualizar la contraseña.');
       });
   }
 }

@@ -22,7 +22,7 @@ class UsuarioSeeder extends Seeder
     ]);
 
     \App\Models\Correo::create([
-        'correo' => 'juandiegomedinamahecha@gmail.com',
+        'correo' => '1234567890@gmail.com',
         'documento' => $usuario1->documento
     ]);
 
@@ -35,7 +35,7 @@ class UsuarioSeeder extends Seeder
     ]);
 
     \App\Models\Correo::create([
-        'correo' => 'tecnico@gmail.com',
+        'correo' => '1234567891@gmail.com',
         'documento' => $usuario2->documento
     ]);
 
@@ -48,7 +48,7 @@ class UsuarioSeeder extends Seeder
     ]);
 
     \App\Models\Correo::create([
-        'correo' => 'gerente@gmail.com',
+        'correo' => '1234567892@gmail.com',
         'documento' => $usuario3->documento
     ]);
 }

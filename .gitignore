@@ -79,3 +79,27 @@ Thumbs.db
 # TEMPORAL
 .tmp/
 temp/
+
+# Entornos locales
+.env
+.env.*
+!.env.example
+laravel-backend/.env
+laravel-backend/.env.*
+!laravel-backend/.env.example
+
+# Dumps de base de datos locales
+laravel-backend/database/dumps/*.sql
+
+# Laravel generado
+laravel-backend/public/build/
+laravel-backend/public/hot
+laravel-backend/.phpunit.result.cache
+laravel-backend/.phpunit.cache/
+
+# Bases de datos locales
+*.sqlite
+*.sqlite-journal
+
+# Logs
+*.log

@@ -2,22 +2,23 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100vw; 
-  height: 100vh;
-  overflow: hidden;
-  background-image: url("../../public/fondo-blanco.svg");
+  flex-grow: 1; 
+  width: 100%;
+  min-height: 100vh;
+  background-image: url("/fondo-blanco.svg");
   background-color: white;
   background-size: cover;
-  background-position: left;
+  background-position: center top;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   
   color: black;
   transition: background-image 0.3s ease, background-color 0.3s ease;
 }
 
 .pagina.modo-oscuro {
-  background-image: url("../../public/fondo-negro.svg");
-  background-color: #232323; 
+  background-image: url("/fondo-negro.svg");
+  background-color: #232323;
   color: white;
 }
 

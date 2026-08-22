@@ -1,23 +1,12 @@
-/* RESETEO GENERAL */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 /* CONFIGURACIÓN DEL HEADER */
 .main-header {
   background-color: #1C74A0; 
   color: #ffffff;
   padding: 15px 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1000;
-  transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
 /* Modo Oscuro */
@@ -187,7 +176,6 @@ body {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-/*-------------------------------------*/
 
 /* MENÚ MÓVIL ELEMENTOS */
 .menu-checkbox {
@@ -232,7 +220,7 @@ body {
   }
 
   :host-context(body.dark-mode) .navbar {
-    background-color: #FF9F13;
+    background-color: #242424;
   }
 
   .navbar ul {

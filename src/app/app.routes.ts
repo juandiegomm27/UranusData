@@ -60,6 +60,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
+  {
+  path: 'modulos/crear-usuario',
+  loadComponent: () => import('./modulos/gestion-usuarios/components/crear-usuario/crear-usuario').then(m => m.CrearUsuario),
+  canActivate: [authGuard]
+  },
+
   { 
     path: 'info', 
     loadComponent: () => import('./layout/inicio/inicio').then(m => m.Inicio) 

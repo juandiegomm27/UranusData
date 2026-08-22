@@ -1,68 +1,54 @@
-<div class="gestion-usuarios-container">
-  
-  <!-- Header -->
-  <div class="gestion-header">
-    <h1>Gestión de Usuarios</h1>
-    <button class="btn-crear" (click)="abrirModalCrear()">Crear Usuario</button>
+<div class="lista-usuarios-container">
+
+  <!-- Título -->
+  <div class="lista-usuarios-header">
+    <h2>Gestión de Usuarios</h2>
+    <button class="btn-crear" (click)="abrirCrearUsuario()">
+      Crear Usuario
+    </button>
   </div>
 
-  <!-- Filtros y Búsqueda -->
-  <div class="filtros-section">
-    
-    <!-- Buscador -->
-  <div class="buscador">
-    <input 
-      type="text" 
-      placeholder="Buscar por documento..." 
-      [(ngModel)]="filtroDocumento"
-      (keyup.enter)="buscar()"
-      class="input-busqueda">
-    <button class="btn-buscar" (click)="buscar()">Buscar</button>
-    <button class="btn-limpiar-busqueda" (click)="filtroDocumento = ''; filtroRol = ''; filtroEstado = ''; paginaActual = 1; cargarUsuarios()">🔄 Limpiar</button>
-  </div>
-
-    <!-- Filtros -->
-    <div class="filtros-grid">
-      
-      <div class="filtro-item">
-        <label>Rol:</label>
-        <select [(ngModel)]="filtroRol" (change)="aplicarFiltro()">
-          <option value="">Todos los roles</option>
-          @for (rol of roles; track rol.cod_rol) {
-            <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="filtro-item">
-        <label>Estado:</label>
-        <select [(ngModel)]="filtroEstado" (change)="aplicarFiltro()">
-          <option value="">Todos los estados</option>
-          @for (estado of estados; track estado.cod_estado_usuario) {
-            <option [value]="estado.cod_estado_usuario">{{ estado.estado }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="filtro-item">
-        <label>Resultados por página:</label>
-        <select [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-        </select>
-      </div>
-
+  <!-- Búsqueda y Filtros -->
+  <div class="busqueda-filtros">
+    <div class="grupo-busqueda">
+      <input 
+        type="text" 
+        placeholder="Buscar por documento"
+        [(ngModel)]="documentoBusqueda"
+        class="input-busqueda">
+      <button class="btn-buscar" (click)="aplicarFiltros()">Buscar</button>
+      <button class="btn-limpiar-busqueda" (click)="limpiarFiltros()">Limpiar</button>
     </div>
 
+    <div class="grupo-filtros">
+      <select [(ngModel)]="filtroRol" (change)="aplicarFiltros()" class="filtro-select">
+        <option value="">Todos los roles</option>
+        @for (rol of roles; track rol.cod_rol) {
+          <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="filtroEstado" (change)="aplicarFiltros()" class="filtro-select">
+        <option value="">Todos los estados</option>
+        @for (estado of estados; track estado.cod_estado_usuario) {
+          <option [value]="estado.cod_estado_usuario">{{ estado.estado }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)" class="filtro-select">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
   </div>
 
   <!-- Tabla de Usuarios -->
-  <div class="tabla-usuarios-wrapper">
-    @if (cargando) {
-      <p class="cargando">Cargando usuarios...</p>
-    } @else if (usuarios.length > 0) {
+  @if (cargando) {
+    <p class="cargando">Cargando usuarios...</p>
+  } @else if (usuarios.length > 0) {
+    <div class="tabla-usuarios-wrapper">
       <table class="tabla-usuarios">
         <thead>
           <tr>
@@ -82,72 +68,82 @@
               <td>{{ (paginaActual - 1) * perPage + i + 1 }}</td>
               <td>{{ usuario.documento }}</td>
               <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-              <td>{{ usuario.telefonos && usuario.telefonos[0]?.telefono || 'N/A' }}</td>
-              <td class="correo-cell">{{ usuario.correos && usuario.correos[0]?.correo || 'N/A' }}</td>
+              <td>{{ usuario.telefono || 'N/A' }}</td>
+              <td>{{ usuario.correo || 'N/A' }}</td>
               <td>{{ obtenerNombreRol(usuario.cod_rol) }}</td>
               <td>
                 <span class="estado-badge" [ngClass]="obtenerClaseEstado(usuario.cod_estado_usuario)">
                   {{ obtenerNombreEstado(usuario.cod_estado_usuario) }}
                 </span>
               </td>
-                <td class="acciones-cell">
-                  <button class="btn-info" (click)="abrirDetalleUsuario(usuario.documento)" title="Ver detalles">
-                    <img src="src/assets/icons/ojo.svg" alt="Ver" class="btn-icon">
+              <td>
+                <div class="botones-accion-tabla">
+                  <button class="btn-icon" (click)="abrirDetalleUsuario(usuario)" title="Ver detalles">
+                    <img src="/icons/ojo.svg" alt="Ver" class="icon-tabla">
                   </button>
-                  <button class="btn-eliminar" (click)="eliminarUsuario(usuario.documento)" title="Eliminar">
-                    <img src="src/assets/icons/papelera.svg" alt="Eliminar" class="btn-icon">
+                  <button class="btn-icon" (click)="bloquearUsuario(usuario.documento)" title="Bloquear Usuario">
+                    <img src="/icons/bloqueo.svg" alt="Bloquear" class="icon-tabla">
                   </button>
-                </td>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
       </table>
-    } @else {
-      <p class="sin-datos">No hay usuarios para mostrar</p>
-    }
-  </div>
-
-  <!-- Paginación -->
-  @if (totalPaginas > 0) {
-    <div class="paginacion">
-      <button 
-        class="btn-paginacion" 
-        (click)="cambiarPagina(paginaActual - 1)"
-        [disabled]="paginaActual === 1">
-        ← Anterior
-      </button>
-
-      <div class="indicador-pagina">
-        Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalUsuarios }} usuarios)
-      </div>
-
-      <button 
-        class="btn-paginacion" 
-        (click)="cambiarPagina(paginaActual + 1)"
-        [disabled]="paginaActual === totalPaginas">
-        Siguiente →
-      </button>
     </div>
+
+    <!-- Paginación -->
+    @if (totalPaginas > 0) {
+      <div class="paginacion">
+        <button 
+          class="btn-paginacion" 
+          (click)="cambiarPagina(paginaActual - 1)"
+          [disabled]="paginaActual === 1">
+          ← Anterior
+        </button>
+
+        <span class="indicador-pagina">
+          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalUsuarios }} usuarios)
+        </span>
+
+        <button 
+          class="btn-paginacion" 
+          (click)="cambiarPagina(paginaActual + 1)"
+          [disabled]="paginaActual === totalPaginas">
+          Siguiente →
+        </button>
+      </div>
+    }
+
+  } @else {
+    <p class="sin-usuarios">No hay usuarios para mostrar</p>
   }
 
-  <!-- Componente Detalle Usuario -->
-@if (mostrarDetalleUsuario && usuarioSeleccionado) {
-  <app-detalle-usuario 
-    [usuario]="usuarioSeleccionado"
-    [estados]="estados"
-    [roles]="roles"
-    (cerrar)="cerrarDetalleUsuario()"
-    (verReservas)="abrirHistorialReservas()">
-  </app-detalle-usuario>
-}
+  <!-- Modal Detalle Usuario -->
+  @if (mostrarDetalleUsuario && usuarioSeleccionado) {
+    <app-detalle-usuario 
+      [usuario]="usuarioSeleccionado"
+      [estados]="estados"
+      [roles]="roles"
+      (cerrar)="cerrarDetalleUsuario()"
+      (verReservas)="abrirHistorialReservas()">
+    </app-detalle-usuario>
+  }
 
-<!-- Componente Historial de Reservas -->
-@if (mostrarHistorialReservas && usuarioSeleccionado) {
-  <app-historial-reservas
-    [documento]="usuarioSeleccionado.documento"
-    [estadosReserva]="estadosReserva"
-    (cerrar)="cerrarHistorialReservas()">
-  </app-historial-reservas>
-}
+  <!-- Modal Historial de Reservas -->
+  @if (mostrarHistorialReservas && usuarioSeleccionado) {
+    <app-historial-reservas
+      [documento]="usuarioSeleccionado.documento"
+      [estadosReserva]="estadosReserva"
+      (cerrar)="cerrarHistorialReservas()">
+    </app-historial-reservas>
+  }
+
+  <!-- Modal Crear Usuario -->
+  @if (mostrarCrearUsuario) {
+    <div #crearUsuarioPanel class="crear-usuario-panel">
+      <app-crear-usuario (cerrar)="cerrarCrearUsuario()"></app-crear-usuario>
+    </div>
+  }
 
 </div>

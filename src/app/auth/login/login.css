@@ -1,18 +1,11 @@
 .auth-section {
-  height: calc(100vh - 80px);
+  min-height: calc(100vh - 80px);
   width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  
-  background-color: var(--bg-page);
+  background-color: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 40px 20px; 
-  
-  background-image: radial-gradient(var(--text-blue) 0.5px, transparent 0.5px); 
-  background-size: 24px 24px;
-  opacity: 0.95;
   transition: background-color 0.3s ease;
 }
 
@@ -67,7 +60,6 @@
 }
 
 /* --- FORMULARIO  --- */
-/* MODO CLARO */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -87,88 +79,6 @@
 :host-context(body.dark-mode) .form-group {
   color: #ffffff; 
 }
-
-
-/* --- PESTAÑAS DE ROL --- */
-.role-tabs-container {
-  width: 100%;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-label-tabs {
-  display: block;
-  font-size: 20px;
-  font-weight: 600;
-  text-align: left;
-}
-
-/* Barra de pestaña de rol */
-.role-tabs {
-  display: flex;
-  background-color: rgba(28, 116, 160, 0.08); /* Fondo azul muy sutil */
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(28, 116, 160, 0.15);
-  width: 100%;
-}
-
-/* Botón individual de pestaña de rol */
-.tab-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 10px 14px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1C74A0; 
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.tab-btn:hover {
-  background-color: rgba(28, 116, 160, 0.12);
-}
-
-/* MODO CLARO */
-.tab-btn.active {
-  background-color: #1C74A0;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(28, 116, 160, 0.5);
-}
-
-/* mensaje de error del rol */
-.text-center {
-  text-align: center;
-  width: 100%;
-}
-
-/* Animacion MODO OSCURO  */
-:host-context(body.dark-mode) .role-tabs {
-  background-color: rgb(14, 14, 14);
-  border-color: rgba(255, 161, 19, 0.5);
-}
-
-:host-context(body.dark-mode) .tab-btn {
-  color: #FF9F13; 
-}
-
-:host-context(body.dark-mode) .tab-btn:hover {
-  background-color: rgba(255, 159, 19, 0.1);
-}
-
-/* Animacion MODO OSCURO */
-:host-context(body.dark-mode) .tab-btn.active {
-  background-color: #FF9F13;
-  color: #000000;
-  box-shadow: 0 2px 6px rgba(255, 159, 19, 0.3);
-}
-
-
-
 
 /* --- Etiquetas (Documento / Contraseña) --- */
 .form-label {

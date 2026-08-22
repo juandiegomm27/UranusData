@@ -9,6 +9,7 @@ use App\Models\EstadoUsuario;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\VUsuariosCompletos;
 
 class UsuarioGestorController extends Controller
@@ -85,7 +86,7 @@ class UsuarioGestorController extends Controller
             'nombre' => $validated['nombre'],
             'apellido' => $validated['apellido'],
             'cod_rol' => $validated['cod_rol'],
-            'cod_estado_usuario' => 1, // Activo por defecto
+            'cod_estado_usuario' => 2,
             'password' => Hash::make($validated['password'])
         ]);
 
@@ -140,16 +141,36 @@ class UsuarioGestorController extends Controller
     }
 
     public function destroy($documento)
-    {
-        $usuario = Usuario::find($documento);
+{
+    $usuario = Usuario::find($documento);
 
-        if (!$usuario) {
-            return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
-        }
-
-        $usuario->delete();
-        return response()->json(['status' => 'success', 'mensaje' => 'Usuario eliminado']);
+    if (!$usuario) {
+        return response()->json([
+            'status' => 'error',
+            'mensaje' => 'Usuario no encontrado'
+        ], 404);
     }
+
+    try {
+        // Eliminar registros relacionados primero
+        DB::table('correo')->where('documento', $documento)->delete();
+        DB::table('telefono')->where('documento', $documento)->delete();
+        DB::table('password_reset_tokens')->where('documento', $documento)->delete();
+
+        // Luego eliminar el usuario
+        $usuario->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'mensaje' => 'Usuario eliminado exitosamente'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'mensaje' => 'Error al eliminar usuario: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
     public function estados()
     {

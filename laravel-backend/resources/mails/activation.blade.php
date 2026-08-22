@@ -1,21 +1,18 @@
 <div class="email-container">
     <div class="email-header">
-        <h2 class="email-title">Información actualizada</h2>
+        <h2 class="email-title">¡Bienvenido a UranusData!</h2>
     </div>
     
     <div class="email-body">
         <p class="email-greeting">Hola <strong>{{ $nombre }}</strong>,</p>
         
         <p class="email-message">
-            Tu información de perfil ha sido actualizada correctamente en UranusData.
+            Tu cuenta ha sido creada exitosamente. Por favor, verifica tu correo electrónico para activar tu usuario.
         </p>
     </div>
     
-    <div class="email-warning">
-        <p><strong>⚠️ Aviso:</strong> Si no realizaste este cambio, contacta inmediatamente con el administrador.</p>
-    </div>
-    
     <div class="email-footer">
+        <p>Si no solicitaste esta cuenta, ignora este mensaje.</p>
         <p>© 2026 UranusData - Institución Educativa Santa Isabel de Hungría</p>
     </div>
 </div>

@@ -6,7 +6,6 @@
 
 html, body {
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,33 +13,45 @@ html, body {
   background-color: #f4f6f9;
 }
 
-app-root {
-  display: block;
-  width: 100%;
-  height: 100%;
+:root {
+  --bg-page: #f4f6f9;
+  --bg-tarjeta: #ffffff;
+  --text-blue: #1c74a0;
+  --text-main: #222222;
+  --input-border: #d9dee2;
+  --shadow: rgba(0, 0, 0, 0.15);
+  --sombra: rgba(0, 0, 0, 0.1);
+  --texto-principal: #222222;
+  --borde-tarjeta: #d9e3e8;
+  --color-primario: #1c74a0;
+  --color-primario-hover: #155b7f;
+  --radio-borde: 6px;
+  --transicion: 0.3s ease;
 }
 
+app-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
 
 /*--- DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL --- */
 
-/* Grosor de la barra de scroll */
 ::-webkit-scrollbar {
   width: 10px; 
   height: 10px;
 }
 
-/* El fondo de scroll */
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* Modo Claro */
 ::-webkit-scrollbar-thumb {
   background-color: rgba(28, 116, 160, 0.5);
   border-radius: 10px;
 }
 
-/* Efecto Modo Claro */
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(28, 116, 160, 0.8);
 }
@@ -50,7 +61,25 @@ body.dark-mode ::-webkit-scrollbar-thumb {
   background-color: rgba(255, 159, 19, 0.5);
 } 
 
-/* Efecto en Modo Oscuro */
 body.dark-mode ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 159, 19, 0.8);
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.dark-mode {
+  --bg-page: #232323;
+  --bg-tarjeta: #1e1e1e;
+  --text-main: #eeeeee;
+  --input-border: #444444;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --sombra: rgba(0, 0, 0, 0.4);
+  --texto-principal: #eeeeee;
+  --borde-tarjeta: #444444;
+  --color-primario: #ff9f13;
+  --color-primario-hover: #e08b0f;
 }

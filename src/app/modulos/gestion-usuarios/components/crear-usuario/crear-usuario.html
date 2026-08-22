@@ -1,0 +1,142 @@
+<div class="crear-usuario-container">
+  <div class="crear-usuario-card">
+    
+    <div class="crear-usuario-header">
+      <h2>Crear Nuevo Usuario</h2>
+      <button class="btn-cerrar" (click)="volver()">✕</button>
+    </div>
+
+    <!-- Mensaje de retroalimentación -->
+    @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="tipoMensaje === 'success' ? 'mensaje-success' : 'mensaje-error'">
+        {{ mensaje }}
+      </div>
+    }
+
+    <form class="formulario-usuario" (ngSubmit)="crearUsuario()">
+      
+      <!-- Fila 1: Documento y Nombre -->
+      <div class="fila-formulario">
+        <div class="grupo-campo">
+          <label for="documento">Documento *</label>
+          <input 
+            type="text" 
+            id="documento"
+            [(ngModel)]="documento"
+            name="documento"
+            placeholder="Ej: 1234567890"
+            required>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="nombre">Nombre *</label>
+          <input 
+            type="text" 
+            id="nombre"
+            [(ngModel)]="nombre"
+            name="nombre"
+            placeholder="Ej: Juan"
+            required>
+        </div>
+      </div>
+
+      <!-- Fila 2: Apellido y Teléfono -->
+      <div class="fila-formulario">
+        <div class="grupo-campo">
+          <label for="apellido">Apellido *</label>
+          <input 
+            type="text" 
+            id="apellido"
+            [(ngModel)]="apellido"
+            name="apellido"
+            placeholder="Ej: López"
+            required>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="telefono">Teléfono *</label>
+          <input 
+            type="tel" 
+            id="telefono"
+            [(ngModel)]="telefono"
+            name="telefono"
+            placeholder="Ej: 3105551234"
+            required>
+        </div>
+      </div>
+
+      <!-- Fila 3: Correo y Rol -->
+      <div class="fila-formulario">
+        <div class="grupo-campo">
+          <label for="correo">Correo *</label>
+          <input 
+            type="email" 
+            id="correo"
+            [(ngModel)]="correo"
+            name="correo"
+            placeholder="Ej: usuario@example.com"
+            required>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="rol">Rol *</label>
+          <select 
+            id="rol"
+            [(ngModel)]="cod_rol"
+            name="cod_rol"
+            required>
+            @for (rol of roles; track rol.cod_rol) {
+              <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Fila 4: Contraseña -->
+      <div class="fila-formulario">
+        <div class="grupo-campo">
+          <label for="password">Contraseña *</label>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Ingresa una contraseña"
+            required>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="confirmPassword">Confirmar Contraseña *</label>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirma tu contraseña"
+            required>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="botones-accion">
+        <button type="submit" class="btn-guardar" [disabled]="cargando">
+          @if (cargando) {
+            <span>Creando...</span>
+          } @else {
+            <span>✓ Crear Usuario</span>
+          }
+        </button>
+
+        <button type="button" class="btn-limpiar" (click)="limpiarFormulario()" [disabled]="cargando">
+          Limpiar
+        </button>
+
+        <button type="button" class="btn-cancelar" (click)="volver()" [disabled]="cargando">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

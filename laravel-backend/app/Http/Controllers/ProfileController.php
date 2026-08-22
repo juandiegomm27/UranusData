@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use App\Models\Correo;
 use App\Models\Telefono;
-use App\Mail\ProfileUpdateMail;
+use App\Mail\NotificationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -49,7 +49,7 @@ class ProfileController extends Controller
             'apellido' => 'required|string',
             'correo' => 'email|unique:correo,correo',
             'telefono' => 'nullable|string|max:15',
-            'password' => 'nullable|min:6'
+            'password' => 'nullable|string'
         ]);
 
         $usuario->update([
@@ -90,12 +90,15 @@ class ProfileController extends Controller
         $correoUsuario = $usuarioActualizado->correos->first()?->correo;
 
         if ($correoUsuario) {
-            Mail::to($correoUsuario)->send(new ProfileUpdateMail(
-                $usuarioActualizado->nombre,
-                $usuarioActualizado->apellido,
-                $correoUsuario,
-                $usuarioActualizado->telefonos->first()?->telefono,
-                $usuarioActualizado->rol->cargo
+            Mail::to($correoUsuario)->send(new NotificationMail(
+                'profile_update',
+                [
+                    'nombre' => $usuarioActualizado->nombre,
+                    'apellido' => $usuarioActualizado->apellido,
+                    'correo' => $correoUsuario,
+                    'telefono' => $usuarioActualizado->telefonos->first()?->telefono,
+                    'rol' => $usuarioActualizado->rol->cargo
+                ]
             ));
         }
 

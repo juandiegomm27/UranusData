@@ -1,18 +1,19 @@
 <div class="email-container">
     <div class="email-header">
-        <h2 class="email-title">Información actualizada</h2>
+        <h2 class="email-title">Verifica tu correo</h2>
     </div>
     
     <div class="email-body">
         <p class="email-greeting">Hola <strong>{{ $nombre }}</strong>,</p>
         
         <p class="email-message">
-            Tu información de perfil ha sido actualizada correctamente en UranusData.
+            Se ha solicitado una verificación de tu correo electrónico. Este es un paso importante para asegurar tu cuenta.
         </p>
-    </div>
-    
-    <div class="email-warning">
-        <p><strong>⚠️ Aviso:</strong> Si no realizaste este cambio, contacta inmediatamente con el administrador.</p>
+        
+        <div class="email-highlight">
+            <p>Código de verificación:</p>
+            <p class="email-code">{{ $verification_code ?? 'N/A' }}</p>
+        </div>
     </div>
     
     <div class="email-footer">

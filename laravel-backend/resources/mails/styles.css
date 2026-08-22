@@ -1,119 +1,48 @@
-/* Estilos Base para Correos UranusData */
-
-.email-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #ffffff;
-}
-
-.email-header {
-  text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 3px solid #1C74A0;
-  padding-bottom: 15px;
-}
-
-.email-title {
-  color: #1C74A0;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.email-subtitle {
-  color: #666666;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.email-body {
+/* Templates de Notificación */
+.email-greeting {
+  font-size: 16px;
   color: #333333;
-  line-height: 1.6;
-  font-size: 14px;
+  margin-bottom: 15px;
 }
 
-.email-body p {
-  margin: 10px 0;
-}
-
-.email-highlight {
-  background-color: rgba(28, 116, 160, 0.1);
-  padding: 15px;
-  border-left: 4px solid #1C74A0;
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-.email-highlight ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-.email-highlight li {
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(28, 116, 160, 0.2);
-}
-
-.email-highlight li:last-child {
-  border-bottom: none;
-}
-
-.email-highlight strong {
+.email-greeting strong {
   color: #1C74A0;
 }
 
-.email-footer {
-  text-align: center;
-  margin-top: 30px;
-  padding-top: 15px;
-  border-top: 1px solid #eeeeee;
-  font-size: 11px;
-  color: #999999;
+.email-message {
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-.email-footer p {
-  margin: 5px 0;
-}
-
-.email-cta {
-  display: inline-block;
-  background-color: #1C74A0;
-  color: #ffffff;
-  padding: 12px 24px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  margin: 15px 0;
-  text-align: center;
-}
-
-.email-warning {
-  background-color: #fff3cd;
-  border-left: 4px solid #ffc107;
-  padding: 15px;
+.email-code {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 10px;
   border-radius: 4px;
-  color: #856404;
-  margin: 20px 0;
+  font-family: monospace;
+  font-weight: bold;
+  color: #1C74A0;
+  margin: 15px 0;
 }
 
-/* Modo Oscuro */
 @media (prefers-color-scheme: dark) {
-  .email-container {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border-color: #333333;
-  }
-  
-  .email-body {
+  .email-greeting {
     color: #e0e0e0;
   }
   
-  .email-highlight {
-    background-color: rgba(255, 159, 19, 0.1);
-    border-left-color: #FF9F13;
+  .email-greeting strong {
+    color: #FF9F13;
+  }
+  
+  .email-message {
+    color: #b0b0b0;
+  }
+  
+  .email-code {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #FF9F13;
   }
 }

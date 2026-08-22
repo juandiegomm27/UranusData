@@ -1,16 +1,31 @@
+/*  CONTENEDOR HOME  */
+
+:host {
+  display: block;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.home-content {
+  flex: 1;
+  padding: 20px;
+}
+
 /* CONFIGURACIÓN DE LA PANTALLA PRINCIPAL */
 .dashboard-layout {
   display: grid;
   grid-template-columns: 1fr 1.1fr; 
   gap: 50px;
   max-width: 1200px;
-  height: calc(100vh - 80px) ;
+  min-height: calc(100vh - 80px);
   width: 100% ;
   margin: 0 auto ; 
-  padding: 180px 10px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
+  padding: 80px 10px;
   align-items: start;
 }
 
@@ -212,5 +227,7 @@
   .dashboard-layout {
     grid-template-columns: 1fr; 
     gap: 30px;
+    min-height: auto;
+    padding: 40px 10px;
   }
 }
