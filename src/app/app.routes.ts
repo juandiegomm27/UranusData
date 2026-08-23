@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { rolGuard } from './core/guards/rol.guard';
+import { rolesGuard } from './core/guards/roles.guard';
 import { EnConstruccion } from './modulos/en-construccion/en-construccion';
 
 export const routes: Routes = [
@@ -58,6 +59,13 @@ export const routes: Routes = [
     path: 'modulos/gestion-usuarios', 
     loadComponent: () => import('./modulos/gestion-usuarios/pages/gestion-usuarios-page').then(m => m.GestionUsuariosPage),
     canActivate: [authGuard]
+  },
+
+  { 
+    path: 'prestamos-activos', 
+    loadComponent: () => import('./modulos/gestion-usuarios/components/lista-prestamos-activos/lista-prestamos-activos').then(m => m.ListaPrestamosActivosComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolesPermitidos: [2, 3] }
   },
 
   {

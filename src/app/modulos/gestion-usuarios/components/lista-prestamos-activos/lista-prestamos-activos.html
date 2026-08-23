@@ -1,0 +1,139 @@
+<div class="modulo-container">
+  <!-- HEADER -->
+  <div class="modulo-header">
+    <h2>Préstamos Activos</h2>
+    <div class="modulo-header-actions">
+      <button class="btn-secondary" (click)="limpiarFiltros()">
+        <span>🔄 Limpiar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- BÚSQUEDA Y FILTROS -->
+  <div class="modulo-busqueda-filtros">
+    <div class="grupo-busqueda">
+      <input
+        type="text"
+        class="input-busqueda"
+        placeholder="Buscar por nombre, documento o elemento..."
+        [(ngModel)]="busqueda"
+        (keyup.enter)="buscar()"
+      />
+      <button class="btn-primary" (click)="buscar()">
+        <span>🔍 Buscar</span>
+      </button>
+    </div>
+
+    <div class="grupo-filtros">
+      <select class="filtro-select" [(ngModel)]="estadoSeleccionado" (change)="buscar()">
+        <option [value]="null">Todos los Estados</option>
+        <option *ngFor="let estado of estados" [value]="estado.cod">
+          {{ estado.nombre }}
+        </option>
+      </select>
+
+      <select class="filtro-select" [(ngModel)]="tipoSeleccionado" (change)="buscar()">
+        <option [value]="null">Todos los Tipos</option>
+        <option *ngFor="let tipo of tipos" [value]="tipo.cod">
+          {{ tipo.nombre }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MENSAJE DE CARGA -->
+  <div *ngIf="cargando" class="cargando">
+    ⏳ Cargando préstamos activos...
+  </div>
+
+  <!-- MENSAJE SIN DATOS -->
+  <div *ngIf="sinDatos && !cargando" class="sin-datos">
+    📭 No se encontraron préstamos activos
+  </div>
+
+  <!-- TABLA DE PRÉSTAMOS -->
+  <div *ngIf="!cargando && prestamos.length > 0" class="modulo-tabla-wrapper">
+    <table class="modulo-tabla">
+      <thead>
+        <tr>
+          <th>ID Reserva</th>
+          <th>Documento</th>
+          <th>Usuario</th>
+          <th>Elemento</th>
+          <th>Tipo</th>
+          <th>Cantidad</th>
+          <th>Fecha Inicio</th>
+          <th>Estado</th>
+          <th>Estado Elementos</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prestamo of prestamos">
+          <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+          <td>{{ prestamo.documento }}</td>
+          <td>{{ prestamo.nombre }}</td>
+          <td>{{ prestamo.elemento }}</td>
+          <td>{{ prestamo.tipo }}</td>
+          <td>{{ prestamo.cantidad }}</td>
+          <td>{{ prestamo.fecha_inicio | date: 'short' }}</td>
+          <td>
+            <span
+              class="estado-badge"
+              [ngClass]="obtenerClaseEstado(prestamo.cod_estado_prestamo)"
+            >
+              {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
+            </span>
+          </td>
+          <td>
+            <div *ngFor="let estado of prestamo.estado_elementos" style="font-size: 11px">
+              <span class="estado-badge" [ngClass]="'estado-' + estado.estado.toLowerCase()">
+                {{ estado.estado }} ({{ estado.total }})
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="botones-accion-tabla">
+              <button
+                class="btn-icon"
+                title="Ver detalles"
+                (click)="verDetalles(prestamo)"
+              >
+                👁️
+              </button>
+              <button
+                class="btn-icon"
+                title="Entregar préstamo"
+                (click)="entregarPrestamo(prestamo)"
+              >
+                ✅
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINACIÓN -->
+  <div *ngIf="!cargando && prestamos.length > 0" class="paginacion">
+    <button
+      class="btn-paginacion"
+      [disabled]="paginaActual === 1"
+      (click)="paginaAnterior()"
+    >
+      ← Anterior
+    </button>
+    <span class="indicador-pagina">
+      Página {{ paginaActual }} de {{ ultimaPagina }} | Mostrando {{ desde }}-{{ hasta }}
+      de {{ totalRegistros }} registros
+    </span>
+    <button
+      class="btn-paginacion"
+      [disabled]="paginaActual === ultimaPagina"
+      (click)="paginaSiguiente()"
+    >
+      Siguiente →
+    </button>
+  </div>
+</div>

@@ -20,24 +20,24 @@
 .dashboard-layout {
   display: grid;
   grid-template-columns: 1fr 1.1fr; 
-  gap: 50px;
+  gap: 40px;
   max-width: 1200px;
   min-height: calc(100vh - 80px);
-  width: 100% ;
-  margin: 0 auto ; 
-  padding: 80px 10px;
+  width: 100%;
+  margin: 0 auto; 
+  padding: 60px 10px;
   align-items: start;
 }
 
-/* Rejilla de botones compartida para los roles */
+/* Rejilla de botones flexible */
 .buttons-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   width: 100%;
 }
 
-/* DISEÑO DE BOTONES CON OPACIDAD AL 50% (MODO CLARO) */
+/* DISEÑO DE BOTONES ADAPTABLES */
 .btn-dash {
   background-color: rgba(255, 255, 255, 1); 
   backdrop-filter: blur(10px);
@@ -45,16 +45,18 @@
   color: #1C74A0; 
   border: 2px solid rgba(28, 116, 160, 0.35); 
   border-radius: 16px; 
-  height: 179px;
-  padding: 0 16px;
-  font-size: 20px;
+  width: 100%;
+  /* Eliminamos la altura fija y usamos aspect-ratio para que se adapten al ancho de su celda */
+  aspect-ratio: 16 / 11;
+  padding: 16px;
+  font-size: clamp(16px, 1.8vw, 20px);
   font-weight: 700;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
@@ -64,7 +66,7 @@
 }
 
 .btn-dash:hover {
-  background-color: rgba(255, 255, 255, 0.75); 
+  background-color: rgba(255, 255, 255, 0.85); 
   border-color: rgba(28, 116, 160, 0.8);
   box-shadow: 0 8px 20px rgba(28, 116, 160, 0.2);
   transform: translateY(-4px); 
@@ -74,16 +76,21 @@
   transform: translateY(-1px) scale(0.97);
 }
 
-.btn-dash .icon {
-  font-size: 25px;
+.btn-dash .icon, 
+.btn-dash .modulo-icono {
+  font-size: clamp(24px, 2.5vw, 32px);
 }
 
-/* Fila inferior que abarca las dos columnas */
+/* Fila inferior que abarca las dos columnas de forma fluida */
 .btn-wide {
-  grid-column: span 2;
-  padding: 26px;
+  grid-column: span 2 !important;
+  aspect-ratio: auto;
+  min-height: 90px;
+  padding: 20px 24px;
   flex-direction: row; 
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 16px;
+  text-align: left;
 }
 
 /* MAQUETACIÓN DEL CALENDARIO INSTITUCIONAL (MODO CLARO) */
@@ -106,7 +113,7 @@
 }
 
 .calendar-title {
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 700;
 }
 
@@ -131,7 +138,7 @@
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
   text-align: center;
 }
 
@@ -146,8 +153,11 @@
 .day-number {
   background: transparent;
   border: 1px solid transparent;
-  padding: 12px 0;
-  font-size: 18px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   font-weight: 600;
   color: #333333;
   border-radius: 8px;
@@ -162,20 +172,20 @@
 
 /* Celda destacada para el día de hoy */
 .day-number.today {
-  background-color: #1C74A0  ;
-  color: #ffffff  ;
+  background-color: #1C74A0;
+  color: #ffffff;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(28, 116, 160, 0.3);
 }
 
-/*  ADAPTACIÓN SUTIL PARA EL MODO OSCURO (MODO OSCURO) */
+/*  ADAPTACIÓN SUTIL PARA EL MODO OSCURO */
 :host-context(body.dark-mode) .btn-dash,
 :host-context(body.dark-mode) .dashboard-calendar {
   background-color: rgba(20, 20, 20, 1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Botones en Modo Oscuro  */
+/* Botones en Modo Oscuro */
 :host-context(body.dark-mode) .btn-dash {
   color: #FF9F13; 
   border-color: rgba(255, 159, 19, 0.3); 
@@ -217,8 +227,8 @@
 
 /* Día actual en Modo Oscuro */
 :host-context(body.dark-mode) .day-number.today {
-  background-color: #FF9F13  ;
-  color: #121212  ;
+  background-color: #FF9F13;
+  color: #121212;
   box-shadow: 0 4px 12px rgba(255, 159, 19, 0.4);
 }
 
@@ -228,6 +238,15 @@
     grid-template-columns: 1fr; 
     gap: 30px;
     min-height: auto;
-    padding: 40px 10px;
+    padding: 30px 10px;
+  }
+  
+  .buttons-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn-wide {
+    grid-column: span 1 !important;
+    aspect-ratio: auto;
   }
 }

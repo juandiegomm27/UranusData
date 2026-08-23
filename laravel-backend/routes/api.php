@@ -34,6 +34,7 @@ Route::prefix('gestion')->group(function () {
     Route::apiResource('usuarios', UsuarioGestorController::class);
     Route::get('/usuarios/estados/list', [UsuarioGestorController::class, 'estados']);
     Route::get('/usuarios/roles/list', [UsuarioGestorController::class, 'roles']);
+    Route::get('/usuarios/prestamos-activos', [UsuarioGestorController::class, 'obtenerPrestamosActivos']);
 });
 
 // Historial de reservas por usuario

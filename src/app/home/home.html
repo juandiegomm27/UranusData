@@ -1,52 +1,58 @@
-<div class="dashboard-layout">
-  
-  <div class="dashboard-actions">
-    @switch (rolUsuario()) {
-      @case ('Docente') {
-        <app-docente></app-docente>
-      }
-      @case ('Tecnico') {
-        <app-tecnico></app-tecnico>
-      }
-      @case ('Gerente') {
-        <app-gerente></app-gerente>
-      }
-    }
-  </div>
+<div class="home-container">
+  <div class="home-content">
+    <div class="dashboard-layout">
+      <!-- COLUMNA IZQUIERDA: BOTONES -->
+      <div class="buttons-grid">
+        @switch(rolUsuario()) {
+          @case('Docente') {
+            <app-docente />
+          }
+          @case('Tecnico') {
+            <app-tecnico />
+          }
+          @case('Gerente') {
+            <app-gerente />
+          }
+          @default {
+            <p>Rol no reconocido</p>
+          }
+        }
+      </div>
 
-  <div class="dashboard-calendar">
-    <div class="calendar-header">
-      <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
-      <div class="calendar-nav">
-        <button type="button" class="btn-cal-nav" (click)="mesAnterior()">&lt;</button>
-        <button type="button" class="btn-cal-nav" (click)="mesSiguiente()">&gt;</button>
+      <!-- COLUMNA DERECHA: CALENDARIO -->
+      <div class="dashboard-calendar">
+        <div class="calendar-header">
+          <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
+          <div>
+            <button class="btn-cal-nav" (click)="mesAnterior()">←</button>
+            <button class="btn-cal-nav" (click)="mesSiguiente()">→</button>
+          </div>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="day-name">Dom</div>
+          <div class="day-name">Lun</div>
+          <div class="day-name">Mar</div>
+          <div class="day-name">Mié</div>
+          <div class="day-name">Jue</div>
+          <div class="day-name">Vie</div>
+          <div class="day-name">Sab</div>
+
+          @for (celda of matrizDias(); track $index) {
+            @if (celda.numero !== null) {
+              <button 
+                class="day-number"
+                [class.today]="celda.esHoy"
+                (click)="seleccionarDia(celda.numero!)"
+              >
+                {{ celda.numero }}
+              </button>
+            } @else {
+              <div class="day-number empty"></div>
+            }
+          }
+        </div>
       </div>
     </div>
-
-    
-    <div class="calendar-grid">
-      <span class="day-name">Dom</span>
-      <span class="day-name">Lun</span>
-      <span class="day-name">Mar</span>
-      <span class="day-name">Mié</span>
-      <span class="day-name">Jue</span>
-      <span class="day-name">Vie</span>
-      <span class="day-name">Sáb</span>
-      
-      @for (celda of matrizDias(); track $index) {
-        @if (celda.numero === null) {
-          <span class="day-number empty"></span>
-        } @else {
-          <button 
-            type="button" 
-            class="day-number" 
-            [class.today]="celda.esHoy"
-            (click)="seleccionarDia(celda.numero)">
-            {{ celda.numero }}
-          </button>
-        }
-      }
-    </div>
   </div>
-
 </div>

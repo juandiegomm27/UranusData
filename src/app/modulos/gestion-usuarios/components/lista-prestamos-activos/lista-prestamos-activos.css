@@ -1,0 +1,12 @@
+/* Importar estilos unificados de módulos */
+@import '../../../styles/modules-layout.css';
+@import '../../../styles/modules-tables.css';
+
+:host {
+  display: block;
+}
+
+/* Sobreescrituras específicas si es necesario */
+.modulo-container {
+  min-height: calc(100vh - 120px);
+}
