@@ -11,7 +11,7 @@ class TipoElemento extends Model
     public $timestamps = false;
     protected $fillable = ['tipo'];
 
-    public function inventarios()
+    public function inventario()
     {
         return $this->hasMany(Inventario::class, 'cod_tipo', 'cod_tipo');
     }

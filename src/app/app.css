@@ -13,7 +13,7 @@
   background-attachment: fixed;
   
   color: black;
-  transition: background-image 0.3s ease, background-color 0.3s ease;
+  transition: background-image 0s ease, background-color 0s ease;
 }
 
 .pagina.modo-oscuro {
@@ -22,3 +22,8 @@
   color: white;
 }
 
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

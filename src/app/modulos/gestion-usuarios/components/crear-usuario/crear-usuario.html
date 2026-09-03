@@ -78,43 +78,18 @@
             required>
         </div>
 
-        <div class="grupo-campo">
-          <label for="rol">Rol *</label>
-          <select 
-            id="rol"
-            [(ngModel)]="cod_rol"
-            name="cod_rol"
-            required>
-            @for (rol of roles; track rol.cod_rol) {
-              <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <!-- Fila 4: Contraseña -->
-      <div class="fila-formulario">
-        <div class="grupo-campo">
-          <label for="password">Contraseña *</label>
-          <input 
-            type="password" 
-            id="password"
-            [(ngModel)]="password"
-            name="password"
-            placeholder="Ingresa una contraseña"
-            required>
-        </div>
-
-        <div class="grupo-campo">
-          <label for="confirmPassword">Confirmar Contraseña *</label>
-          <input 
-            type="password" 
-            id="confirmPassword"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-            placeholder="Confirma tu contraseña"
-            required>
-        </div>
+<div class="grupo-campo">
+  <label for="rol">Rol *</label>
+  <select 
+    id="rol"
+    [(ngModel)]="cod_rol"
+    name="cod_rol"
+    required>
+    @for (item of rol; track item.cod_rol) {
+      <option [value]="item.cod_rol">{{ item.cargo }}</option>
+    }
+  </select>
+</div>
       </div>
 
       <!-- Botones de acción -->

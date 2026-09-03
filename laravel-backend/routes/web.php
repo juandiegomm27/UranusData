@@ -1,156 +1,78 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 
-// Ruta principal / Inicio
-Route::get('/', function () { return view('welcome'); });
-Route::get('/inicio', function () { return view('welcome'); });
+/**
+ * WEB ROUTES - SOLO DOCUMENTACIÓN+
+ * Este archivo contiene SOLO rutas públicas de documentación.
+ * TODAS las funciones API están en routes/api.php
+ */
 
-//    
-// RUTAS GET (Para consultar y mostrar las tablas)
-//    
-
-Route::get('/rol', function () {
-    $roles = DB::table('rol')->get();
-    return view('rol', compact('roles'));
+// Ruta raíz - Info de la API
+Route::get('/', function () {
+    return response()->json([
+        'nombre' => 'UranusData API',
+        'versión' => '1.0.0',
+        'descripción' => 'API REST para gestión de equipos, préstamos y reserva',
+        'endpoints_base' => url('/api'),
+        'documentación' => url('/docs'),
+        'estado' => 'operativo'
+    ]);
 });
 
-Route::get('/usuario', function () {
-    $usuarios = DB::table('usuario')->get();
-    return view('usuario', compact('usuarios'));
+// Health Check (para monitoreo/verificar que la API está viva)
+// Se excluyen los middleware que necesitan sesión o errores compartidos para que
+// este endpoint siga respondiendo aunque la BD o la tabla de sesiones no estén disponibles.
+Route::withoutMiddleware([
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+    \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+])->get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+    ]);
 });
 
-Route::get('/correo', function () {
-    $correos = DB::table('correo')->get();
-    return view('correo', compact('correos'));
-});
-
-Route::get('/telefono', function () {
-    $telefonos = DB::table('telefono')->get();
-    return view('telefono', compact('telefonos'));
-});
-
-Route::get('/estado_elemento', function () {
-    $estadosElemento = DB::table('estado_elemento')->get();
-    return view('estado_elemento', compact('estadosElemento'));
-});
-
-Route::get('/tipo_elemento', function () {
-    $tiposElemento = DB::table('tipo_elemento')->get();
-    return view('tipo_elemento', compact('tiposElemento'));
-});
-
-Route::get('/ubi_elemento', function () {
-    $ubicaciones = DB::table('ubi_elemento')->get();
-    return view('ubi_elemento', compact('ubicaciones'));
-});
-
-Route::get('/inventario', function () {
-    $inventarios = DB::table('inventario')->get();
-    return view('inventario', compact('inventarios'));
-});
-
-Route::get('/tipo_mantenimiento', function () {
-    $tiposMantenimiento = DB::table('tipo_mantenimiento')->get();
-    return view('tipo_mantenimiento', compact('tiposMantenimiento'));
-});
-
-Route::get('/mantenimiento', function () {
-    $mantenimientos = DB::table('mantenimiento')->get();
-    return view('mantenimiento', compact('mantenimientos'));
-});
-
-Route::get('/estado_reserva', function () {
-    $estadosReserva = DB::table('estado_Reserva')->get();
-    return view('estado_reserva', compact('estadosReserva'));
-});
-
-Route::get('/reserva', function () {
-    $reservas = DB::table('Reserva')->get();
-    return view('reserva', compact('reservas'));
-});
-
-Route::get('/prestamo', function () {
-    $prestamos = DB::table('prestamo')->get();
-    return view('prestamo', compact('prestamos'));
-});
-
-Route::get('/cantidad', function () {
-    $cantidades = DB::table('cantidad')->get();
-    return view('cantidad', compact('cantidades'));
-});
-
-//    
-// RUTAS POST (Ejemplos para guardar nuevos registros)
-//    
-
-Route::post('/rol', function (\Illuminate\Http\Request $request) {
-    DB::table('rol')->insert($request->except('_token'));
-    return redirect('/rol');
-});
-
-Route::post('/usuario', function (\Illuminate\Http\Request $request) {
-    DB::table('usuario')->insert($request->except('_token'));
-    return redirect('/usuario');
-});
-
-Route::post('/correo', function (\Illuminate\Http\Request $request) {
-    DB::table('correo')->insert($request->except('_token'));
-    return redirect('/correo');
-});
-
-Route::post('/telefono', function (\Illuminate\Http\Request $request) {
-    DB::table('telefono')->insert($request->except('_token'));
-    return redirect('/telefono');
-});
-
-Route::post('/estado_elemento', function (\Illuminate\Http\Request $request) {
-    DB::table('estado_elemento')->insert($request->except('_token'));
-    return redirect('/estado_elemento');
-});
-
-Route::post('/tipo_elemento', function (\Illuminate\Http\Request $request) {
-    DB::table('tipo_elemento')->insert($request->except('_token'));
-    return redirect('/tipo_elemento');
-});
-
-Route::post('/ubi_elemento', function (\Illuminate\Http\Request $request) {
-    DB::table('ubi_elemento')->insert($request->except('_token'));
-    return redirect('/ubi_elemento');
-});
-
-Route::post('/inventario', function (\Illuminate\Http\Request $request) {
-    DB::table('inventario')->insert($request->except('_token'));
-    return redirect('/inventario');
-});
-
-Route::post('/tipo_mantenimiento', function (\Illuminate\Http\Request $request) {
-    DB::table('tipo_mantenimiento')->insert($request->except('_token'));
-    return redirect('/tipo_mantenimiento');
-});
-
-Route::post('/mantenimiento', function (\Illuminate\Http\Request $request) {
-    DB::table('mantenimiento')->insert($request->except('_token'));
-    return redirect('/mantenimiento');
-});
-
-Route::post('/estado_reserva', function (\Illuminate\Http\Request $request) {
-    DB::table('estado_Reserva')->insert($request->except('_token'));
-    return redirect('/estado_reserva');
-});
-
-Route::post('/reserva', function (\Illuminate\Http\Request $request) {
-    DB::table('Reserva')->insert($request->except('_token'));
-    return redirect('/reserva');
-});
-
-Route::post('/prestamo', function (\Illuminate\Http\Request $request) {
-    DB::table('prestamo')->insert($request->except('_token'));
-    return redirect('/prestamo');
-});
-
-Route::post('/cantidad', function (\Illuminate\Http\Request $request) {
-    DB::table('cantidad')->insert($request->except('_token'));
-    return redirect('/cantidad');
-});
+// Página de documentación (solo en desarrollo)
+if (config('app.env') === 'local' || config('app.debug')) {
+    Route::get('/docs', function () {
+        return <<<'HTML'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>UranusData API - Documentación</title>
+            <style>
+                body { font-family: Arial; margin: 40px; background: #f5f5f5; }
+                h1 { color: #1C74A0; }
+                .doc { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                code { background: #eee; padding: 2px 6px; border-radius: 3px; }
+            </style>
+        </head>
+        <body>
+            <h1>📚 UranusData API - Documentación</h1>
+            <div class="doc">
+                <h2>Base URL</h2>
+                <code>http://localhost:8000/api</code>
+            </div>
+            <div class="doc">
+                <h2>Autenticación</h2>
+                <p><code>Authorization: Bearer {token}</code></p>
+            </div>
+            <div class="doc">
+                <h2>Endpoints Principales</h2>
+                <ul>
+                    <li><code>POST /api/login</code> - Iniciar sesión</li>
+                    <li><code>POST /api/logout</code> - Cerrar sesión</li>
+                    <li><code>GET /api/gestion/usuario</code> - Listar usuario</li>
+                    <li><code>GET /api/gestion/usuario/prestamos-activos</code> - Listar préstamos</li>
+                    <li><code>GET /api/perfil/{documento}</code> - Obtener perfil</li>
+                </ul>
+            </div>
+            <p><a href="/api">Ver respuesta JSON de API →</a></p>
+        </body>
+        </html>
+        HTML;
+    });
+}

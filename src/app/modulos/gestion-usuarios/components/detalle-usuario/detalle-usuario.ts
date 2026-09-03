@@ -13,7 +13,7 @@ import { UsuarioGestorService } from '../../services/usuario-gestor.service';
 export class DetalleUsuario {
   @Input() usuario: any = null;
   @Input() estados: any[] = [];
-  @Input() roles: any[] = [];
+  @Input() rol: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Output() verReservas = new EventEmitter<void>();
 
@@ -35,7 +35,7 @@ export class DetalleUsuario {
   }
 
   obtenerNombreRol(codRol: number): string {
-    const rol = this.roles.find(r => r.cod_rol === codRol);
+    const rol = this.rol.find(r => r.cod_rol === codRol);
     return rol ? rol.cargo : 'N/A';
   }
 
@@ -66,20 +66,22 @@ export class DetalleUsuario {
 
     this.usuarioGestorService.actualizarUsuario(this.usuario.documento, {
       cod_estado_usuario: this.estadoSeleccionado
-    })
-      .then((response: any) => {
-        if (response.status === 'success') {
+    }).subscribe({
+      next: (response: any) => {
+        this.cargando = false;
+
+        if (response?.status === 'success') {
           this.usuario.cod_estado_usuario = this.estadoSeleccionado;
           this.editando = false;
-          this.cargando = false;
           alert('Estado actualizado exitosamente');
         }
-      })
-      .catch((error: any) => {
+      },
+      error: (error: any) => {
         this.cargando = false;
         console.error('Error actualizando estado:', error);
         alert('Error al actualizar estado');
-      });
+      }
+    });
   }
 
   irAlHistorialReservas(): void {

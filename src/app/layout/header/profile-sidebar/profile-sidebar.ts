@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/service/auth.service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile-sidebar',
@@ -11,33 +11,51 @@ import { CommonModule } from '@angular/common';
   styleUrl: './profile-sidebar.css'
 })
 export class ProfileSidebar implements OnInit {
-  private router = inject(Router);
-  public authService = inject(AuthService);
+  documento = signal<string>('');
+  nombre = signal<string>('');
+  apellido = signal<string>('');
+  rol = signal<string>('');
+  mostrarSidebar = signal<boolean>(false);
 
-  documento: string | null = null;
-  nombre: string | null = null;
-  apellido: string | null = null;
-  rol: string | null = null;
-  mostrarSidebar = false;
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.documento = this.authService.getDocumento();
-    this.nombre = this.authService.getNombre();
-    this.apellido = this.authService.getApellido();
-    this.rol = this.authService.getRol();
+    // Cargar datos SIN delay
+    this.cargarDatos();
+  }
+
+  private cargarDatos(): void {
+    this.documento.set(this.authService.getDocumento());
+    this.nombre.set(this.authService.getNombre());
+    this.apellido.set(this.authService.getApellido());
+    this.rol.set(this.authService.getRol());
   }
 
   toggleSidebar(): void {
-    this.mostrarSidebar = !this.mostrarSidebar;
+    this.mostrarSidebar.set(!this.mostrarSidebar());
+    // Cerrar hamburguesa cuando se abre el sidebar
+    if (this.mostrarSidebar()) {
+      this.cerrarHamburguesa();
+    }
+  }
+  
+  private cerrarHamburguesa(): void {
+    const checkbox = document.getElementById('menu-toggle-private') as HTMLInputElement;
+    if (checkbox) {
+      checkbox.checked = false;
+    }
   }
 
   cerrarSidebar(): void {
-    this.mostrarSidebar = false;
+    this.mostrarSidebar.set(false);
   }
 
   irAMiInformacion(): void {
     this.cerrarSidebar();
-    this.router.navigate(['/perfil/editar', this.documento]);
+    this.router.navigate(['/perfil/editar', this.documento()]);
   }
 
   irAAjustes(): void {
@@ -51,7 +69,7 @@ export class ProfileSidebar implements OnInit {
   }
 
   salir(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.cerrarSidebar();
+    this.authService.logoutRemoto();
   }
 }

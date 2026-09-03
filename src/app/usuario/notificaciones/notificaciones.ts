@@ -22,4 +22,3 @@ export class Notificaciones {
     this.authService.irAlInicio(this.router);
   }
 }
-

@@ -11,7 +11,7 @@ class EstadoUsuario extends Model
     public $timestamps = false;
     protected $fillable = ['estado'];
 
-    public function usuarios()
+    public function usuario()
     {
         return $this->hasMany(Usuario::class, 'cod_estado_usuario', 'cod_estado_usuario');
     }

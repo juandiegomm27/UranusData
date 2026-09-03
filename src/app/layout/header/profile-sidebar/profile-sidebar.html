@@ -1,22 +1,24 @@
-<!-- Trigger Button (Avatar) -->
+<!-- Botón Avatar -->
 <button 
   type="button" 
   class="usuario-trigger" 
   (click)="toggleSidebar()"
-  title="Mi Perfil">
-  <img src="icon-usuario.png" id="icon-usuario" alt="Usuario" class="avatar-img">
+  title="Mi Perfil"
+  [class.active]="mostrarSidebar()">
+  <img src="icon-usuario.svg" alt="Usuario" class="avatar-img">
 </button>
 
-<!-- Overlay - Cierra el sidebar al hacer clic fuera -->
-@if (mostrarSidebar) {
+<!-- Overlay (Fondo oscuro que cierra el sidebar) -->
+@if (mostrarSidebar()) {
   <div class="sidebar-overlay" (click)="cerrarSidebar()"></div>
 }
 
 <!-- Sidebar Lateral -->
-<div class="profile-sidebar" [class.open]="mostrarSidebar">
+<div class="profile-sidebar" [class.open]="mostrarSidebar()">
   
   <!-- Header del Sidebar -->
   <div class="sidebar-header">
+    <h3 class="sidebar-title">Mi Perfil</h3>
     <button 
       type="button" 
       class="btn-cerrar-sidebar" 
@@ -24,31 +26,31 @@
       title="Cerrar">
       ✕
     </button>
-    <h3 class="sidebar-title">Mi Perfil</h3>
   </div>
 
   <!-- Información del Usuario -->
   <div class="sidebar-user-info">
     <img 
-      [src]="'https://www.gravatar.com/avatar/' + (documento || '?s=80')" 
-      alt="Avatar" 
+      src="icon-usuario.svg" 
+      alt="Avatar Usuario" 
       class="sidebar-avatar">
     <div class="user-details">
-      <p class="user-name">{{ nombre }} {{ apellido }}</p>
-      <p class="user-role">{{ rol }}</p>
-      <p class="user-documento">Doc: {{ documento }}</p>
+      <p class="user-name">{{ nombre() }} {{ apellido() }}</p>
+      <p class="user-role">{{ rol() }}</p>
+      <p class="user-documento">{{ documento() }}</p>
     </div>
   </div>
 
   <!-- Separador -->
   <hr class="sidebar-divider">
 
-  <!-- Menú -->
+    <!-- Menú de Opciones -->
   <nav class="sidebar-menu">
     <button 
       type="button" 
       class="menu-item"
       (click)="irAMiInformacion()">
+      <img src="icons/user-info.svg" alt="Usuario" class="menu-icon">
       <span class="menu-text">Mi Información</span>
     </button>
     
@@ -56,6 +58,7 @@
       type="button" 
       class="menu-item"
       (click)="irAAjustes()">
+      <img src="icons/settings.svg" alt="Ajustes" class="menu-icon">
       <span class="menu-text">Ajustes</span>
     </button>
 
@@ -63,6 +66,7 @@
       type="button" 
       class="menu-item"
       (click)="irANotificaciones()">
+      <img src="icons/bell.svg" alt="Notificaciones" class="menu-icon">
       <span class="menu-text">Notificaciones</span>
     </button>
   </nav>
@@ -75,6 +79,7 @@
     type="button" 
     class="btn-salir"
     (click)="salir()">
+    <img src="icons/logout.svg" alt="Salir" class="logout-icon">
     Salir de sesión
   </button>
 

@@ -11,7 +11,7 @@ class Rol extends Model
     public $timestamps = false;
     protected $fillable = ['cargo'];
 
-    public function usuarios()
+    public function usuario()
     {
         return $this->hasMany(Usuario::class, 'cod_rol', 'cod_rol');
     }

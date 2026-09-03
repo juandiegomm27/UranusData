@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { rolGuard } from './core/guards/rol.guard';
-import { rolesGuard } from './core/guards/roles.guard';
+import { rolesGuard } from './core/guards/rol.guard';
 import { EnConstruccion } from './modulos/en-construccion/en-construccion';
 
 export const routes: Routes = [
@@ -13,23 +12,23 @@ export const routes: Routes = [
   
   { 
     path: 'login', 
-    loadComponent: () => import('./auth/login/login').then(m => m.Login) 
+    loadComponent: () => import('./auth/login/login').then(m => m.LoginComponent) 
   },
 
   { 
     path: 'activar-usuario', 
-    loadComponent: () => import('./auth/activar-usuario/activar-usuario').then(m => m.ActivarUsuario) 
+    loadComponent: () => import('./auth/activar-usuario/activar-usuario').then(m => m.ActivarUsuarioComponent)
   },
 
   { 
     path: 'recuperar-contrasena', 
-    loadComponent: () => import('./auth/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasena) 
+    loadComponent: () => import('./auth/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasenaComponent) 
   },
 
   { 
     path: 'home/:rol', 
     loadComponent: () => import('./home/home').then(m => m.Home),
-    canActivate: [authGuard, rolGuard]
+    canActivate: [authGuard, rolesGuard]
   },
 
   { 
@@ -65,7 +64,7 @@ export const routes: Routes = [
     path: 'prestamos-activos', 
     loadComponent: () => import('./modulos/gestion-usuarios/components/lista-prestamos-activos/lista-prestamos-activos').then(m => m.ListaPrestamosActivosComponent),
     canActivate: [authGuard, rolesGuard],
-    data: { rolesPermitidos: [2, 3] }
+    data: { rolPermitidos: ['Gerente', 'Tecnico'] }
   },
 
   {
@@ -81,14 +80,14 @@ export const routes: Routes = [
 
   { 
   path: 'recuperar-contrasena/:token', 
-  loadComponent: () => import('./auth/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasena) 
+  loadComponent: () => import('./auth/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasenaComponent) 
   },
   
-  // --- MÓDULOS PENDIENTES DE CONEXIÓN A MYSQL (pantalla "En construcción") ---
+  //    MÓDULOS PENDIENTES DE CONEXIÓN A MYSQL (pantalla "En construcción")   
   { 
-    path: 'usuarios/gestion', 
+    path: 'usuario/gestion', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Gestión de Usuarios' },
+    data: { nombreModulo: 'Gestión de usuario' },
     canActivate: [authGuard]
   },
   { 
@@ -106,7 +105,7 @@ export const routes: Routes = [
   { 
     path: 'mantenimiento/reportes', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Mantenimientos' },
+    data: { nombreModulo: 'mantenimiento' },
     canActivate: [authGuard]
   },
   { 
@@ -118,7 +117,7 @@ export const routes: Routes = [
   { 
     path: 'reserva/crear', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Reservas' },
+    data: { nombreModulo: 'reserva' },
     canActivate: [authGuard]
   },
   { 
@@ -136,7 +135,7 @@ export const routes: Routes = [
   { 
     path: 'reserva/ver', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Reservas' },
+    data: { nombreModulo: 'reserva' },
     canActivate: [authGuard]
   },
 

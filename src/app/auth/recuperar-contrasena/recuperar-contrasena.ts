@@ -1,87 +1,125 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-recuperar-contrasena',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './recuperar-contrasena.html',
-  styleUrl: '../login/login.css' 
+  styleUrls: ['../login/login.css']
 })
-export class RecuperarContrasena implements OnInit {
-  private fb = inject(NonNullableFormBuilder);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private authService = inject(AuthService);
+export class RecuperarContrasenaComponent implements OnInit {
+  estado = signal('formulario');
+  correoEnviado = signal<boolean>(false);
+  solicitudForm!: FormGroup;
+  nuevaPasswordForm!: FormGroup;
+  cargando = signal(false);
+  error = signal('');
+  token: string = '';
+  mostrarPassword = signal(false);
 
-  public estado = signal<'solicitud' | 'validando' | 'formulario' | 'invalido'>('solicitud');
-  public correoEnviado = signal<boolean>(false);
-  private token: string | null = null;
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) { }
 
-  solicitudForm = this.fb.group({
-    documento: ['', [Validators.required, Validators.minLength(5), Validators.pattern('^[0-9]*$')]],
-    correo: ['', [Validators.required, Validators.email]]
-  });
+  ngOnInit() {
+    this.solicitudForm = this.fb.group({
+      documento: ['', [Validators.required]],
+      correo: ['', [Validators.required, Validators.email]]
+    });
 
-  nuevaPasswordForm = this.fb.group({
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    verificarPassword: ['', [Validators.required]]
-  }, {
-    validators: this.passwordMatchValidator
-  });
+    this.nuevaPasswordForm = this.fb.group({
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      verificarPassword: ['', [Validators.required]]
+    });
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password')?.value;
-    const verificarPassword = control.get('verificarPassword')?.value;
-    return password === verificarPassword ? null : { mismatch: true };
+    this.route.queryParams.subscribe(params => {
+      if (params['token']) {
+        this.token = params['token'];
+        this.verificarToken();
+      }
+    });
   }
 
-  ngOnInit(): void {
-    this.token = this.route.snapshot.paramMap.get('token');
-
-    if (this.token) {
-      this.estado.set('validando');
-      this.authService.verificarTokenRecuperacion(this.token)
-        .then(() => this.estado.set('formulario'))
-        .catch(() => this.estado.set('invalido'));
-    }
-  }
-
-  onSolicitar(): void {
+  onSolicitar() {
+    this.error.set('');
     if (this.solicitudForm.invalid) {
-      this.solicitudForm.markAllAsTouched();
+      this.error.set('Completa todos los campos correctamente');
       return;
     }
-
-    const payload = this.solicitudForm.getRawValue();
-
-    this.authService.solicitarRecuperacion(payload)
-      .then(() => this.correoEnviado.set(true))
-      .catch((fallo: any) => {
-        alert(fallo.error?.mensaje || 'Error al procesar la solicitud.');
-      });
+   
+    this.cargando.set(true);
+    const documento = this.solicitudForm.get('documento')?.value;
+    const correo = this.solicitudForm.get('correo')?.value;
+   
+    this.authService.solicitarRecuperacion(documento, correo).subscribe({
+      next: (respuesta: any) => {
+        console.log('Recuperación solicitada:', respuesta);
+        this.estado.set('enviado');
+        this.correoEnviado.set(true);
+        this.cargando.set(false);
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+        this.error.set(err.error?.mensaje || 'No se pudo enviar el correo de recuperación');
+        this.cargando.set(false);
+      }
+    });
   }
 
-  onConfirmar(): void {
+  private verificarToken() {
+    this.cargando.set(true);
+    this.authService.verificarToken(this.token).subscribe({
+      next: (respuesta: any) => {
+        console.log('Token válido:', respuesta);
+        this.estado.set('password');
+        this.cargando.set(false);
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+        this.error.set('El enlace ha expirado o es inválido');
+        this.cargando.set(false);
+      }
+    });
+  }
+
+  onConfirmar() {
+    this.error.set('');
     if (this.nuevaPasswordForm.invalid) {
-      this.nuevaPasswordForm.markAllAsTouched();
+      this.error.set('Completa todos los campos correctamente');
       return;
     }
 
-    const payload = {
-      token: this.token,
-      password: this.nuevaPasswordForm.get('password')?.value
-    };
+    const password = this.nuevaPasswordForm.get('password')?.value;
+    const verificarPassword = this.nuevaPasswordForm.get('verificarPassword')?.value;
 
-    this.authService.confirmarRecuperacion(payload)
-      .then(() => {
-        alert('Tu contraseña fue actualizada correctamente.');
+    if (password !== verificarPassword) {
+      this.nuevaPasswordForm.setErrors({ mismatch: true });
+      this.error.set('Las contraseñas no coinciden');
+      return;
+    }
+
+    this.cargando.set(true);
+    this.authService.confirmarRecuperacion(this.token, password, verificarPassword).subscribe({
+      next: (respuesta: any) => {
+        console.log('Contraseña actualizada:', respuesta);
         this.router.navigate(['/login']);
-      })
-      .catch((fallo: any) => {
-        alert(fallo.error?.mensaje || 'No se pudo actualizar la contraseña.');
-      });
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+        this.error.set('No se pudo cambiar la contraseña');
+        this.cargando.set(false);
+      }
+    });
+  }
+
+  togglePassword() {
+    this.mostrarPassword.set(!this.mostrarPassword());
   }
 }

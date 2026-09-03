@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './editar-perfil.html',
-  styleUrl: '../../auth/login/login.css'
+  styleUrls: ['../../auth/login/login.css', './editar-perfil.css']
 })
 export class EditarPerfil implements OnInit {
   private fb = inject(NonNullableFormBuilder);
@@ -18,14 +18,16 @@ export class EditarPerfil implements OnInit {
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
 
-  documento: string | null = null;
+  documentoSesion: string | null = null;
+  documentoOriginal: string = ''; 
   cargando = false;
   mensajeExito = '';
   mostrarMensajeExito = false;
 
   perfilForm = this.fb.group({
-    nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
-    apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
+    documento: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    nombre: ['', [Validators.required, Validators.pattern('^[a-zA-Z áéíóúÁÉÍÓÚñÑ]+$')]],
+    apellido: ['', [Validators.required, Validators.pattern('^[a-zA-Z áéíóúÁÉÍÓÚñÑ]+$')]],
     correo: ['', [Validators.required, Validators.email]],
     telefono: ['', [Validators.pattern('^[0-9]{10,15}$|^$')]],
     password: [''],
@@ -46,9 +48,9 @@ export class EditarPerfil implements OnInit {
   }
 
   ngOnInit(): void {
-    this.documento = this.authService.getDocumento();
+    this.documentoSesion = this.authService.getDocumento();
     
-    if (!this.documento) {
+    if (!this.documentoSesion) {
       this.router.navigate(['/login']);
       return;
     }
@@ -57,22 +59,26 @@ export class EditarPerfil implements OnInit {
   }
 
   cargarPerfil(): void {
-    if (!this.documento) return;
+    if (!this.documentoSesion) return;
 
-    this.profileService.getProfile(this.documento)
-      .then(response => {
-        if (response.status === 'success') {
+    this.profileService.getProfile(this.documentoSesion)
+      .then((response: any) => {
+        if (response.success) {
+          const user = response.data; 
+          this.documentoOriginal = user.documento;
+          
           this.perfilForm.patchValue({
-            nombre: response.usuario.nombre,
-            apellido: response.usuario.apellido,
-            correo: response.usuario.correo,
-            telefono: response.usuario.telefono || ''
+            documento: user.documento,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            correo: user.correos && user.correos.length > 0 ? user.correos[0].correo : '',
+            telefono: user.telefonos && user.telefonos.length > 0 ? user.telefonos[0].telefono : ''
           });
         }
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error('Error cargando perfil:', error);
-        alert('Error al cargar la información del perfil');
+        window.alert('Error al cargar la información del perfil');
       });
   }
 
@@ -82,52 +88,74 @@ export class EditarPerfil implements OnInit {
       return;
     }
 
-    if (!this.documento) return;
+    const datos = this.perfilForm.getRawValue();
+    
+    const cambioDocumento = datos.documento !== this.documentoOriginal;
+    const cambioPassword = !!datos.password;
+
+    if (cambioDocumento && !cambioPassword) {
+      window.alert('¡Alerta de Seguridad!\nSi decide cambiar su número de documento de identidad, por seguridad está obligado a actualizar también su contraseña.');
+      return;
+    }
+
+    let mensajeConfirmacion = '¿Está seguro de que desea cambiar sus datos personales?';
+    let requiereReinicioSesion = false;
+
+    if (cambioDocumento) {
+      mensajeConfirmacion = '¡Atención!\nHa modificado su número de documento y contraseña. Por seguridad, su sesión se cerrará y deberá iniciar sesión nuevamente con sus nuevas credenciales.\n\n¿Desea aceptar y continuar?';
+      requiereReinicioSesion = true;
+    } else if (cambioPassword) {
+      mensajeConfirmacion = '¡Atención!\nHa modificado su contraseña. Por seguridad, su sesión se cerrará y deberá iniciar sesión nuevamente.\n\n¿Desea aceptar y continuar?';
+      requiereReinicioSesion = true;
+    } else {
+      mensajeConfirmacion = 'Se van a actualizar sus datos personales en el sistema. ¿Desea continuar?';
+    }
+
+    if (!window.confirm(mensajeConfirmacion)) {
+      return;
+    }
 
     this.cargando = true;
-    const datos = this.perfilForm.getRawValue();
+    if (!this.documentoSesion) return;
 
-    this.profileService.updateProfile(this.documento, datos)
-      .then(response => {
+    this.profileService.updateProfile(this.documentoSesion, datos)
+      .then((response: any) => {
         this.cargando = false;
-        if (response.status === 'success') {
+        
+        if (response.success) {
+          if (requiereReinicioSesion) {
+            window.alert('Credenciales actualizadas exitosamente. Redirigiendo al login...');
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            this.router.navigate(['/login']);
+            return;
+          }
+
           this.authService.setNombreApellido(datos.nombre, datos.apellido);
-          this.mensajeExito = '¡Perfil actualizado correctamente! Se envió un correo de confirmación.';
+          this.documentoOriginal = datos.documento;
+          this.mensajeExito = '¡Perfil actualizado correctamente!';
           this.mostrarMensajeExito = true;
           
+          this.perfilForm.patchValue({
+            password: '',
+            verificarPassword: ''
+          });
+          this.perfilForm.get('password')?.markAsUntouched();
+          this.perfilForm.get('verificarPassword')?.markAsUntouched();
+
           setTimeout(() => {
             this.mostrarMensajeExito = false;
-            this.perfilForm.get('password')?.reset();
-            this.perfilForm.get('verificarPassword')?.reset();
-          }, 3000);
+          }, 3500);
         }
       })
-      .catch(error => {
+      .catch((error: any) => {
         this.cargando = false;
         console.error('Error actualizando perfil:', error);
-        alert(error.error?.mensaje || 'Error al actualizar el perfil');
+        window.alert(error.error?.mensaje || 'Error al actualizar el perfil');
       });
   }
 
   regresar(): void {
     this.router.navigate(['/home', this.authService.getRol()]);
-  }
-
-  obtenerUrlGravatar(): string {
-    const correo = this.perfilForm.get('correo')?.value || '';
-    const hash = this.md5(correo.toLowerCase().trim());
-    return `https://www.gravatar.com/avatar/${hash}?s=80&d=identicon`;
-  }
-
-  private md5(str: string): string {
-    // Implementación simple de MD5 para Gravatar
-    // En producción, usar una librería
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash).toString(16);
   }
 }

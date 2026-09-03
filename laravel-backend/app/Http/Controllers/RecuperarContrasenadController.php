@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Usuario;
 use App\Models\PasswordResetToken;
 use App\Mail\NotificationMail;
@@ -11,11 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 class RecuperarContrasenadController extends Controller
 {
-    /**
- * SOLICITAR recuperación de contraseña
- * POST /api/recuperar-contrasena/solicitar
- */
-public function solicitar(Request $request)
+
+public function solicitarRecuperacion(Request $request)
 {
     $validated = $request->validate([
         'documento' => 'required|string|exists:usuario,documento',
@@ -43,7 +41,13 @@ public function solicitar(Request $request)
         ], 404);
     }
 
-    // Verificar si el usuario está bloqueado
+    if ($usuario->cod_estado_usuario == 2) {
+        return response()->json([
+            'status' => 'error',
+            'mensaje' => 'Tu usuario está inactivo. No puedes recuperar contraseña'
+        ], 403);
+    }
+
     if ($usuario->cod_estado_usuario == 3) {
         return response()->json([
             'status' => 'error',
@@ -74,7 +78,7 @@ public function solicitar(Request $request)
                 'enlace' => env('FRONTEND_URL', 'http://localhost:4200') . '/recuperar-contrasena/' . $token
             ]));
         } catch (\Exception $e) {
-            \Log::error('Error enviando email de recuperación: ' . $e->getMessage());
+            Log::error('Error enviando email de recuperación: ' . $e->getMessage());
         }
     }
 
@@ -85,11 +89,7 @@ public function solicitar(Request $request)
     ]);
 }
 
-    /**
-     * VERIFICAR token de recuperación
-     * GET /api/recuperar-contrasena/verificar/{token}
-     */
-    public function verificar($token)
+    public function verificarToken($token) 
     {
         $resetToken = PasswordResetToken::where('token', $token)->first();
 
@@ -130,11 +130,8 @@ public function solicitar(Request $request)
         ]);
     }
 
-    /**
-     * CONFIRMAR y cambiar contraseña
-     * POST /api/recuperar-contrasena/confirmar
-     */
-    public function confirmar(Request $request)
+
+    public function confirmarRecuperacion(Request $request) 
     {
         $validated = $request->validate([
             'token' => 'required|string',
@@ -179,7 +176,7 @@ public function solicitar(Request $request)
 
         // Actualizar contraseña y estado a ACTIVO
         $usuario->password = bcrypt($validated['password']);
-        $usuario->cod_estado_usuario = 1; // Activar usuario
+        $usuario->cod_estado_usuario = 1;
         $usuario->save();
 
         // Eliminar token usado

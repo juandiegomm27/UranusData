@@ -1,18 +1,34 @@
 <main class="auth-section">
+
+  <!-- VENTANA DE CARGA (Overlay) -->
+  @if (cargando()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Iniciando sesión...</p>
+    </div>
+  }
+
   <div class="auth-card">
     
-    <!-- imagen superior -->
+    <!-- Imagen superior -->
     <div class="brand-badge">
-      <img src="logo-nada.svg" alt="Escudo Institucional" class="badge-img">
+      <img src="logo-nada.svg" alt="logo" class="badge-img">
     </div>
 
     <!-- Título -->
-    <h1 class="auth-title">Iniciar sesion</h1>
+    <h1 class="auth-title">Iniciar sesión</h1>
+
+    <!-- CAJA DE ERROR GLOBAL (Diseño sutil con ícono propio) -->
+    @if (error()) {
+      <div class="global-error-msg">
+        <img src="/icons/alerta.svg" alt="Alerta" class="error-icon">
+        <span>{{ error() }}</span>
+      </div>
+    }
 
     <!-- Formulario enlazado -->
     <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       
-
       <!-- Documento -->
       <div class="form-group">
         <label for="documento" class="form-label">Documento</label>
@@ -21,12 +37,12 @@
           id="documento" 
           formControlName="documento" 
           class="form-input" 
-          placeholder="Documento"
+          placeholder="Ingresa tu documento"
           [class.input-error]="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched"
+          [disabled]="cargando()"
         >
-        <!-- Mensaje de Validación -->
         @if (loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched) {
-          <small class="error-msg">El documento es obligatorio que sea numerico (mínimo 10 caracteres).</small>
+          <small class="error-msg">El documento es obligatorio (mínimo 10 caracteres).</small>
         }
       </div>
 
@@ -39,10 +55,10 @@
           id="password" 
           formControlName="password" 
           class="form-input" 
-          placeholder="Contraseña"
+          placeholder="Tu contraseña"
           [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          [disabled]="cargando()"
         >
-        <!-- Mensaje de Validación  -->
         @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
           <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
         }
@@ -54,6 +70,7 @@
             class="form-checkbox" 
             #togglePass 
             (change)="passwordInput.type = togglePass.checked ? 'text' : 'password'"
+            [disabled]="cargando()"
           >
           <span class="custom-checkbox"></span>
           <span class="checkbox-text-secondary">Mostrar contraseña</span>
@@ -61,7 +78,9 @@
       </div>
 
       <!-- Botón Ingresar -->
-      <button type="submit" class="btn-submit">Ingresar</button>
+      <button type="submit" class="btn-submit" [disabled]="cargando()">
+        {{ cargando() ? 'Cargando...' : 'Ingresar' }}
+      </button>
       
     </form>
 

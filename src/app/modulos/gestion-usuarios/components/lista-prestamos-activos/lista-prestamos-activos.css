@@ -6,7 +6,115 @@
   display: block;
 }
 
-/* Sobreescrituras específicas si es necesario */
+/* Sobreescrituras específicas */
 .modulo-container {
   min-height: calc(100vh - 120px);
+}
+
+/* Estilos para botones de acción */
+.botones-accion-tabla {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-icon {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-ver-detalles {
+  background: #1C74A0;
+  color: white;
+}
+
+.btn-ver-detalles:hover:not(:disabled) {
+  background: #155b7f;
+  transform: translateY(-2px);
+}
+
+.btn-entregar {
+  background: #28a745;
+  color: white;
+}
+
+.btn-entregar:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estilos para badges de estado */
+.estado-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.estado-solicitado {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-entregado {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.estado-devuelto {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-perdido {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.estado-danado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Dark Mode */
+:host-context(body.dark-mode) .btn-ver-detalles {
+  background: #FF9F13;
+  color: #000;
+}
+
+:host-context(body.dark-mode) .btn-ver-detalles:hover:not(:disabled) {
+  background: #e08b0f;
+}
+
+:host-context(body.dark-mode) .btn-entregar {
+  background: #28a745;
+}
+
+:host-context(body.dark-mode) .btn-entregar:hover:not(:disabled) {
+  background: #218838;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .botones-accion-tabla {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-icon {
+    width: 100%;
+  }
 }

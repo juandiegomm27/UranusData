@@ -210,7 +210,7 @@
 
 .btn-editar,
 .btn-bloquear,
-.btn-reservas,
+.btn-reserva,
 .btn-guardar,
 .btn-cancelar,
 .btn-cerrar-modal {
@@ -245,14 +245,14 @@
   background-color: #c82333;
 }
 
-.btn-reservas {
+.btn-reserva {
   background-color: #6c757d;
   color: #ffffff;
   flex: 1;
   min-width: 120px;
 }
 
-.btn-reservas:hover {
+.btn-reserva:hover {
   background-color: #5a6268;
 }
 
@@ -385,7 +385,7 @@
 
   .btn-editar,
   .btn-bloquear,
-  .btn-reservas,
+  .btn-reserva,
   .btn-guardar,
   .btn-cancelar,
   .btn-cerrar-modal {

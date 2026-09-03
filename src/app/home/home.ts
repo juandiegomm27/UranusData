@@ -57,10 +57,25 @@ export class Home implements OnInit {
     return celdas;
   });
 
-  ngOnInit(): void {
+ngOnInit(): void {
+    // Primero intenta obtener del URL (para rutas específicas)
     const rolUrl = this.route.snapshot.paramMap.get('rol');
     if (rolUrl) {
       this.rolUsuario.set(rolUrl);
+      return;
+    }
+
+    // Si no está en URL, obtener del localStorage (después de login)
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      try {
+        const parsed = JSON.parse(usuario);
+        const rol = parsed.rol || 'Sin rol';
+        this.rolUsuario.set(rol);
+      } catch (e) {
+        console.error('Error al parsear usuario:', e);
+        this.rolUsuario.set('Sin rol');
+      }
     }
   }
 
@@ -77,6 +92,6 @@ export class Home implements OnInit {
 
   seleccionarDia(dia: number): void {
     console.log(`Día seleccionado para el panel: ${dia}/${this.fechaActual().getMonth() + 1}/${this.fechaActual().getFullYear()}`);
-    // Aquí amarraremos los modales de reserva o asignación de mantenimientos más adelante
+    // Aquí amarraremos los modales de reserva o asignación de mantenimiento más adelante
   }
 }

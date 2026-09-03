@@ -26,7 +26,7 @@ class Inventario extends Model
         return $this->belongsTo(UbiElemento::class, 'No_ubicacion', 'cod_ubicacion');
     }
 
-    public function mantenimientos()
+    public function mantenimiento()
     {
         return $this->hasMany(Mantenimiento::class, 'id_elemento', 'id_elemento');
     }

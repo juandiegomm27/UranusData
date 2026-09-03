@@ -165,6 +165,11 @@ return new class extends Migration
         });
 
         //  VIEWs 
+        
+        DB::statement('DROP VIEW IF EXISTS v_historial_reservas');
+        DB::statement('DROP VIEW IF EXISTS v_historial_prestamos');
+        DB::statement('DROP VIEW IF EXISTS v_usuarios_completos');
+        DB::statement('DROP VIEW IF EXISTS v_ingreso_login');
 
         DB::statement('
             CREATE VIEW v_ingreso_login AS
@@ -236,12 +241,13 @@ return new class extends Migration
 
         //  STORED PROCEDURES 
 
+        DB::statement('DROP PROCEDURE IF EXISTS sp_generar_usuarios');
         DB::unprepared('
             CREATE PROCEDURE IF NOT EXISTS sp_generar_usuarios()
             BEGIN
-              DELETE FROM usuario WHERE documento >= 1000000001;
               DELETE FROM correo WHERE documento >= 1000000001;
               DELETE FROM telefono WHERE documento >= 1000000001;
+                            DELETE FROM usuario WHERE documento >= 1000000001;
 
               INSERT INTO usuario (documento, nombre, apellido, cod_rol, cod_estado_usuario, password) VALUES
               (1000000001, "Carlos", "López", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),

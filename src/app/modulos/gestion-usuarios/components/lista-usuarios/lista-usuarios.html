@@ -2,7 +2,7 @@
 
   <!-- Título -->
   <div class="lista-usuarios-header">
-    <h2>Gestión de Usuarios</h2>
+    <h2>Gestión de usuario</h2>
     <button class="btn-crear" (click)="abrirCrearUsuario()">
       Crear Usuario
     </button>
@@ -22,8 +22,8 @@
 
     <div class="grupo-filtros">
       <select [(ngModel)]="filtroRol" (change)="aplicarFiltros()" class="filtro-select">
-        <option value="">Todos los roles</option>
-        @for (rol of roles; track rol.cod_rol) {
+        <option value="">Todos los rol</option>
+        @for (rol of rol; track rol.cod_rol) {
           <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
         }
       </select>
@@ -44,12 +44,12 @@
     </div>
   </div>
 
-  <!-- Tabla de Usuarios -->
+  <!-- Tabla de usuario -->
   @if (cargando) {
-    <p class="cargando">Cargando usuarios...</p>
-  } @else if (usuarios.length > 0) {
-    <div class="tabla-usuarios-wrapper">
-      <table class="tabla-usuarios">
+    <p class="cargando">Cargando usuario...</p>
+  } @else if (usuario.length > 0) {
+    <div class="tabla-usuario-wrapper">
+      <table class="tabla-usuario">
         <thead>
           <tr>
             <th>#</th>
@@ -63,7 +63,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (usuario of usuarios; track usuario.documento; let i = $index) {
+          @for (usuario of usuario; track usuario.documento; let i = $index) {
             <tr>
               <td>{{ (paginaActual - 1) * perPage + i + 1 }}</td>
               <td>{{ usuario.documento }}</td>
@@ -103,7 +103,7 @@
         </button>
 
         <span class="indicador-pagina">
-          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalUsuarios }} usuarios)
+          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalUsuarios }} usuario)
         </span>
 
         <button 
@@ -116,7 +116,7 @@
     }
 
   } @else {
-    <p class="sin-usuarios">No hay usuarios para mostrar</p>
+    <p class="sin-usuario">No hay usuario para mostrar</p>
   }
 
   <!-- Modal Detalle Usuario -->
@@ -124,13 +124,13 @@
     <app-detalle-usuario 
       [usuario]="usuarioSeleccionado"
       [estados]="estados"
-      [roles]="roles"
+      [rol]="rol"
       (cerrar)="cerrarDetalleUsuario()"
       (verReservas)="abrirHistorialReservas()">
     </app-detalle-usuario>
   }
 
-  <!-- Modal Historial de Reservas -->
+  <!-- Modal Historial de reserva -->
   @if (mostrarHistorialReservas && usuarioSeleccionado) {
     <app-historial-reservas
       [documento]="usuarioSeleccionado.documento"
@@ -142,7 +142,7 @@
   <!-- Modal Crear Usuario -->
   @if (mostrarCrearUsuario) {
     <div #crearUsuarioPanel class="crear-usuario-panel">
-      <app-crear-usuario (cerrar)="cerrarCrearUsuario()"></app-crear-usuario>
+      <app-crear-usuario (cerrar)="cerrarModalCrearYRecargar()"></app-crear-usuario>
     </div>
   }
 

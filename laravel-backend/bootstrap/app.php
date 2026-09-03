@@ -15,6 +15,25 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
     })
+
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
+
+        $middleware->trustProxies(at: ['127.0.0.1', '10.0.0.0/8']);
+
+        $middleware->statefulApi();
+    })
+
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->statefulApi();
+        
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
+    })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

@@ -1,0 +1,49 @@
+<header class="main-header">
+  <div class="header-container">
+    
+    <!-- Logo -->
+    <a (click)="irAlInicio()" class="logo" title="UranusData">
+      <img src="logo-blanco-largo.svg" alt="Logo UranusData" class="logo-img">
+    </a>
+
+    <!-- Hamburguesa (solo móvil) -->
+    <button 
+      type="button" 
+      class="menu-hamburger" 
+      (click)="toggleMenu()"
+      title="Menú">
+      <img src="icons/menu.svg" alt="Menú" class="hamburger-icon">
+    </button>
+
+    <!-- Navegación -->
+    <nav class="navbar" [class.open]="menuAbierto">
+      <ul>
+        <li>
+          <a (click)="irAlInicio()" class="nav-link">Inicio</a>
+        </li>
+        <li>
+          <a [routerLink]="['/contactanos']" class="nav-link" (click)="cerrarMenu()">Contactanos</a>
+        </li>
+        <li>
+          <a [routerLink]="['/info']" class="nav-link" (click)="cerrarMenu()">Info</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Acciones Derecha -->
+    <div class="header-actions">
+      
+      <!-- Switch Modo Oscuro -->
+      <label class="switch-modo" title="Cambiar modo oscuro">
+        <input 
+          type="checkbox" 
+          [checked]="modoOscuro" 
+          (change)="cambiarModo()"
+          id="dark-mode-toggle-public">
+        <span class="switch-slider"></span>
+      </label>
+
+    </div>
+
+  </div>
+</header>

@@ -2,14 +2,14 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     
     <div class="modal-header">
-      <h2>Historial de Reservas</h2>
+      <h2>Historial de reserva</h2>
       <button class="btn-cerrar" (click)="onCerrar()">✕</button>
     </div>
 
     <div class="modal-body">
 
-      <!-- Filtros de Reservas -->
-      <div class="filtros-reservas">
+      <!-- Filtros de reserva -->
+      <div class="filtros-reserva">
         
         <div class="filtro-reserva-item">
           <label>Estado:</label>
@@ -46,12 +46,12 @@
 
       </div>
 
-      <!-- Tabla de Reservas -->
+      <!-- Tabla de reserva -->
       @if (cargando) {
-        <p class="cargando">Cargando reservas...</p>
+        <p class="cargando">Cargando reserva...</p>
       } @else if (reservasUsuario.length > 0) {
-        <div class="tabla-reservas-wrapper">
-          <table class="tabla-reservas">
+        <div class="tabla-reserva-wrapper">
+          <table class="tabla-reserva">
             <thead>
               <tr>
                 <th>#</th>
@@ -81,9 +81,9 @@
           </table>
         </div>
 
-        <!-- Paginación de Reservas -->
+        <!-- Paginación de reserva -->
         @if (totalPaginasReservas > 0) {
-          <div class="paginacion-reservas">
+          <div class="paginacion-reserva">
             <button 
               class="btn-paginacion-reserva" 
               (click)="cambiarPaginaReservas(paginaReservas - 1)"
@@ -92,7 +92,7 @@
             </button>
 
             <span class="indicador-pagina-reserva">
-              Página {{ paginaReservas }} de {{ totalPaginasReservas }} ({{ totalReservas }} reservas)
+              Página {{ paginaReservas }} de {{ totalPaginasReservas }} ({{ totalReservas }} reserva)
             </span>
 
             <button 
@@ -105,7 +105,7 @@
         }
 
       } @else {
-        <p class="sin-reservas">No hay reservas para este usuario</p>
+        <p class="sin-reserva">No hay reserva para este usuario</p>
       }
 
     </div>

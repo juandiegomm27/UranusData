@@ -6,6 +6,8 @@ import { UsuarioGestorService } from '../../services/usuario-gestor.service';
 import { DetalleUsuario } from '../detalle-usuario/detalle-usuario';
 import { HistorialReservas } from '../historial-reservas/historial-reservas';
 import { CrearUsuario } from '../crear-usuario/crear-usuario';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../../../core/service/auth.service';
 
 @Component({
   selector: 'app-lista-usuarios',
@@ -19,10 +21,10 @@ export class ListaUsuarios implements OnInit {
   @ViewChild('crearUsuarioPanel') crearUsuarioPanel?: ElementRef<HTMLElement>;
 
   //   VARIABLES DE DATOS  
-  usuarios: any[] = [];
+  usuario: any[] = [];
   usuarioSeleccionado: any = null;
   estados: any[] = [];
-  roles: any[] = [];
+  rol: any[] = [];
   estadosReserva: any[] = [];
 
   //   VARIABLES DE CONTROL  
@@ -46,23 +48,22 @@ export class ListaUsuarios implements OnInit {
   rolUsuario: string = '';
 
   //   CONSTRUCTOR  
-  constructor(
+constructor(
     private usuarioGestorService: UsuarioGestorService,
     private router: Router,
-    private cdr: ChangeDetectorRef // <-- LÍNEA NUEVA
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
-    this.rolUsuario = localStorage.getItem('usuario_rol') || '';
+    this.rolUsuario = this.authService.getRol();
   }
 
-  //   CICLO DE VIDA  
-  ngOnInit(): void {
-    if (this.rolUsuario !== 'Gerente') {
-      this.router.navigate(['/home', this.rolUsuario]);
-      return;
-    }
-
-    this.inicializarComponente();
+ngOnInit(): void {
+  if (this.rolUsuario !== 'Gerente') {
+    this.router.navigate(['/home', this.rolUsuario]);
+    return;
   }
+  this.inicializarComponente();
+}
 
   //   MÉTODO DE INICIALIZACIÓN  
   
@@ -71,7 +72,7 @@ export class ListaUsuarios implements OnInit {
 
     Promise.all([
       this.cargarEstados(),
-      this.cargarRoles(),
+      this.cargarrol(),
       this.cargarEstadosReserva()
     ]).then(() => {
       this.cargarUsuarios();
@@ -84,43 +85,45 @@ export class ListaUsuarios implements OnInit {
   //   MÉTODOS DE CARGA DE DATOS  
 
 cargarUsuarios(): void {
-    const filtros = {
-      rol: this.filtroRol,
-      estado: this.filtroEstado,
-      documento: this.documentoBusqueda
-    };
+  const filtros = {
+    rol: this.filtroRol,
+    estado: this.filtroEstado,
+    documento: this.documentoBusqueda
+  };
 
-    this.usuarioGestorService.getUsuarios(this.paginaActual, this.perPage, filtros)
-      .then((response: any) => {
-        if (response.status === 'success') {
-          this.usuarios = response.data || [];
-          this.totalUsuarios = response.total || 0;
-          this.totalPaginas = response.last_page || 0;
-        } else {
-          this.usuarios = [];
-          this.totalUsuarios = 0;
-          this.totalPaginas = 0;
-        }
-        this.cargando = false;
-        
-        this.cdr.detectChanges(); // <-- LÍNEA NUEVA
-      })
-      .catch((error: any) => {
-        console.error('Error cargando usuarios:', error);
-        this.usuarios = [];
-        this.totalUsuarios = 0;
-        this.totalPaginas = 0;
-        this.cargando = false;
-        
-        this.cdr.detectChanges(); // <-- LÍNEA NUEVA
-      });
-  }
+  firstValueFrom(this.usuarioGestorService.getUsuarios(this.paginaActual, this.perPage, filtros))
+    .then((response: any) => {
+      // 1. Mapeamos la data para extraer el primer correo y teléfono de las relaciones de Laravel
+      this.usuario = (response.data || []).map((u: any) => ({
+        ...u,
+        correo: u.correos && u.correos.length > 0 ? u.correos[0].correo : null,
+        telefono: u.telefonos && u.telefonos.length > 0 ? u.telefonos[0].telefono : null
+      }));
 
-  cargarEstados(): Promise<void> {
+      // 2. Extraemos la paginación correctamente desde response.pagination
+      this.totalUsuarios = response.pagination?.total || 0;
+      this.totalPaginas = response.pagination?.last_page || 0;
+      this.paginaActual = response.pagination?.current_page || this.paginaActual;
+
+      this.cargando = false;
+      this.cdr.detectChanges();
+    })
+    .catch((error: any) => {
+      console.error('Error cargando usuarios:', error);
+      this.usuario = [];
+      this.totalUsuarios = 0;
+      this.totalPaginas = 0;
+      this.cargando = false;
+      this.cdr.detectChanges();
+    });
+}
+
+cargarEstados(): Promise<void> {
   return new Promise((resolve) => {
-    this.usuarioGestorService.getEstados()
+    firstValueFrom(this.usuarioGestorService.getEstados())
       .then((response: any) => {
-        if (response.status === 'success') {
+        // Validamos 'success === true' (booleano) como responde Laravel
+        if (response.success === true) {
           this.estados = response.data || [];
         }
         resolve();
@@ -133,18 +136,19 @@ cargarUsuarios(): void {
   });
 }
 
-cargarRoles(): Promise<void> {
+cargarrol(): Promise<void> {
   return new Promise((resolve) => {
-    this.usuarioGestorService.getRoles()
+    firstValueFrom(this.usuarioGestorService.getrol())
       .then((response: any) => {
-        if (response.status === 'success') {
-          this.roles = response.data || [];
+        // Validamos 'success === true' (booleano)
+        if (response.success === true) {
+          this.rol = response.data || [];
         }
         resolve();
       })
       .catch((error: any) => {
         console.error('Error cargando roles:', error);
-        this.roles = [];
+        this.rol = [];
         resolve();
       });
   });
@@ -235,9 +239,9 @@ cargarEstadosReserva(): Promise<void> {
   bloquearUsuario(documento: string): void {
     if (confirm('¿Estás seguro de que deseas bloquear a este usuario?')) {
       // Llamamos al servicio para actualizar solo el estado a 3 (Bloqueado)
-      this.usuarioGestorService.actualizarUsuario(documento, {
+      firstValueFrom(this.usuarioGestorService.actualizarUsuario(documento, {
         cod_estado_usuario: 3 
-      })
+      }))
       .then((response: any) => {
         if (response.status === 'success') {
           alert('Usuario bloqueado exitosamente');
@@ -260,7 +264,7 @@ cargarEstadosReserva(): Promise<void> {
   }
 
   obtenerNombreRol(codRol: number): string {
-    const rol = this.roles.find(r => r.cod_rol === codRol);
+    const rol = this.rol.find(r => r.cod_rol === codRol);
     return rol ? rol.cargo : 'N/A';
   }
 
@@ -275,5 +279,10 @@ cargarEstadosReserva(): Promise<void> {
       default:
         return '';
     }
+  }
+
+  cerrarModalCrearYRecargar(): void {
+    this.mostrarCrearUsuario = false;
+    this.cargarUsuarios();
   }
 }

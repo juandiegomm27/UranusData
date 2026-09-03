@@ -11,7 +11,7 @@ class EstadoReserva extends Model
     public $timestamps = false;
     protected $fillable = ['estado'];
 
-    public function reservas()
+    public function reserva()
     {
         return $this->hasMany(Reserva::class, 'Num_estado', 'Num_estado');
     }

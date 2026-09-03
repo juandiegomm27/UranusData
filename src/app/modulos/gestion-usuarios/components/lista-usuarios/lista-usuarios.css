@@ -124,7 +124,7 @@
 
 /* TABLA */
 
-.tabla-usuarios-wrapper {
+.tabla-usuario-wrapper {
   background: #ffffff;
   border-radius: 8px;
   overflow: hidden;
@@ -135,14 +135,14 @@
   overflow-x: auto;
 }
 
-.tabla-usuarios {
+.tabla-usuario {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   min-width: 900px;
 }
 
-.tabla-usuarios thead {
+.tabla-usuario thead {
   background-color: #1C74A0;
   color: #ffffff;
   position: sticky;
@@ -150,7 +150,7 @@
   z-index: 10;
 }
 
-.tabla-usuarios th {
+.tabla-usuario th {
   padding: 15px;
   text-align: left;
   font-weight: 600;
@@ -159,13 +159,13 @@
   letter-spacing: 0.5px;
 }
 
-.tabla-usuarios td {
+.tabla-usuario td {
   padding: 12px 15px;
   border-bottom: 1px solid #000000;
   color: #333;
 }
 
-.tabla-usuarios tbody tr:hover {
+.tabla-usuario tbody tr:hover {
   background-color: #e2eef4;
 }
 
@@ -260,7 +260,7 @@
 /*   MENSAJES   */
 
 .cargando,
-.sin-usuarios {
+.sin-usuario {
   text-align: center;
   padding: 40px;
   color: #999;
@@ -322,7 +322,7 @@
   background-color: #e08b0f;
 }
 
-:host-context(body.dark-mode) .tabla-usuarios-wrapper {
+:host-context(body.dark-mode) .tabla-usuario-wrapper {
   background: #2a2a2a;
 }
 
@@ -330,17 +330,17 @@
   background-color: #e4b56f;
 }
 
-:host-context(body.dark-mode) .tabla-usuarios thead {
+:host-context(body.dark-mode) .tabla-usuario thead {
   background-color: #c07300;
   color: #ffffff;
 }
 
-:host-context(body.dark-mode) .tabla-usuarios td {
+:host-context(body.dark-mode) .tabla-usuario td {
   border-bottom-color: #444;
   color: #e0e0e0;
 }
 
-:host-context(body.dark-mode) .tabla-usuarios tbody tr:hover {
+:host-context(body.dark-mode) .tabla-usuario tbody tr:hover {
   background-color: #333;
 }
 
@@ -362,7 +362,7 @@
 }
 
 :host-context(body.dark-mode) .cargando,
-:host-context(body.dark-mode) .sin-usuarios {
+:host-context(body.dark-mode) .sin-usuario {
   background: #2a2a2a;
   color: #999;
 }
@@ -380,16 +380,16 @@
     grid-template-columns: 1fr;
   }
 
-  .tabla-usuarios {
+  .tabla-usuario {
     font-size: 12px;
   }
 
-  .tabla-usuarios th,
-  .tabla-usuarios td {
+  .tabla-usuario th,
+  .tabla-usuario td {
     padding: 8px;
   }
 
-  .tabla-usuarios-wrapper {
+  .tabla-usuario-wrapper {
     max-height: 400px;
   }
 

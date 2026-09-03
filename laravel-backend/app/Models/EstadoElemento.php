@@ -11,7 +11,7 @@ class EstadoElemento extends Model
     public $timestamps = false;
     protected $fillable = ['estado'];
 
-    public function inventarios()
+    public function inventario()
     {
         return $this->hasMany(Inventario::class, 'cod_estado', 'cod_estado');
     }

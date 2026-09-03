@@ -1,0 +1,274 @@
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 30px 20px;
+}
+
+.perfil-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 650px;
+  width: 100%;
+  text-align: left;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-badge {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.badge-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.auth-title {
+  text-align: center;
+  color: #1C74A0;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+.avatar-container {
+  text-align: center;
+  margin: 20px 0 30px 0;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #1C74A0;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(28, 116, 160, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.avatar-text {
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.alert-success {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fafafa;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1C74A0;
+  box-shadow: 0 0 10px rgba(28, 116, 160, 0.25);
+  background: #fff;
+}
+
+.input-error {
+  border-color: #dc3545 !important;
+}
+
+.error-msg {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.divider {
+  margin: 25px 0 15px 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+.info-text {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.show-password-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+  user-select: none;
+}
+
+.botones-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn-submit {
+  flex: 1;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background-color: #1C74A0;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(28, 116, 160, 0.2);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #155b7f;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================
+   MODO OSCURO (DARK MODE)
+   ========================================== */
+:host-context(body.dark-mode) .perfil-card {
+  background: #1e1e1e;
+  border-color: #444;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+:host-context(body.dark-mode) .auth-title {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .profile-avatar {
+  border-color: #FF9F13;
+  box-shadow: 0 4px 15px rgba(255, 159, 19, 0.2);
+}
+
+:host-context(body.dark-mode) .avatar-text,
+:host-context(body.dark-mode) .info-text {
+  color: #888;
+}
+
+:host-context(body.dark-mode) .alert-success {
+  background: rgba(21, 87, 36, 0.2);
+  border-color: #155724;
+  color: #d4edda;
+}
+
+:host-context(body.dark-mode) .form-label {
+  color: #ccc;
+}
+
+:host-context(body.dark-mode) .form-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+:host-context(body.dark-mode) .form-input:focus {
+  border-color: #FF9F13;
+  box-shadow: 0 0 10px rgba(255, 159, 19, 0.25);
+  background: #333;
+}
+
+:host-context(body.dark-mode) .divider {
+  border-top-color: #333;
+}
+
+:host-context(body.dark-mode) .show-password-label {
+  color: #ccc;
+}
+
+:host-context(body.dark-mode) .btn-submit {
+  background-color: #FF9F13;
+  color: #000;
+}
+
+:host-context(body.dark-mode) .btn-submit:hover:not(:disabled) {
+  background-color: #e08b0f;
+}
+
+:host-context(body.dark-mode) .btn-cancel {
+  background-color: #444;
+  color: #fff;
+}
+
+:host-context(body.dark-mode) .btn-cancel:hover:not(:disabled) {
+  background-color: #555;
+}
+
+@media (max-width: 768px) {
+  .perfil-card {
+    padding: 20px;
+  }
+  .botones-container {
+    flex-direction: column;
+  }
+}

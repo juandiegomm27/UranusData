@@ -1,162 +1,212 @@
-import { Injectable, signal, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { firstValueFrom } from 'rxjs';
-
-export interface UsuarioAutenticado {
-  documento: string;
-  nombre: string;
-  apellido: string;
-  rol: string;
-  correo: string;
-  telefono: string;
-  estado: string;
-}
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private esEntornoBrowser = typeof window !== 'undefined';
-  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
-  private documentoInicial = this.esEntornoBrowser ? localStorage.getItem('usuario_documento') : null;
-  private rolInicial = this.esEntornoBrowser ? localStorage.getItem('usuario_rol') : null;
-  private usuarioInicial = this.esEntornoBrowser
-    ? this.leerUsuarioGuardado()
-    : null;
+  // Signals para datos de usuario (reactivos)
+  private usuarioNombre = signal<string>('');
+  private usuarioApellido = signal<string>('');
+  private usuarioRol = signal<string>('');
 
-  private usuarioDocumento = signal<string | null>(this.documentoInicial);
-  private usuarioRol = signal<string | null>(this.rolInicial);
-  private usuarioActual = signal<UsuarioAutenticado | null>(this.usuarioInicial);
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) { }
 
-  login(documento: string, password: string): Promise<any> {
-  return firstValueFrom(
-    this.http.post<any>(`${environment.apiUrl}/login`, {
+  private obtenerCsrfToken(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/../sanctum/csrf-cookie`, {
+      withCredentials: true
+    });
+  }
+
+  login(documento: string, password: string): Observable<any> {
+    return this.obtenerCsrfToken().pipe(
+      switchMap(() => 
+        this.http.post(`${this.apiUrl}/login`, {
+          documento,
+          password
+        }, {
+          withCredentials: true
+        })
+      )
+    );
+  }
+
+  logout(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {});
+  }
+
+  logoutRemoto() {
+    this.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        this.limpiarDatos();
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        this.limpiarDatos();
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  obtenerPerfil(documento: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/perfil/${documento}`);
+  }
+
+  validarUsuarioActivar(documento: string): Observable<any> {
+      return this.http.post(`${this.apiUrl}/activar/validar`, {
+        documento: documento
+      });
+  }
+
+  activarCuenta(documento: string, password: string, confirmPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/activar/cuenta`, {
       documento,
-      password
-    })
-  ).then(response => {
-    if (response.status === 'success') {
-        this.setLogin(response.usuario);
-    }
-    return response;
-  });
+      password,
+      confirmPassword
+    });
   }
 
-  register(datos: any): Promise<any> {
-    return firstValueFrom(
-      this.http.post<any>(`${environment.apiUrl}/register`, datos)
-    );
+  solicitarRecuperacion(documento: string, correo: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-contrasena/solicitar`, {
+      documento,
+      correo
+    });
   }
 
-  validarUsuarioActivar(datos: any): Promise<any> {
-    return firstValueFrom(
-      this.http.post<any>(`${environment.apiUrl}/activar/validar`, datos)
-    );
+  verificarToken(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/recuperar-contrasena/verificar/${token}`);
   }
 
-  activarCuenta(datos: any): Promise<any> {
-    return firstValueFrom(
-      this.http.put<any>(`${environment.apiUrl}/activar`, datos)
-    );
+  verificarTokenRecuperacion(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/recuperar-contrasena/verificar/${token}`);
   }
 
-  solicitarRecuperacion(datos: any): Promise<any> {
-    return firstValueFrom(
-      this.http.post<any>(`${environment.apiUrl}/recuperar-contrasena/solicitar`, datos)
-    );
-  }
-
-  verificarTokenRecuperacion(token: string): Promise<any> {
-    return firstValueFrom(
-      this.http.get<any>(`${environment.apiUrl}/recuperar-contrasena/verificar/${token}`)
-    );
-  }
-
-  confirmarRecuperacion(datos: any): Promise<any> {
-    return firstValueFrom(
-      this.http.post<any>(`${environment.apiUrl}/recuperar-contrasena/confirmar`, datos)
-    );
-  }
-
-  private setLogin(usuario: UsuarioAutenticado): void {
-    if (this.esEntornoBrowser) {
-      localStorage.setItem('usuario_documento', usuario.documento);
-      localStorage.setItem('usuario_rol', usuario.rol);
-      localStorage.setItem('usuario_nombre', usuario.nombre);
-      localStorage.setItem('usuario_apellido', usuario.apellido);
-      localStorage.setItem('usuario_actual', JSON.stringify(usuario));
-    }
-    this.usuarioDocumento.set(usuario.documento);
-    this.usuarioRol.set(usuario.rol);
-    this.usuarioActual.set(usuario);
-  }
-
-  logout(): void {
-    if (this.esEntornoBrowser) {
-      localStorage.removeItem('usuario_documento');
-      localStorage.removeItem('usuario_rol');
-      localStorage.removeItem('usuario_nombre');
-      localStorage.removeItem('usuario_apellido');
-      localStorage.removeItem('usuario_actual');
-    }
-  this.usuarioDocumento.set(null);
-  this.usuarioRol.set(null);
-  this.usuarioActual.set(null);
-}
-
-  getDocumento(): string | null {
-    return this.usuarioDocumento();
-  }
-
-  getRol(): string | null {
-    return this.usuarioRol();
-  }
-
-  getNombre(): string | null {
-    return localStorage.getItem('usuario_nombre') || null;
-  }
-
-  getApellido(): string | null {
-    return localStorage.getItem('usuario_apellido') || null;
-  }
-
-  getUsuario(): UsuarioAutenticado | null {
-    return this.usuarioActual();
-  }
-
-  setNombreApellido(nombre: string, apellido: string): void {
-    if (this.esEntornoBrowser) {
-      localStorage.setItem('usuario_nombre', nombre);
-      localStorage.setItem('usuario_apellido', apellido);
-    }
+  confirmarRecuperacion(token: string, password: string, confirmPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-contrasena/confirmar`, {
+      token,
+      password,
+      confirmPassword
+    });
   }
 
   isAutenticado(): boolean {
-    return this.usuarioDocumento() !== null;
+    const token = localStorage.getItem('token');
+    return !!token;
   }
 
-  irAlInicio(router: Router): void {
-    if (this.isAutenticado()) {
-      const rolActual = this.getRol();
-      router.navigate(['/home', rolActual || 'Docente']);
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // Método privado que actualiza los signals desde localStorage
+  private actualizarDatosUsuario(): void {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      try {
+        const parsed = JSON.parse(usuario);
+        this.usuarioNombre.set(parsed.nombre || '');
+        this.usuarioApellido.set(parsed.apellido || '');
+        this.usuarioRol.set(parsed.rol || 'Sin rol');
+      } catch {
+        this.limpiarDatos();
+      }
     } else {
-      router.navigate(['/login']);
+      this.limpiarDatos();
     }
   }
 
-  private leerUsuarioGuardado(): UsuarioAutenticado | null {
-    const usuarioGuardado = localStorage.getItem('usuario_actual');
+  // Limpia los datos cuando no hay usuario
+  private limpiarDatos(): void {
+    this.usuarioNombre.set('');
+    this.usuarioApellido.set('');
+    this.usuarioRol.set('Sin rol');
+  }
 
-    if (!usuarioGuardado) return null;
+  // Obtener signals directamente (para componentes)
+  getNombreSignal() {
+    this.actualizarDatosUsuario();
+    return this.usuarioNombre;
+  }
 
-    try {
-      return JSON.parse(usuarioGuardado) as UsuarioAutenticado;
-    } catch {
-      localStorage.removeItem('usuario_actual');
-      return null;
+  getApellidoSignal() {
+    this.actualizarDatosUsuario();
+    return this.usuarioApellido;
+  }
+
+  getRolSignal() {
+    this.actualizarDatosUsuario();
+    return this.usuarioRol;
+  }
+
+  // Métodos originales (mantienen compatibilidad)
+  getRol(): string {
+    this.actualizarDatosUsuario();
+    return this.usuarioRol();
+  }
+
+  getDocumento(): string {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      try {
+        const parsed = JSON.parse(usuario);
+        return parsed.documento || '';
+      } catch {
+        return '';
+      }
+    }
+    return '';
+  }
+
+  getNombre(): string {
+    this.actualizarDatosUsuario();
+    return this.usuarioNombre();
+  }
+
+  getApellido(): string {
+    this.actualizarDatosUsuario();
+    return this.usuarioApellido();
+  }
+
+  setNombreApellido(nombre: string, apellido: string) {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      try {
+        const parsed = JSON.parse(usuario);
+        parsed.nombre = nombre;
+        parsed.apellido = apellido;
+        localStorage.setItem('usuario', JSON.stringify(parsed));
+        this.actualizarDatosUsuario();
+      } catch {
+        console.error('Error al actualizar usuario');
+      }
+    }
+  }
+
+  irAlInicio(router: Router) {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      try {
+        const parsed = JSON.parse(usuario);
+        const rol = parsed.rol || 'Docente';
+        router.navigate(['/home', rol]);
+      } catch {
+        router.navigate(['/login']);
+      }
+    } else {
+      router.navigate(['/login']);
     }
   }
 }

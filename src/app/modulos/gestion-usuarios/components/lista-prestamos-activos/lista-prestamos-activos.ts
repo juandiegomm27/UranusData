@@ -1,23 +1,30 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PrestamosActivosService, PrestamoActivo } from '../../services/prestamos-activos.service';
+import { ModalDetallesPrestamo } from './modal-detalles-prestamo';
 
 @Component({
   selector: 'app-lista-prestamos-activos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalDetallesPrestamo],
   templateUrl: './lista-prestamos-activos.html',
   styleUrls: ['./lista-prestamos-activos.css']
 })
 export class ListaPrestamosActivosComponent implements OnInit {
+  // Servicios
+  private prestamosService = inject(PrestamosActivosService);
+  private cdr = inject(ChangeDetectorRef);
+
   // Datos
   prestamos: PrestamoActivo[] = [];
-  
+
   // Estados
   cargando = false;
   sinDatos = false;
-  
+  mostrarModal = false;
+  prestamoSeleccionado: PrestamoActivo | null = null;
+
   // Paginación
   paginaActual = 1;
   registrosPorPagina = 10;
@@ -51,11 +58,6 @@ export class ListaPrestamosActivosComponent implements OnInit {
     { cod: 8, nombre: 'Webcam' }
   ];
 
-  constructor(
-    private prestamosService: PrestamosActivosService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
   ngOnInit(): void {
     this.cargarPrestamos();
   }
@@ -77,7 +79,7 @@ export class ListaPrestamosActivosComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          this.prestamos = response.data;
+          this.prestamos = response.data || [];
           this.totalRegistros = response.pagination.total;
           this.ultimaPagina = response.pagination.last_page;
           this.desde = response.pagination.from;
@@ -161,20 +163,48 @@ export class ListaPrestamosActivosComponent implements OnInit {
   }
 
   /**
-   * Entregar préstamo (actualizar estado)
+   * Ver detalles del préstamo y abrir modal
    */
-  entregarPrestamo(prestamo: PrestamoActivo): void {
-    if (confirm(`¿Confirmar entrega del préstamo ${prestamo.id_reserva}?`)) {
-      console.log('Entregar préstamo:', prestamo);
-      // Aquí iría la lógica de actualización
-    }
+  verDetalles(prestamo: PrestamoActivo): void {
+    this.prestamoSeleccionado = prestamo;
+    this.mostrarModal = true;
   }
 
   /**
-   * Ver detalles del préstamo
+   * Cerrar modal
    */
-  verDetalles(prestamo: PrestamoActivo): void {
-    console.log('Ver detalles de:', prestamo);
-    // Abrir modal con detalles
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.prestamoSeleccionado = null;
+  }
+
+  /**
+   * Entregar préstamo (abrir modal con estado "Entregado")
+   */
+  entregarPrestamo(prestamo: PrestamoActivo): void {
+    this.prestamoSeleccionado = { ...prestamo };
+    this.mostrarModal = true;
+  }
+
+  /**
+   * Manejar actualización de préstamo desde el modal
+   */
+  onActualizarPrestamo(evento: any): void {
+    // Recargar lista de préstamos para reflejar cambios
+    this.cargarPrestamos();
+  }
+
+    /**
+   * TrackBy para optimizar *ngFor de préstamos
+   */
+  trackByIdReserva(index: number, prestamo: PrestamoActivo): number {
+    return prestamo.id_reserva;
+  }
+
+  /**
+   * TrackBy para optimizar *ngFor de estados elementos
+   */
+  trackByEstadoElemento(index: number, estado: any): number {
+    return estado.cod_estado_elemento;
   }
 }

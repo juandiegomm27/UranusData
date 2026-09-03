@@ -5,52 +5,53 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* Centra verticalmente */
   padding: 40px 20px; 
   transition: background-color 0.3s ease;
 }
 
-
-/* --- Tarjeta Central Flotante --- */
+/*    Tarjeta Central Flotante    */
 .auth-card {
-  /* Fondo blanco */
-  background-color: rgba(255, 255, 255, 1);
-  backdrop-filter: blur(8px); 
-  
+  /* Fondo blanco sutil */
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px); 
   width: 100%;
-  max-width: 900px;
-  padding: 50px 50px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px var(--shadow);
-  border: 3px solid rgba(37, 70, 200, 1);
+  max-width: 650px; /* Reducido para parecerse a la captura */
+  padding: 60px 50px;
+  border-radius: 16px;
+  /* Sombra suave y borde muy sutil, sin el azul grueso */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   text-align: center;
-  
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Modo Oscuro */
+/* Modo Oscuro - Tarjeta */
 :host-context(body.dark-mode) .auth-card {
-  background-color: rgba(0, 0, 0, 1);
-  border: 3px solid rgba(100, 54, 36, 1); 
+  background-color: rgba(18, 18, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.05); 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Imagen Superior --- */
+/*    Imagen Superior    */
 .brand-badge {
-  margin-bottom: 0px;
+  margin-bottom: 20px;
 }
 
 .badge-img {
-  max-height: 80px;
+  max-height: 120px; /* Logo más grande según la imagen */
   width: auto;
   object-fit: contain;
 }
 
-/* --- Titulo --- */
+/*    Titulo    */
 /* Modo Claro */
 .auth-title {
   color: #1C74A0;
-  font-size: 60px;
+  font-size: 52px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
   transition: color 0.3s ease;
 }
 
@@ -59,82 +60,80 @@
   color: #FF9F13;
 }
 
-/* --- FORMULARIO  --- */
+/*    FORMULARIO     */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px; /* Más espacio entre grupos */
   align-items: center;
-  color: #000000;
+  color: #333333;
 }
 
 .form-group {
   width: 100%;
   text-align: left;
-  color: #000000;
 }
 
 /* (MODO OSCURO) */
 :host-context(body.dark-mode) .auth-form,
 :host-context(body.dark-mode) .form-group {
-  color: #ffffff; 
+  color: #e0e0e0; 
 }
 
-/* --- Etiquetas (Documento / Contraseña) --- */
+/*    Etiquetas (Documento / Contraseña)    */
 .form-label {
   display: block;
-  color: var(--text-blue);
-  font-size: 20px;
+  color: #1C74A0;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   transition: color 0.3s ease;
+}
+
+:host-context(body.dark-mode) .form-label {
+  color: #2da1df; /* Un azul más claro para modo oscuro, o déjalo igual si prefieres */
 }
 
 /* Cajas de Texto */
 .form-input {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--text-blue);
-  border-radius: 6px;
-  background-color: #ccd0d27b;
-  color: var(--text-main);
-  font-size: 17px;
+  padding: 14px 16px;
+  border: 1px solid #9fb9c7; /* Borde sutil azulado */
+  border-radius: 8px;
+  background-color: #e8ecef; /* Gris claro de la imagen */
+  color: #333;
+  font-size: 16px;
   outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
 }
 
 :host-context(body.dark-mode) .form-input {
-  background-color: #2323237b;
+  background-color: #1a1a1a;
+  border-color: #333;
+  color: #e0e0e0;
 }
 
-
 .form-input:focus {
-  border-color: var(--text-blue);
+  border-color: #1C74A0;
+  background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.15);
 }
 
-.form-options {
-  width: 100%;
-  text-align: left;
-  margin-bottom: 10px;
+:host-context(body.dark-mode) .form-input:focus {
+  border-color: #FF9F13;
+  background-color: #242424;
+  box-shadow: 0 0 0 3px rgba(255, 159, 19, 0.15);
 }
 
-/* --- checkbox --- */
+
+/*    checkbox    */
 .show-password-label {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  margin-top: 12px; 
+  margin-top: 10px; 
   user-select: none;
-  gap: 8px;
-}
-
-.checkbox-label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  gap: 8px;
+  gap: 10px;
 }
 
 .form-checkbox {
@@ -147,7 +146,7 @@
 .custom-checkbox {
   width: 18px;
   height: 18px;
-  border: 2px solid #b0bec5;
+  border: 2px solid #9fb9c7;
   border-radius: 4px;
   background-color: #ffffff;
   position: relative;
@@ -155,8 +154,6 @@
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Efecto */
-.checkbox-label:hover .custom-checkbox,
 .show-password-label:hover .custom-checkbox {
   border-color: #1C74A0;
 }
@@ -165,18 +162,18 @@
   box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.25);
 }
 
-/* Modo Claro */
+/* Checkbox marcado */
 .form-checkbox:checked + .custom-checkbox {
   background-color: #1C74A0;
   border-color: #1C74A0;
 }
 
-/* Palomita blanco interno */
+/* Palomita blanca */
 .custom-checkbox::after {
   content: "";
   position: absolute;
   display: none;
-  left: 4px;
+  left: 5px;
   top: 1px;
   width: 5px;
   height: 9px;
@@ -189,20 +186,14 @@
   display: block;
 }
 
-/* Textos de las etiquetas */
-.checkbox-text {
-  color: var(--text-main);
-  font-size: 14px;
-  font-weight: 500;
-}
-
+/* Texto del checkbox */
 .checkbox-text-secondary {
-  color: var(--text-main);
+  color: #333333;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600; /* Negrita como en la imagen */
 }
 
-/* Modo Oscuro */
+/* Modo Oscuro - Checkbox */
 :host-context(body.dark-mode) .custom-checkbox {
   background-color: #2a2a2a;
   border-color: #555555;
@@ -213,107 +204,266 @@
   border-color: #FF9F13;
 }
 
-:host-context(body.dark-mode) .checkbox-label:hover .custom-checkbox,
 :host-context(body.dark-mode) .show-password-label:hover .custom-checkbox {
   border-color: #FF9F13;
 }
-/* ---------------------------------------------------- */
+
+:host-context(body.dark-mode) .checkbox-text-secondary {
+  color: #e0e0e0;
+}
 
 
-
-/* --- BOTÓN DE INGRESAR --- */
+/*    BOTÓN DE INGRESAR    */
 .btn-submit {
-  width: 180px;
-  padding: 12px 24px;
-  background-color: #1C74A0;
+  width: 220px; /* Un poco más ancho */
+  padding: 14px 24px;
+  margin-top: 10px;
+  background-color: #196f9a; /* Azul de la imagen */
   color: #ffffff;
-  
   border: none;
   border-radius: 8px;
-  font-size: 25px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700; /* Más grueso */
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(28, 116, 160, 0.2);
-  
+  box-shadow: 0 4px 10px rgba(25, 111, 154, 0.3);
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 /* Amimacion Modo Claro */
 .btn-submit:hover {
-  background-color: #155b7f;
-  box-shadow: 0 6px 14px rgba(28, 116, 160, 0.35);
+  background-color: #14587a;
+  box-shadow: 0 6px 14px rgba(25, 111, 154, 0.4);
   transform: translateY(-2px); 
 }
 
-/* Amimacion  al hacer clic */
 .btn-submit:active {
-  transform: translateY(0) scale(0.96);
-  box-shadow: 0 2px 5px rgba(28, 116, 160, 0.2);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 5px rgba(25, 111, 154, 0.2);
 }
 
-/* MODO OSCURO  */
+/* MODO OSCURO - Botón */
 :host-context(body.dark-mode) .btn-submit {
   background-color: #FF9F13;
   color: #121212; 
   box-shadow: 0 4px 10px rgba(255, 159, 19, 0.2);
 }
 
-/* Amimacion al pasar el cursor  */
 :host-context(body.dark-mode) .btn-submit:hover {
   background-color: #e08b0f; 
   box-shadow: 0 6px 14px rgba(255, 159, 19, 0.4);
 }
 
-/* Amimacion al hacer clic */
 :host-context(body.dark-mode) .btn-submit:active {
   box-shadow: 0 2px 5px rgba(255, 159, 19, 0.2);
 }
 
 
-/* --- Enlaces del Pie de la Tarjeta --- */
+/*    Enlaces del Pie de la Tarjeta    */
 .auth-footer-links {
-  margin-top: 20px;
+  margin-top: 35px;
   padding-top: 25px;
-  border-top: 1px solid var(--input-border);
+  border-top: 1px solid #e0e0e0; /* Línea gris muy clara */
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
+:host-context(body.dark-mode) .auth-footer-links {
+  border-top: 1px solid #333;
+}
+
 .footer-link {
-  color: var(--text-blue);
+  color: #1C74A0;
   text-decoration: underline;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   transition: color 0.3s ease;
 }
 
-.footer-link:hover {
-  filter: brightness(1.2);
+:host-context(body.dark-mode) .footer-link {
+  color: #2da1df;
 }
 
-/* --- RESPONSIVE DESIGN --- */
-@media (max-width: 480px) {
+.footer-link:hover {
+  color: #14587a;
+}
+:host-context(body.dark-mode) .footer-link:hover {
+  color: #65baf0;
+}
+
+
+/*    ESTILOS DE VALIDACIÓN ADICIONALES    */
+.error-msg {
+  display: block;
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 500;
+  color: #d32f2f; 
+}
+
+/* Bordes rojos inmediatos en inputs si el usuario se equivoca */
+.form-input.input-error {
+  border-color: #d32f2f;
+  background-color: #fffafa;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+:host-context(body.dark-mode) .form-input.input-error {
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+/* =========================================
+   ESTILOS DEL MENSAJE DE ERROR GLOBAL (Sutil)
+   ========================================= */
+.global-error-msg {
+  background-color: #fff2f2;
+  border: 1px solid #ffcccc;
+  color: #d32f2f;
+  padding: 10px 15px;
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  animation: slideDown 0.3s ease;
+}
+
+.error-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain; 
+}
+
+:host-context(body.dark-mode) .global-error-msg {
+  background-color: rgba(211, 47, 47, 0.1); 
+  border-color: rgba(211, 47, 47, 0.2);
+  color: #ffb4ab; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ESTILOS DE PANTALLA DE CARGA (OVERLAY) */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1C74A0;
+  font-weight: 600;
+  font-size: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+:host-context(body.dark-mode) .loading-overlay {
+  background: rgba(0, 0, 0, 0.85);
+  color: #FF9F13;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(28, 116, 160, 0.2);
+  border-top-color: #1C74A0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+:host-context(body.dark-mode) .spinner {
+  border-color: rgba(255, 159, 19, 0.2);
+  border-top-color: #FF9F13;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.form-input:disabled, .btn-submit:disabled, .form-checkbox:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/*    RESPONSIVE DESIGN    */
+@media (max-width: 600px) {
   .auth-card {
-    padding: 30px 20px;
+    padding: 40px 25px;
   }
   
+  .auth-title {
+    font-size: 40px;
+  }
+
   .btn-submit {
     width: 100%;
   }
 }
 
-/* --- ESTILOS DE VALIDACIÓN ADICIONALES --- */
-.error-msg {
-  display: block;
-  font-size: 17px;
-  margin-top: 4px;
-  font-weight: 500;
-  color: #e63946; 
+/* CLASES REUTILIZABLES */
+
+/* Textos informativos centrados */
+.auth-info-text {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  color: #333333;
+}
+:host-context(body.dark-mode) .auth-info-text {
+  color: #e0e0e0;
 }
 
-/* Bordes rojos inmediatos en inputs si el usuario se equivoca */
-.form-input.input-error {
-  border-color: #e63946  ;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15)  ;
+/* Fila para acomodar dos botones (ej: Volver / Guardar) */
+.auth-actions-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+/* Botón secundario (Gris) */
+.btn-secondary {
+  background-color: #6c757d;
+  box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+}
+.btn-secondary:hover {
+  background-color: #5a6268;
+  box-shadow: 0 6px 14px rgba(108, 117, 125, 0.4);
+}
+
+:host-context(body.dark-mode) .btn-secondary {
+  background-color: #555555;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+:host-context(body.dark-mode) .btn-secondary:hover {
+  background-color: #666666;
+}
+
+/* Margen superior de apoyo */
+.mt-15 {
+  margin-top: 15px !important;
 }

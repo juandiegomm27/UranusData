@@ -3,8 +3,8 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 
 /**
- * Guard genérico de roles
- * Uso: canActivate: [rolesGuard], data: { rolesPermitidos: [2, 3] }
+ * Guard genérico de rol
+ * Uso: canActivate: [rolesGuard], data: { rolPermitidos: ['Gerente', 'Tecnico'] }
  */
 export const rolesGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -15,10 +15,10 @@ export const rolesGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  const rolActual = Number(authService.getRol());
-  const rolesPermitidos = route.data['rolesPermitidos'] as number[];
+  const rolActual = authService.getRol();
+  const rolPermitidos = route.data['rolPermitidos'] as string[];
 
-  if (rolesPermitidos && rolesPermitidos.includes(rolActual)) {
+  if (rolActual && rolPermitidos?.includes(rolActual)) {
     return true;
   }
 

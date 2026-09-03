@@ -36,7 +36,7 @@ app-root {
   min-height: 100vh;
 }
 
-/*--- DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL --- */
+/*   DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL    */
 
 ::-webkit-scrollbar {
   width: 10px; 

@@ -3,9 +3,9 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Default Mailer
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | This option controls the default mailer that is used to send all email
     | messages unless another mailer is explicitly specified when sending
@@ -17,9 +17,9 @@ return [
     'default' => env('MAIL_MAILER', 'log'),
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Mailer Configurations
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | Here you may configure all of the mailers used by your application plus
     | their respective settings. Several examples have been configured for
@@ -100,9 +100,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Global "From" Address
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | You may wish for all emails sent by your application to be sent from
     | the same address. Here you may specify a name and address that is

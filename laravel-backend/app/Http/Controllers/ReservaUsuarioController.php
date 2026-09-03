@@ -18,7 +18,7 @@ class ReservaUsuarioController extends Controller
         }
 
         $perPage = $request->get('per_page', 10);
-        $tipo = $request->get('tipo', 'reservas'); // 'reservas' o 'prestamos'
+        $tipo = $request->get('tipo', 'reserva');
         $estado = $request->get('estado');
         $elemento = $request->get('elemento');
         $fecha = $request->get('fecha');

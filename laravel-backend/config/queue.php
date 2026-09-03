@@ -3,9 +3,9 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Default Queue Connection Name
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | Laravel's queue supports a variety of backends via a single, unified
     | API, giving you convenient access to each backend using identical
@@ -16,9 +16,9 @@ return [
     'default' => env('QUEUE_CONNECTION', 'database'),
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Queue Connections
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | Here you may configure the connection options for every queue backend
     | used by your application. An example configuration is provided for
@@ -92,9 +92,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Job Batching
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | The following options configure the database and table that store job
     | batching information. These options can be updated to any database
@@ -108,9 +108,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
+    |                  --
     | Failed Queue Jobs
-    |--------------------------------------------------------------------------
+    |                  --
     |
     | These options configure the behavior of failed queue job logging so you
     | can control how and where failed jobs are stored. Laravel ships with

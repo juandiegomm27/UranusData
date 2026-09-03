@@ -2,11 +2,11 @@
 ## 🚀 Instalación
 
 ### Requisitos previos
-- Node.js 18+
+- Node.js 22.22.3 o superior compatible con Angular 22
 - PHP 8.2+
 - MySQL 8.0+
-- XAMPP (para desarrollo local)
-- Composer
+- Composer 2+
+- XAMPP es opcional si ya tienes PHP y MySQL disponibles
 
 ### Pasos
 
@@ -18,9 +18,10 @@ cd sana-uranus-data
 # 2. Instalar dependencias del frontend
 npm install
 
-# 3. Configurar Laravel backend
+# 3. Configurar el backend Laravel
 cd laravel-backend
 composer install
+# En Windows PowerShell usa: Copy-Item .env.example .env
 cp .env.example .env
 php artisan key:generate
 
@@ -35,13 +36,28 @@ php artisan key:generate
 php artisan migrate
 php artisan db:seed
 
-# 6. Crear carpeta de almacenamiento de sesiones
+# 6. Crear el enlace de almacenamiento público
 php artisan storage:link
+
+# 7. Volver a la raíz del proyecto
+cd ..
 ```
 
-### Configurar correos (SMTP)
+La plantilla `laravel-backend/.env.example` está preparada para desarrollo local:
+usa MySQL en `127.0.0.1:3306`, frontend en `http://localhost:4200` y API en
+`http://localhost:8000`. Después de copiarla a `.env`, ajusta únicamente los datos de
+la base de datos si tu instalación es diferente. `APP_KEY` se genera con
+`php artisan key:generate` y no debe compartirse.
 
-En `laravel-backend/.env`:
+La plantilla usa `SESSION_DRIVER=database`, `CACHE_STORE=database` y
+`QUEUE_CONNECTION=database`; por eso debes ejecutar `php artisan migrate` antes de iniciar
+la aplicación. Redis y AWS son opcionales y pueden permanecer sin configurar.
+
+### Configurar correos
+
+Para desarrollo, la plantilla usa `MAIL_MAILER=log`; los mensajes quedan registrados en
+`laravel-backend/storage/logs/laravel.log`. Para enviar correos reales, cambia estas variables
+en `laravel-backend/.env`:
 
 ```bash
 MAIL_MAILER=smtp
@@ -56,30 +72,36 @@ MAIL_FROM_ADDRESS=tu_correo@gmail.com
 ## ▶️ Ejecución
 
 ```bash
-# Terminal 1: Angular Frontend (puerto 4200)
+# Desde la raíz del proyecto: inicia Angular y Laravel juntos
 npm start
-
-# Terminal 2: Laravel Backend (puerto 3000)
-cd laravel-backend
-php artisan serve --port=3000
 ```
 
 **Acceso a la aplicación:**
 - Frontend: `http://localhost:4200`
-- API Backend: `http://localhost:3000/api`
+- API Backend: `http://localhost:8000/api`
+
+Para iniciarlos por separado:
+
+```bash
+# Terminal 1, desde la raíz
+npm run start:frontend
+
+# Terminal 2, desde la raíz
+npm run start:backend
+```
 
 ## 🔑 Roles y Funcionalidades
 
 | Rol | Funcionalidades |
-| --- | --- |
+|    |    |
 | **Docente** | Crear reservas, ver historial de préstamos, editar perfil |
-| **Técnico** | Gestionar inventario, registrar mantenimientos, ver reservas |
-| **Gerente** | Administrar usuarios, inventario, reservas, mantenimientos, generar reportes |
+| **Técnico** | Gestionar inventario, registrar mantenimiento, ver reservas |
+| **Gerente** | Administrar usuarios, inventario, reservas, mantenimiento, generar reportes |
 
 ## 👤 Credenciales de Prueba
 
 | Documento | Nombre | Rol | Contraseña |
-| --- | --- | --- | --- |
+|    |    |    |    |
 | 1234567890 | Juan Diego Medina | Docente | 123456 |
 | 1234567893 | Juan Camilo Aguirre | Técnico | 123456 |
 | 1234567895 | Maria Garcia | Gerente | 123456 |
@@ -116,4 +138,4 @@ php artisan serve --port=3000
 
 Proyecto académico para SENA - Sistema Integrado de Gestión
 
----
+  

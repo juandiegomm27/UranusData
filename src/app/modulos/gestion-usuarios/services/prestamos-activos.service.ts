@@ -40,7 +40,7 @@ export interface PrestamosResponse {
   providedIn: 'root'
 })
 export class PrestamosActivosService {
-  private baseUrl = `${environment.apiUrl}/gestion/usuarios/prestamos-activos`;
+  private baseUrl = `${environment.apiUrl}/gestion/usuario/prestamos-activos`;
 
   constructor(private http: HttpClient) {}
 
@@ -74,12 +74,51 @@ export class PrestamosActivosService {
   }
 
   /**
-   * Descargar préstamos como Excel o PDF (opcional para futuro)
+   * Obtener detalles de un préstamo específico
+   */
+  obtenerDetallePrestamo(idReserva: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${idReserva}`);
+  }
+
+  /**
+   * Actualizar estado de un préstamo
+   * Estados: 1=Solicitado, 2=Entregado, 3=Devuelto, 4=Perdido, 5=Dañado
+   */
+  actualizarEstadoPrestamo(
+    idReserva: number,
+    nuevoEstado: number,
+    observaciones?: string
+  ): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/${idReserva}`,
+      {
+        cod_estado_prestamo: nuevoEstado,
+        observaciones: observaciones || null
+      }
+    );
+  }
+
+  /**
+   * Descargar préstamos como Excel o PDF
    */
   exportarPrestamos(formato: 'excel' | 'pdf'): Observable<Blob> {
     return this.http.get(
       `${this.baseUrl}/exportar?formato=${formato}`,
       { responseType: 'blob' }
     );
+  }
+
+  /**
+   * Marcar préstamo como entregado
+   */
+  marcarComoEntregado(idReserva: number): Observable<any> {
+    return this.actualizarEstadoPrestamo(idReserva, 2, 'Entregado por sistema');
+  }
+
+  /**
+   * Marcar préstamo como devuelto
+   */
+  marcarComoDevuelto(idReserva: number): Observable<any> {
+    return this.actualizarEstadoPrestamo(idReserva, 3, 'Devuelto por sistema');
   }
 }

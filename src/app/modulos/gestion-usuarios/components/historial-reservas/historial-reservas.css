@@ -82,9 +82,9 @@
   padding: 24px;
 }
 
-/*   FILTROS DE RESERVAS   */
+/*   FILTROS DE reserva   */
 
-.filtros-reservas {
+.filtros-reserva {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
@@ -153,7 +153,7 @@
   background-color: #5a6268;
 }
 
-/*   TABLA DE RESERVAS   */
+/*   TABLA DE reserva   */
 
 .cargando {
   text-align: center;
@@ -162,7 +162,7 @@
   font-size: 14px;
 }
 
-.sin-reservas {
+.sin-reserva {
   text-align: center;
   color: #999;
   padding: 30px;
@@ -172,25 +172,25 @@
   margin-bottom: 15px;
 }
 
-.tabla-reservas-wrapper {
+.tabla-reserva-wrapper {
   overflow-x: auto;
   margin-bottom: 15px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
 }
 
-.tabla-reservas {
+.tabla-reserva {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 
-.tabla-reservas thead {
+.tabla-reserva thead {
   background-color: #e8f4f8;
   border-bottom: 2px solid #1C74A0;
 }
 
-.tabla-reservas th {
+.tabla-reserva th {
   padding: 12px;
   text-align: left;
   font-weight: 700;
@@ -200,17 +200,17 @@
   letter-spacing: 0.5px;
 }
 
-.tabla-reservas td {
+.tabla-reserva td {
   padding: 10px 12px;
   border-bottom: 1px solid #e0e0e0;
   color: #333;
 }
 
-.tabla-reservas tbody tr {
+.tabla-reserva tbody tr {
   transition: background-color 0.2s;
 }
 
-.tabla-reservas tbody tr:hover {
+.tabla-reserva tbody tr:hover {
   background-color: #f9f9f9;
 }
 
@@ -242,7 +242,7 @@
 
 /*   PAGINACIÓN   */
 
-.paginacion-reservas {
+.paginacion-reserva {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -316,7 +316,7 @@
   background: linear-gradient(135deg, #FF9F13 0%, #e08b0f 100%);
 }
 
-:host-context(body.dark-mode) .filtros-reservas {
+:host-context(body.dark-mode) .filtros-reserva {
   background: #2a2a2a;
 }
 
@@ -327,34 +327,34 @@
   color: #e0e0e0;
 }
 
-:host-context(body.dark-mode) .tabla-reservas-wrapper {
+:host-context(body.dark-mode) .tabla-reserva-wrapper {
   border-color: #333;
 }
 
-:host-context(body.dark-mode) .tabla-reservas thead {
+:host-context(body.dark-mode) .tabla-reserva thead {
   background-color: #2a3a4a;
   border-bottom-color: #FF9F13;
 }
 
-:host-context(body.dark-mode) .tabla-reservas th {
+:host-context(body.dark-mode) .tabla-reserva th {
   color: #FF9F13;
 }
 
-:host-context(body.dark-mode) .tabla-reservas td {
+:host-context(body.dark-mode) .tabla-reserva td {
   color: #e0e0e0;
   border-bottom-color: #333;
 }
 
-:host-context(body.dark-mode) .tabla-reservas tbody tr:hover {
+:host-context(body.dark-mode) .tabla-reserva tbody tr:hover {
   background-color: #2a2a2a;
 }
 
-:host-context(body.dark-mode) .sin-reservas {
+:host-context(body.dark-mode) .sin-reserva {
   background: #2a2a2a;
   color: #999;
 }
 
-:host-context(body.dark-mode) .paginacion-reservas {
+:host-context(body.dark-mode) .paginacion-reserva {
   background: #2a2a2a;
 }
 
@@ -391,17 +391,17 @@
     max-height: calc(100vh - 20px);
   }
 
-  .filtros-reservas {
+  .filtros-reserva {
     grid-template-columns: 1fr;
   }
 
-  .tabla-reservas th,
-  .tabla-reservas td {
+  .tabla-reserva th,
+  .tabla-reserva td {
     padding: 8px;
     font-size: 12px;
   }
 
-  .paginacion-reservas {
+  .paginacion-reserva {
     flex-direction: column;
     gap: 8px;
   }

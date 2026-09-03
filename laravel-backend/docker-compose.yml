@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: uranusdata-app
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=uranusdata
+      - DB_USERNAME=uranusdata_user
+      - DB_PASSWORD=uranusdata_password
+    depends_on:
+      - mysql
+    networks:
+      - uranusdata
+
+  mysql:
+    image: mysql:8.0
+    container_name: uranusdata-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uranusdata
+      MYSQL_USER: uranusdata_user
+      MYSQL_PASSWORD: uranusdata_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - uranusdata
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: uranusdata-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: uranusdata_user
+      PMA_PASSWORD: uranusdata_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - uranusdata
+
+volumes:
+  mysql_data:
+
+networks:
+  uranusdata:
+    driver: bridge

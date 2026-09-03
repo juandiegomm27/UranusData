@@ -1,105 +1,70 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
-
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
-
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
-.history/*
-
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
-.env
-
-# System files
-.DS_Store
-Thumbs.db
-
-#LARAVEL
+# Dependencies
+node_modules/
+laravel-backend/node_modules/
 laravel-backend/vendor/
-laravel-backend/.env
-laravel-backend/.env.local
-laravel-backend/.env.*.local
+
+# Angular and build output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+coverage/
+typings/
+__screenshots__/
+
+# Laravel generated files
 laravel-backend/storage/
 laravel-backend/bootstrap/cache/
-laravel-backend/node_modules/
-laravel-backend/npm-debug.log
-laravel-backend/yarn-error.log
+laravel-backend/public/build/
+laravel-backend/public/hot
+laravel-backend/.phpunit.result.cache
+laravel-backend/.phpunit.cache/
+laravel-backend/database/dumps/*.sql
 
-#ANGULAR 
-node_modules/
-dist/
-.angular/
-npm-debug.log
-yarn-error.log
-
-# GENERAL
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/settings.json
-.idea/
-*.log
-
-# ARCHIVOS SENSIBLES 
-*.pem
-*.key
-.env.example
-
-# TEMPORAL
-.tmp/
-temp/
-
-# Entornos locales
+# Environment and local databases
 .env
 .env.*
 !.env.example
 laravel-backend/.env
 laravel-backend/.env.*
 !laravel-backend/.env.example
-
-# Dumps de base de datos locales
-laravel-backend/database/dumps/*.sql
-
-# Laravel generado
-laravel-backend/public/build/
-laravel-backend/public/hot
-laravel-backend/.phpunit.result.cache
-laravel-backend/.phpunit.cache/
-
-# Bases de datos locales
 *.sqlite
 *.sqlite-journal
 
-# Logs
+# Logs and package-manager output
 *.log
+npm-debug.log
+yarn-error.log
+
+# IDEs and operating-system files
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/
+.project
+.classpath
+.c9/
+.settings/
+*.launch
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Temporary files and sensitive keys
+.sass-cache/
+.tmp/
+temp/
+connect.lock
+libpeerconnection.log
+testem.log
+*.pem
+*.key

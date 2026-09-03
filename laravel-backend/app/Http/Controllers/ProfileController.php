@@ -3,116 +3,115 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
-use App\Models\Correo;
-use App\Models\Telefono;
-use App\Mail\NotificationMail;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB; 
-use App\Models\VIngresoLogin;
-use App\Models\VUsuariosCompletos;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class ProfileController extends Controller
 {
-    public function getProfile($documento){
-        $usuario = VUsuariosCompletos::find($documento);
+    use ApiResponse;
+
+    //GET /perfil/{documento}
+    public function obtenerPerfil($documento)
+    {
+        $usuario = Usuario::with(['rol', 'estado', 'correos', 'telefonos'])
+            ->where('documento', $documento)
+            ->first();
 
         if (!$usuario) {
-            return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
+            return $this->notFoundResponse('Usuario');
         }
 
-        return response()->json([
-            'status' => 'success',
-            'usuario' => [
-                'documento' => $usuario->documento,
-                'nombre' => $usuario->nombre,
-                'apellido' => $usuario->apellido,
-                'rol' => $usuario->rol,
-                'correo' => $usuario->correo ?? '',
-                'telefono' => $usuario->telefono ?? '',
-                'estado' => $usuario->estado_usuario
-            ]
-        ]);
+        return $this->successResponse(
+            $usuario,
+            'Perfil obtenido correctamente'
+        );
     }
 
-    public function updateProfile(Request $request, $documento)
+///PUT /perfil/{documento}
+    public function actualizarPerfil(Request $request, $documento)
     {
-        $usuario = Usuario::find($documento);
-
+        $usuario = Usuario::where('documento', $documento)->first();
         if (!$usuario) {
-            return response()->json(['status' => 'error', 'mensaje' => 'Usuario no encontrado'], 404);
+            return $this->notFoundResponse('Usuario');
         }
 
-        $validated = $request->validate([
-            'nombre' => 'required|string',
-            'apellido' => 'required|string',
-            'correo' => 'email|unique:correo,correo',
-            'telefono' => 'nullable|string|max:15',
-            'password' => 'nullable|string'
+        $rolUsuario = $request->user()->rol?->cargo;
+        if ($request->user()->documento !== $documento && $rolUsuario !== 'Gerente') { 
+            return $this->forbiddenResponse('No puedes editar el perfil de otro usuario');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'documento' => 'sometimes|string|digits:10|unique:usuario,documento,' . $usuario->documento . ',documento',
+            'nombre' => 'sometimes|string|regex:/^[a-zA-Z áéíóúÁÉÍÓÚñÑ\s]+$/u',
+            'apellido' => 'sometimes|string|regex:/^[a-zA-Z áéíóúÁÉÍÓÚñÑ\s]+$/u',
+            'correo' => 'sometimes|email',
+            'telefono' => 'sometimes|string|regex:/^\d{10,15}$/',
+            'password' => 'nullable|string|min:6'
         ]);
 
-        $usuario->update([
-            'nombre' => $validated['nombre'],
-            'apellido' => $validated['apellido']
-        ]);
-
-        if ($validated['password'] ?? null) {
-            $usuario->password = Hash::make($validated['password']);
-            $usuario->save();
+        if ($validator->fails()) {
+            return $this->errorResponse('Validación fallida', 422, $validator->errors());
         }
 
-        if (!empty($validated['correo'])) {
-            $correoExistente = Correo::where('documento', $documento)->first();
-            if ($correoExistente) {
-                $correoExistente->update(['correo' => $validated['correo']]);
-            } else {
-                Correo::create([
-                    'correo' => $validated['correo'],
-                    'documento' => $documento
-                ]);
-            }
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($request, $usuario) {
+                
+                if ($request->filled('documento') && $request->documento !== $usuario->documento) {
+                    $nuevoDoc = $request->documento;
+                    $viejoDoc = $usuario->documento;
+
+                    Schema::disableForeignKeyConstraints();
+
+                    DB::table('correo')->where('documento', $viejoDoc)->update(['documento' => $nuevoDoc]);
+                    DB::table('telefono')->where('documento', $viejoDoc)->update(['documento' => $nuevoDoc]);
+                    DB::table('mantenimiento')->where('documento', $viejoDoc)->update(['documento' => $nuevoDoc]);
+                    DB::table('reserva')->where('documento', $viejoDoc)->update(['documento' => $nuevoDoc]);
+                    DB::table('password_reset_tokens')->where('documento', $viejoDoc)->update(['documento' => $nuevoDoc]);
+
+                    $usuario->documento = $nuevoDoc;
+                    
+                    Schema::enableForeignKeyConstraints();
+                }
+
+                if ($request->filled('nombre')) {
+                    $usuario->nombre = $request->nombre;
+                }
+                if ($request->filled('apellido')) {
+                    $usuario->apellido = $request->apellido;
+                }
+                if ($request->filled('password')) {
+                    $usuario->password = bcrypt($request->password);
+                }
+                
+                $usuario->save();
+
+                if ($request->filled('correo')) {
+                    $usuario->correos()->updateOrCreate(
+                        ['documento' => $usuario->documento],
+                        ['correo' => $request->correo]
+                    );
+                }
+
+                if ($request->filled('telefono')) {
+                    $usuario->telefonos()->updateOrCreate(
+                        ['documento' => $usuario->documento],
+                        ['telefono' => $request->telefono]
+                    );
+                }
+            });
+
+            return $this->successResponse(
+                $usuario->load(['correos', 'telefonos']),
+                'Perfil actualizado correctamente'
+            );
+        } catch (\Exception $e) {
+            Schema::enableForeignKeyConstraints();
+            Log::error('Error al actualizar perfil: ' . $e->getMessage());
+            return $this->errorResponse('Error interno al actualizar el perfil', 500);
         }
-
-        if (!empty($validated['telefono'])) {
-            $telefonoExistente = Telefono::where('documento', $documento)->first();
-            if ($telefonoExistente) {
-                $telefonoExistente->update(['telefono' => $validated['telefono']]);
-            } else {
-                Telefono::create([
-                    'telefono' => $validated['telefono'],
-                    'documento' => $documento
-                ]);
-            }
-        }
-
-        $usuarioActualizado = Usuario::with('rol', 'correos', 'telefonos')->find($documento);
-        $correoUsuario = $usuarioActualizado->correos->first()?->correo;
-
-        if ($correoUsuario) {
-            Mail::to($correoUsuario)->send(new NotificationMail(
-                'profile_update',
-                [
-                    'nombre' => $usuarioActualizado->nombre,
-                    'apellido' => $usuarioActualizado->apellido,
-                    'correo' => $correoUsuario,
-                    'telefono' => $usuarioActualizado->telefonos->first()?->telefono,
-                    'rol' => $usuarioActualizado->rol->cargo
-                ]
-            ));
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'mensaje' => 'Perfil actualizado correctamente',
-            'usuario' => [
-                'documento' => $usuarioActualizado->documento,
-                'nombre' => $usuarioActualizado->nombre,
-                'apellido' => $usuarioActualizado->apellido,
-                'rol' => $usuarioActualizado->rol->cargo,
-                'correo' => $correoUsuario,
-                'telefono' => $usuarioActualizado->telefonos->first()?->telefono,
-            ]
-        ]);
     }
 }

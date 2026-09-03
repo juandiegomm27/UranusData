@@ -1,43 +1,44 @@
 <main class="auth-section">
-  <div class="auth-card" style="max-width: 700px; text-align: left;">
+  <div class="perfil-card">
     
-    <div class="brand-badge" style="text-align: center; margin-bottom: 20px;">
+    <div class="brand-badge">
       <img src="logo-nada.svg" alt="Logo" class="badge-img">
     </div>
-
-    <h1 class="auth-title" style="text-align: center;">
-      Mi Información
-    </h1>
+    
+    <h1 class="auth-title">Mi Información</h1>
 
     <!-- Foto de Perfil -->
-    <div style="text-align: center; margin: 25px 0;">
-      <img 
-        [src]="obtenerUrlGravatar()" 
-        alt="Foto de Perfil" 
-        class="profile-avatar"
-        style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #1C74A0;">
-      <p style="font-size: 12px; color: #999999; margin-top: 8px;">
-        Foto de perfil vía Gravatar
-      </p>
+    <div class="avatar-container">
+      <img src="icon-usuario.svg" alt="Foto de Perfil" class="profile-avatar">
+      <p class="avatar-text">Imagen de perfil predeterminada</p>
     </div>
 
-    <!-- Mensaje de Éxito -->
+    <!-- Mensaje de éxito -->
     @if (mostrarMensajeExito) {
-      <div style="
-        background: #d4edda; 
-        border: 1px solid #c3e6cb; 
-        color: #155724; 
-        padding: 12px; 
-        border-radius: 6px; 
-        margin-bottom: 20px;
-      ">
-        ✓ {{ mensajeExito }}
+      <div class="alert-success">
+        {{ mensajeExito }}
       </div>
     }
 
     <!-- Formulario -->
     <form class="auth-form" [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
       
+      <!-- Documento -->
+      <div class="form-group">
+        <label for="documento" class="form-label">Documento</label>
+        <input 
+          type="text" 
+          id="documento" 
+          formControlName="documento" 
+          class="form-input" 
+          placeholder="Tu documento de identidad"
+          [class.input-error]="perfilForm.get('documento')?.invalid && perfilForm.get('documento')?.touched"
+        >
+        @if (perfilForm.get('documento')?.invalid && perfilForm.get('documento')?.touched) {
+          <small class="error-msg">Documento es requerido (solo números)</small>
+        }
+      </div>
+
       <!-- Nombre -->
       <div class="form-group">
         <label for="nombre" class="form-label">Primer Nombre</label>
@@ -88,7 +89,7 @@
 
       <!-- Teléfono -->
       <div class="form-group">
-        <label for="telefono" class="form-label">Teléfono (Opcional)</label>
+        <label for="telefono" class="form-label">Teléfono</label>
         <input 
           type="text" 
           id="telefono" 
@@ -102,11 +103,9 @@
         }
       </div>
 
-      <!-- Separador -->
-      <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0e0e0;">
-      <p style="font-size: 12px; color: #999999; margin-bottom: 15px;">
-        Déjalo en blanco si no deseas cambiar tu contraseña
-      </p>
+      <!-- Separador de Zona Sensible -->
+      <hr class="divider">
+      <p class="info-text">Déjalo en blanco si no deseas cambiar tu contraseña.</p>
 
       <!-- Nueva Contraseña -->
       <div class="form-group">
@@ -141,39 +140,26 @@
           <small class="error-msg">Las contraseñas no coinciden</small>
         }
 
-        <!-- Checkbox mostrar contraseña -->
         <label class="show-password-label">
           <input 
             type="checkbox" 
-            class="form-checkbox" 
             #togglePass 
             (change)="passInput.type = confirmPassInput.type = togglePass.checked ? 'text' : 'password'"
           >
-          <span class="custom-checkbox"></span>
-          <span class="checkbox-text-secondary">Mostrar contraseñas</span>
+          <span>Mostrar contraseñas</span>
         </label>
       </div>
 
       <!-- Botones -->
-      <div style="display: flex; gap: 10px; margin-top: 25px;">
-        <button 
-          type="submit" 
-          class="btn-submit"
-          [disabled]="cargando"
-          style="flex: 1;">
+      <div class="botones-container">
+        <button type="submit" class="btn-submit" [disabled]="cargando">
           {{ cargando ? 'Guardando...' : 'Guardar Cambios' }}
         </button>
-        <button 
-          type="button" 
-          class="btn-submit"
-          (click)="regresar()"
-          style="flex: 1; background-color: #6c757d;"
-          [disabled]="cargando">
+        <button type="button" class="btn-submit btn-cancel" (click)="regresar()" [disabled]="cargando">
           Cancelar
         </button>
       </div>
       
     </form>
-
   </div>
 </main>

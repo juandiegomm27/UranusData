@@ -1,5 +1,4 @@
-import { Output, EventEmitter } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
+import { Output, EventEmitter, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,45 +18,41 @@ export class CrearUsuario implements OnInit {
   telefono: string = '';
   correo: string = '';
   cod_rol: number = 1;
-  password: string = '';
-  confirmPassword: string = '';
+  rol: any[] = [];
 
-  roles: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
+  
   cargando: boolean = false;
   mensaje: string = '';
   tipoMensaje: 'success' | 'error' = 'success';
 
   constructor(
     private usuarioGestorService: UsuarioGestorService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit(): void {
-    this.cargarRoles();
+    this.cargarrol();
   }
 
-  cargarRoles(): void {
-    this.usuarioGestorService.getRoles()
-      .then((response: any) => {
-        if (response.status === 'success') {
-          this.roles = response.data;
+  cargarrol(): void {
+    this.usuarioGestorService.getrol().subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.rol = response.data;
+          this.cdr.detectChanges(); 
         }
-      })
-      .catch((error: any) => {
-        console.error('Error cargando roles:', error);
-      });
+      },
+      error: (error: any) => {
+        console.error('Error cargando rol:', error);
+      }
+    });
   }
 
   crearUsuario(): void {
-    // Validaciones
-    if (!this.documento || !this.nombre || !this.apellido || !this.telefono || !this.correo || !this.password) {
+    if (!this.documento || !this.nombre || !this.apellido || !this.telefono || !this.correo) {
       this.mostrarMensaje('Todos los campos son requeridos', 'error');
-      return;
-    }
-
-    if (this.password !== this.confirmPassword) {
-      this.mostrarMensaje('Las contraseñas no coinciden', 'error');
       return;
     }
 
@@ -67,32 +62,53 @@ export class CrearUsuario implements OnInit {
     }
 
     this.cargando = true;
-
+    
     const datos = {
       documento: this.documento,
       nombre: this.nombre,
       apellido: this.apellido,
       cod_rol: Number(this.cod_rol), 
-      password: this.password,
       telefono: this.telefono,
       correo: this.correo,
     };
 
-    this.usuarioGestorService.crearUsuario(datos)
-      .then((response: any) => {
+    this.usuarioGestorService.crearUsuario(datos).subscribe({
+      next: (response: any) => {
         this.cargando = false;
-        if (response.status === 'success') {
-          this.mostrarMensaje('Usuario creado exitosamente. Se envió correo de verificación.', 'success');
+        if (response.success) {
+          this.mostrarMensaje('Usuario creado exitosamente. Estado: Inactivo.', 'success');
+          this.cdr.detectChanges(); 
           setTimeout(() => {
             this.cerrar.emit();
-            this.router.navigate(['/modulos/gestion-usuarios']);
-          }, 1000);
+          }, 1500);
         }
-      })
-      .catch((error: any) => {
+      },
+      error: (err: any) => {
+        console.log('Error recibido del servidor:', err); 
+        
         this.cargando = false;
-        this.mostrarMensaje('Error al crear usuario: ' + (error.message || 'Intenta nuevamente'), 'error');
-      });
+
+          if (err.status === 422 && err.error && err.error.errors) {
+            const validaciones = err.error.errors;
+            
+            if (validaciones.documento) {
+              this.mostrarMensaje('Error: Este documento ya está registrado.', 'error');
+            } else if (validaciones.correo) {
+              this.mostrarMensaje('Error: Este correo electrónico ya está en uso.', 'error');
+            } else if (validaciones.telefono) { 
+              this.mostrarMensaje('Error: Este número de teléfono ya está registrado.', 'error');
+            } else {
+              this.mostrarMensaje('Error de validación en los datos.', 'error');
+            }
+          } else {
+            this.mostrarMensaje('Ocurrió un error inesperado. Verifica los datos o contacta a soporte técnico.', 'error');
+          }
+        
+          this.cdr.detectChanges();
+        
+          this.cdr.detectChanges(); 
+        }
+    });
   }
 
   limpiarFormulario(): void {
@@ -101,10 +117,9 @@ export class CrearUsuario implements OnInit {
     this.apellido = '';
     this.telefono = '';
     this.correo = '';
-    this.password = '';
-    this.confirmPassword = '';
     this.cod_rol = 1;
     this.mensaje = '';
+    this.cdr.detectChanges();
   }
 
   volver(): void {
@@ -114,8 +129,11 @@ export class CrearUsuario implements OnInit {
   mostrarMensaje(texto: string, tipo: 'success' | 'error'): void {
     this.mensaje = texto;
     this.tipoMensaje = tipo;
+    this.cdr.detectChanges(); 
+    
     setTimeout(() => {
       this.mensaje = '';
-    }, 3000);
+      this.cdr.detectChanges();
+    }, 5000);
   }
 }

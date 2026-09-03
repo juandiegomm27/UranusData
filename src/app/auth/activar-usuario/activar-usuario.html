@@ -11,10 +11,11 @@
       {{ pasoActual === 1 ? 'Activar Cuenta' : 'Establecer Nueva Contraseña' }}
     </h1>
 
-    <!-- Alertas de Error o Mensajes de Bloqueo -->
+    <!-- Alertas de Error usando el estilo global limpio -->
     @if (mensajeError) {
-      <div class="error-msg text-center" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e63946; border-radius: 6px; background-color: rgba(230, 57, 70, 0.1);">
-        {{ mensajeError }}
+      <div class="global-error-msg">
+        <img src="/icons/alerta.svg" alt="Alerta" class="error-icon">
+        <span>{{ mensajeError }}</span>
       </div>
     }
 
@@ -24,12 +25,9 @@
         <div class="form-group">
           <label for="primerNombre" class="form-label">Nombre</label>
           <input 
-            type="text" 
-            id="primerNombre" 
-            formControlName="primerNombre" 
-            class="form-input" 
-            placeholder="Primer nombre"
-            [class.input-error]="datosForm.get('primerNombre')?.invalid && datosForm.get('primerNombre')?.touched"
+             type="text" id="primerNombre" formControlName="primerNombre" 
+             class="form-input" placeholder="Primer nombre"
+             [class.input-error]="datosForm.get('primerNombre')?.invalid && datosForm.get('primerNombre')?.touched"
           >
           @if (datosForm.get('primerNombre')?.invalid && datosForm.get('primerNombre')?.touched) {
             <small class="error-msg">Ingresa un nombre válido (solo letras).</small>
@@ -39,12 +37,9 @@
         <div class="form-group">
           <label for="apellidos" class="form-label">Apellidos</label>
           <input 
-            type="text" 
-            id="apellidos" 
-            formControlName="apellidos" 
-            class="form-input" 
-            placeholder="Apellidos completos"
-            [class.input-error]="datosForm.get('apellidos')?.invalid && datosForm.get('apellidos')?.touched"
+             type="text" id="apellidos" formControlName="apellidos" 
+             class="form-input" placeholder="Apellidos completos"
+             [class.input-error]="datosForm.get('apellidos')?.invalid && datosForm.get('apellidos')?.touched"
           >
           @if (datosForm.get('apellidos')?.invalid && datosForm.get('apellidos')?.touched) {
             <small class="error-msg">Ingresa apellidos válidos (solo letras).</small>
@@ -54,12 +49,9 @@
         <div class="form-group">
           <label for="documento" class="form-label">Documento</label>
           <input 
-            type="text" 
-            id="documento" 
-            formControlName="documento" 
-            class="form-input" 
-            placeholder="Número de documento"
-            [class.input-error]="datosForm.get('documento')?.invalid && datosForm.get('documento')?.touched"
+             type="text" id="documento" formControlName="documento" 
+             class="form-input" placeholder="Número de documento"
+             [class.input-error]="datosForm.get('documento')?.invalid && datosForm.get('documento')?.touched"
           >
           @if (datosForm.get('documento')?.invalid && datosForm.get('documento')?.touched) {
             <small class="error-msg">Ingresa un número de documento válido.</small>
@@ -69,19 +61,16 @@
         <div class="form-group">
           <label for="correo" class="form-label">Correo Electrónico</label>
           <input 
-            type="email" 
-            id="correo" 
-            formControlName="correo" 
-            class="form-input" 
-            placeholder="ejemplo@correo.com"
-            [class.input-error]="datosForm.get('correo')?.invalid && datosForm.get('correo')?.touched"
+             type="email" id="correo" formControlName="correo" 
+             class="form-input" placeholder="ejemplo@correo.com"
+             [class.input-error]="datosForm.get('correo')?.invalid && datosForm.get('correo')?.touched"
           >
           @if (datosForm.get('correo')?.invalid && datosForm.get('correo')?.touched) {
             <small class="error-msg">Formato de correo no válido.</small>
           }
         </div>
 
-        <!-- Selector Desplegable de Rol (Debajo de los datos) -->
+        <!-- Selector Desplegable de Rol -->
         <div class="form-group">
           <label for="rol" class="form-label">Rol del Usuario</label>
           <select id="rol" formControlName="rol" class="form-input">
@@ -94,11 +83,10 @@
           }
         </div>
 
-        <!-- Botón de Siguiente / Validar -->
-        <button type="submit" class="btn-submit" [disabled]="cargando" style="margin-top: 15px;">
+        <!-- Botón usando la clase mt-15 en lugar de style -->
+        <button type="submit" class="btn-submit mt-15" [disabled]="cargando">
           {{ cargando ? 'Validando...' : 'Validar Datos' }}
         </button>
-
       </form>
     }
 
@@ -106,34 +94,24 @@
     @if (pasoActual === 2) {
       <form class="auth-form" [formGroup]="passwordForm" (ngSubmit)="confirmarActivacion()">
         
-        <!-- Nueva Contraseña -->
         <div class="form-group">
           <label for="password" class="form-label">Nueva Contraseña</label>
           <input 
-            #passInput
-            type="password" 
-            id="password" 
-            formControlName="password" 
-            class="form-input" 
-            placeholder="Mínimo 6 caracteres"
-            [class.input-error]="passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched"
+             #passInput type="password" id="password" formControlName="password" 
+             class="form-input" placeholder="Mínimo 6 caracteres"
+             [class.input-error]="passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched"
           >
           @if (passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched) {
             <small class="error-msg">La contraseña debe tener al menos 6 caracteres.</small>
           }
         </div>
 
-        <!-- Confirmar Contraseña -->
         <div class="form-group">
           <label for="verificarPassword" class="form-label">Confirmar Nueva Contraseña</label>
           <input 
-            #confirmPassInput
-            type="password" 
-            id="verificarPassword" 
-            formControlName="verificarPassword" 
-            class="form-input" 
-            placeholder="Repite la contraseña"
-            [class.input-error]="(passwordForm.get('verificarPassword')?.invalid || passwordForm.hasError('mismatch')) && passwordForm.get('verificarPassword')?.touched"
+             #confirmPassInput type="password" id="verificarPassword" formControlName="verificarPassword" 
+             class="form-input" placeholder="Repite la contraseña"
+             [class.input-error]="(passwordForm.get('verificarPassword')?.invalid || passwordForm.hasError('mismatch')) && passwordForm.get('verificarPassword')?.touched"
           >
           @if (passwordForm.get('verificarPassword')?.touched) {
             @if (passwordForm.get('verificarPassword')?.hasError('required')) {
@@ -142,30 +120,26 @@
               <small class="error-msg">Las contraseñas no coinciden.</small>
             }
           }
-
-          <!-- Checkbox Mostrar Contraseñas -->
+          
           <label class="show-password-label">
             <input 
-              type="checkbox" 
-              class="form-checkbox" 
-              #togglePass 
-              (change)="passInput.type = confirmPassInput.type = togglePass.checked ? 'text' : 'password'"
+               type="checkbox" class="form-checkbox" #togglePass 
+               (change)="passInput.type = confirmPassInput.type = togglePass.checked ? 'text' : 'password'"
             >
             <span class="custom-checkbox"></span>
             <span class="checkbox-text-secondary">Mostrar contraseñas</span>
           </label>
         </div>
 
-        <div style="display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 15px;">
-          <button type="button" class="btn-submit" (click)="volverPasoUno()" style="background-color: #6c757d;">
+        <!-- Usando .auth-actions-row y .btn-secondary en lugar de styles en línea -->
+        <div class="auth-actions-row">
+          <button type="button" class="btn-submit btn-secondary" (click)="volverPasoUno()">
             Volver
           </button>
-
           <button type="submit" class="btn-submit" [disabled]="cargando">
             {{ cargando ? 'Guardando...' : 'Activar Cuenta' }}
           </button>
         </div>
-
       </form>
     }
 

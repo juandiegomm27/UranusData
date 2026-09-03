@@ -11,7 +11,7 @@ class UbiElemento extends Model
     public $timestamps = false;
     protected $fillable = ['ubicacion'];
 
-    public function inventarios()
+    public function inventario()
     {
         return $this->hasMany(Inventario::class, 'No_ubicacion', 'cod_ubicacion');
     }

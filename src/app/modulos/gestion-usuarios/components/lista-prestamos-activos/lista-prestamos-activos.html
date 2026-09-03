@@ -68,50 +68,51 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let prestamo of prestamos">
-          <td><strong>#{{ prestamo.id_reserva }}</strong></td>
-          <td>{{ prestamo.documento }}</td>
-          <td>{{ prestamo.nombre }}</td>
-          <td>{{ prestamo.elemento }}</td>
-          <td>{{ prestamo.tipo }}</td>
-          <td>{{ prestamo.cantidad }}</td>
-          <td>{{ prestamo.fecha_inicio | date: 'short' }}</td>
-          <td>
-            <span
-              class="estado-badge"
-              [ngClass]="obtenerClaseEstado(prestamo.cod_estado_prestamo)"
-            >
-              {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
-            </span>
-          </td>
-          <td>
-            <div *ngFor="let estado of prestamo.estado_elementos" style="font-size: 11px">
-              <span class="estado-badge" [ngClass]="'estado-' + estado.estado.toLowerCase()">
-                {{ estado.estado }} ({{ estado.total }})
+        <tbody>
+          <tr *ngFor="let prestamo of prestamos; trackBy: trackByIdReserva">
+            <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+            <td>{{ prestamo.documento }}</td>
+            <td>{{ prestamo.nombre }}</td>
+            <td>{{ prestamo.elemento }}</td>
+            <td>{{ prestamo.tipo }}</td>
+            <td>{{ prestamo.cantidad }}</td>
+            <td>{{ prestamo.fecha_inicio | date: 'short' }}</td>
+            <td>
+              <span
+                class="estado-badge"
+                [ngClass]="obtenerClaseEstado(prestamo.cod_estado_prestamo)"
+              >
+                {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
               </span>
-            </div>
-          </td>
-          <td>
-            <div class="botones-accion-tabla">
-              <button
-                class="btn-icon"
-                title="Ver detalles"
-                (click)="verDetalles(prestamo)"
-              >
-                👁️
-              </button>
-              <button
-                class="btn-icon"
-                title="Entregar préstamo"
-                (click)="entregarPrestamo(prestamo)"
-              >
-                ✅
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
+            </td>
+            <td>
+              <div *ngFor="let estado of prestamo.estado_elementos; trackBy: trackByEstadoElemento" style="font-size: 11px">
+                <span class="estado-badge" [ngClass]="'estado-' + estado.estado.toLowerCase()">
+                  {{ estado.estado }} ({{ estado.total }})
+                </span>
+              </div>
+            </td>
+            <td>
+              <div class="botones-accion-tabla">
+                <button
+                  class="btn-icon btn-ver-detalles"
+                  title="Ver detalles"
+                  (click)="verDetalles(prestamo)"
+                >
+                  👁️ Ver
+                </button>
+                <button
+                  class="btn-icon btn-entregar"
+                  title="Entregar préstamo"
+                  (click)="entregarPrestamo(prestamo)"
+                  [disabled]="prestamo.cod_estado_prestamo !== 1"
+                >
+                  ✅ Entregar
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
     </table>
   </div>
 
@@ -136,4 +137,13 @@
       Siguiente →
     </button>
   </div>
+
+<!-- MODAL DE DETALLES -->
+<app-modal-detalles-prestamo
+  *ngIf="mostrarModal"
+  [prestamo]="prestamoSeleccionado"
+  (cerrarModal)="cerrarModal()"
+  (actualizarPrestamo)="onActualizarPrestamo($event)"
+></app-modal-detalles-prestamo>
+
 </div>

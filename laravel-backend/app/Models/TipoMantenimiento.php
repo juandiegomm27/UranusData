@@ -11,7 +11,7 @@ class TipoMantenimiento extends Model
     public $timestamps = false;
     protected $fillable = ['tipo'];
 
-    public function mantenimientos()
+    public function mantenimiento()
     {
         return $this->hasMany(Mantenimiento::class, 'tipo_cod_tipo', 'cod_tipo');
     }
