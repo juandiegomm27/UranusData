@@ -70,11 +70,10 @@ export class DetalleUsuario {
       next: (response: any) => {
         this.cargando = false;
 
-        if (response?.status === 'success') {
-          this.usuario.cod_estado_usuario = this.estadoSeleccionado;
-          this.editando = false;
-          alert('Estado actualizado exitosamente');
-        }
+        this.usuario.cod_estado_usuario = this.estadoSeleccionado;
+        this.editando = false;
+        alert('Estado actualizado exitosamente');
+        
       },
       error: (error: any) => {
         this.cargando = false;

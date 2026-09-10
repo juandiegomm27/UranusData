@@ -12,7 +12,7 @@ import { AuthService } from '../../core/service/auth.service';
   styleUrls: ['../login/login.css']
 })
 export class RecuperarContrasenaComponent implements OnInit {
-  estado = signal('formulario');
+  estado = signal('solicitud'); 
   correoEnviado = signal<boolean>(false);
   solicitudForm!: FormGroup;
   nuevaPasswordForm!: FormGroup;
@@ -42,6 +42,7 @@ export class RecuperarContrasenaComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['token']) {
         this.token = params['token'];
+        this.estado.set('validando'); 
         this.verificarToken();
       }
     });
@@ -53,15 +54,15 @@ export class RecuperarContrasenaComponent implements OnInit {
       this.error.set('Completa todos los campos correctamente');
       return;
     }
-   
+    
     this.cargando.set(true);
     const documento = this.solicitudForm.get('documento')?.value;
     const correo = this.solicitudForm.get('correo')?.value;
-   
+    
     this.authService.solicitarRecuperacion(documento, correo).subscribe({
       next: (respuesta: any) => {
         console.log('Recuperación solicitada:', respuesta);
-        this.estado.set('enviado');
+        this.estado.set('solicitud'); 
         this.correoEnviado.set(true);
         this.cargando.set(false);
       },
@@ -78,12 +79,13 @@ export class RecuperarContrasenaComponent implements OnInit {
     this.authService.verificarToken(this.token).subscribe({
       next: (respuesta: any) => {
         console.log('Token válido:', respuesta);
-        this.estado.set('password');
+        this.estado.set('formulario'); 
         this.cargando.set(false);
       },
       error: (err: any) => {
         console.error('Error:', err);
         this.error.set('El enlace ha expirado o es inválido');
+        this.estado.set('invalido'); 
         this.cargando.set(false);
       }
     });

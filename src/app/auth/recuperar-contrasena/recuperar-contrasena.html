@@ -48,6 +48,13 @@
             }
           </div>
 
+          <!-- Mostrar mensaje de error si algo falla en Laravel -->
+    @if (error()) {
+      <div style="background-color: #fee2e2; color: #dc2626; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: 500;">
+        {{ error() }}
+      </div>
+    }
+    
           <button type="submit" class="btn-submit mt-15">Enviar Enlace</button>
         </form>
       } @else {

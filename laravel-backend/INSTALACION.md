@@ -121,7 +121,7 @@ MAIL_ENCRYPTION=tls
 curl -X POST http://localhost:8000/api/register \
   -H "Content-Type: application/json" \
   -d '{
-    "rol": 1,
+    "cod_rol": 1,
     "nombre": "Test",
     "apellido": "User",
     "documento": "1234567890",

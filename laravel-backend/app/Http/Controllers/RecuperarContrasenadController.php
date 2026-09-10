@@ -69,13 +69,13 @@ public function solicitarRecuperacion(Request $request)
         'expires_at' => $expiresAt
     ]);
 
-    if ($correo) {
+if ($correo) {
         try {
-            Mail::send(new NotificationMail('recovery-request', [
+            Mail::to($correo->correo)->send(new NotificationMail('recovery-request', [
                 'nombre' => $usuario->nombre,
                 'token' => $token,
                 'subject' => 'Recuperación de Contraseña - UranusData',
-                'enlace' => env('FRONTEND_URL', 'http://localhost:4200') . '/recuperar-contrasena/' . $token
+                'enlace' => env('FRONTEND_URL', 'http://localhost:4200') . '/recuperar-contrasena?token=' . $token
             ]));
         } catch (\Exception $e) {
             Log::error('Error enviando email de recuperación: ' . $e->getMessage());

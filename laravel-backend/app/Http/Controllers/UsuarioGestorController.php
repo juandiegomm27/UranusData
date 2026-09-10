@@ -56,7 +56,7 @@ class UsuarioGestorController extends Controller
      * POST /gestion/usuario
      * Crear nuevo usuario
      */
-public function store(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'documento' => 'required|unique:usuario,documento',
@@ -127,7 +127,50 @@ public function store(Request $request)
             );
         }
     }
+    /**
+     * PUT /gestion/usuario/{documento}
+     * Actualizar datos del usuario (como el estado)
+     */
+    public function update(Request $request, $documento)
+    {
+        // 1. Buscamos al usuario por su documento
+        $usuario = Usuario::where('documento', $documento)->first();
 
+        // 2. Si no existe, devolvemos un error 404
+        if (!$usuario) {
+            return $this->notFoundResponse('Usuario');
+        }
+
+        // 3. Validamos que el estado enviado sea correcto (opcional pero recomendado)
+        $validator = Validator::make($request->all(), [
+            'cod_estado_usuario' => 'sometimes|required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validación fallida', 422, $validator->errors());
+        }
+
+        try {
+            // 4. Actualizamos el estado si viene en la petición
+            if ($request->has('cod_estado_usuario')) {
+                $usuario->cod_estado_usuario = $request->cod_estado_usuario;
+            }
+
+            // Guardamos los cambios en la base de datos
+            $usuario->save();
+
+            // Devolvemos la respuesta de éxito
+            return $this->successResponse(
+                $usuario->load(['rol', 'estado']), 
+                'Usuario actualizado correctamente', 
+                200
+            );
+            
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar usuario: ' . $e->getMessage());
+            return $this->errorResponse('Error interno al actualizar el usuario.', 500);
+        }
+    }
     /**
      * GET /gestion/usuario/estados/list
      * Listar todos los estados disponibles

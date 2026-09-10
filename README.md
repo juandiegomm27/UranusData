@@ -1,12 +1,18 @@
+![Logo de UranusData](public/logo-largo-color.svg)
+
+UranusData es una plataforma centralizada que permite digitalizar y automatizar los procesos de control de inventario. El sistema facilita la trazabilidad de los equipos registrados, gestionando su ciclo de vida a través de módulos especializados para reservas, préstamos y seguimiento de mantenimientos preventivos o correctivos. 
+
+El proyecto está construido bajo una arquitectura separada:
+- **Frontend:** Desarrollado con el framework Angular, encargado de la interfaz gráfica y la experiencia del usuario.
+- **Backend:** Construido con Laravel (PHP), funciona como una API RESTful que procesa la lógica de negocio y gestiona la base de datos MySQL.
 
 ## 🚀 Instalación
 
 ### Requisitos previos
-- Node.js 22.22.3 o superior compatible con Angular 22
-- PHP 8.2+
-- MySQL 8.0+
-- Composer 2+
-- XAMPP es opcional si ya tienes PHP y MySQL disponibles
+- [Node.js 26.8.1](https://nodejs.org/es/download/current)
+- [Composer 2.10.2](https://getcomposer.org/download/)
+- [PHP 8.2.12](https://www.php.net/downloads.php)
+- [XAMPP ](https://www.apachefriends.org/es/index.html)
 
 ### Pasos
 
@@ -26,13 +32,13 @@ cp .env.example .env
 php artisan key:generate
 
 # 4. Configurar base de datos en .env
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=UranusData
-# DB_USERNAME=root
-# DB_PASSWORD=
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=UranusData
+DB_USERNAME=root
+DB_PASSWORD=
 
-# 5. Crear tablas y cargar datos iniciales
+# 5. Crear tablas y cargar datos iniciales (tener encendido XAMPP con Apache y Mysql)
 php artisan migrate
 php artisan db:seed
 
@@ -43,33 +49,32 @@ php artisan storage:link
 cd ..
 ```
 
-La plantilla `laravel-backend/.env.example` está preparada para desarrollo local:
-usa MySQL en `127.0.0.1:3306`, frontend en `http://localhost:4200` y API en
-`http://localhost:8000`. Después de copiarla a `.env`, ajusta únicamente los datos de
-la base de datos si tu instalación es diferente. `APP_KEY` se genera con
-`php artisan key:generate` y no debe compartirse.
 
-La plantilla usa `SESSION_DRIVER=database`, `CACHE_STORE=database` y
-`QUEUE_CONNECTION=database`; por eso debes ejecutar `php artisan migrate` antes de iniciar
-la aplicación. Redis y AWS son opcionales y pueden permanecer sin configurar.
-
-### Configurar correos
-
-Para desarrollo, la plantilla usa `MAIL_MAILER=log`; los mensajes quedan registrados en
-`laravel-backend/storage/logs/laravel.log`. Para enviar correos reales, cambia estas variables
-en `laravel-backend/.env`:
+### Configurar correos (opcional)
 
 ```bash
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=tu_correo@gmail.com
-MAIL_PASSWORD=tu_contraseña_de_aplicacion
+MAIL_USERNAME="tu_correo@gmail.com"
+MAIL_PASSWORD="tu_contraseña_de_aplicacion"
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=tu_correo@gmail.com
+MAIL_FROM_ADDRESS="tu_correo@gmail.com"
+MAIL_FROM_NAME="Soporte UranusData"
+```
+
+Envio de correo
+```bash
+cd .\laravel-backend\
+
+php artisan config:clear
+
+Mail::raw('Prueba exitosa', function($m) { $m->to('correo_destino@gmail.com')->subject('Prueba SMTP'); });
 ```
 
 ## ▶️ Ejecución
+
+Encienda XAMPP con Apache y Mysql
 
 ```bash
 # Desde la raíz del proyecto: inicia Angular y Laravel juntos
@@ -86,22 +91,23 @@ Para iniciarlos por separado:
 # Terminal 1, desde la raíz
 npm run start:frontend
 
+
 # Terminal 2, desde la raíz
 npm run start:backend
 ```
 
 ## 🔑 Roles y Funcionalidades
 
-| Rol | Funcionalidades |
-|    |    |
-| **Docente** | Crear reservas, ver historial de préstamos, editar perfil |
-| **Técnico** | Gestionar inventario, registrar mantenimiento, ver reservas |
-| **Gerente** | Administrar usuarios, inventario, reservas, mantenimiento, generar reportes |
+| Rol | Funcionalidades principales |
+| --- | --- |
+| Docente | Crear, consultar y editar reservas |
+| Técnico | Ver inventario, gestionar reservas y mantenimientos |
+| Gerente | Gestión de usuarios, inventario y mantenimientos |
 
 ## 👤 Credenciales de Prueba
 
 | Documento | Nombre | Rol | Contraseña |
-|    |    |    |    |
+| --- | --- | --- | --- |
 | 1234567890 | Juan Diego Medina | Docente | 123456 |
 | 1234567893 | Juan Camilo Aguirre | Técnico | 123456 |
 | 1234567895 | Maria Garcia | Gerente | 123456 |
@@ -109,14 +115,10 @@ npm run start:backend
 ## 📧 Características
 
 - ✅ Autenticación con hash Bcrypt
-- ✅ Sistema de perfiles de usuario (Gravatar)
 - ✅ Notificaciones por correo
 - ✅ Modo claro/oscuro
-- ✅ Respuestas adaptativas (mobile-first)
 - ✅ Gestión de sesiones
 - ✅ API RESTful con Laravel
-- ✅ Paginación en tablas
-- ✅ Filtrado y búsqueda avanzada
 - ✅ Edición de perfiles con validación
 
 ## 🔐 Seguridad

@@ -61,7 +61,7 @@ Registrar nuevo usuario
 curl -X POST http://localhost:8000/api/register \
   -H "Content-Type: application/json" \
   -d '{
-    "rol": 3,
+    "cod_rol": 3,
     "nombre": "Juan",
     "apellido": "Pérez",
     "documento": "1234567890",
