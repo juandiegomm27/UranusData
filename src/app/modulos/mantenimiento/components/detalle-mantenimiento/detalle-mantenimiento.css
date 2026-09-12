@@ -1,0 +1,172 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-contenido {
+  background: #ffffff;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1C74A0 0%, #155b7f 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.btn-cerrar-modal {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.btn-modal-success {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-modal-primary {
+  background: #ffc107;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-modal-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.seccion-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.seccion-info h3 {
+  font-size: 15px;
+  color: #1C74A0;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+.grid-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.campo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.campo-info label {
+  font-size: 11px;
+  color: #666;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.campo-info span {
+  font-size: 14px;
+  color: #333;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  width: fit-content;
+}
+
+.estado-aprobada { background-color: #d4edda; color: #155724; }
+.estado-pendiente { background-color: #fff3cd; color: #856404; }
+.estado-pausa { background-color: #ffeeba; color: #856404; }
+
+.modulo-form { display: flex; flex-direction: column; gap: 15px; }
+.grupo-campo { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+.grupo-campo label { font-size: 12px; font-weight: 600; color: #333; text-transform: uppercase; }
+.grupo-campo textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 90px; }
+.grupo-campo textarea:focus { border-color: #1C74A0; outline: none; background: #fff; }
+
+.mensaje-alerta {
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.mensaje-success { background: #d4edda; color: #155724; }
+.mensaje-error { background: #f8d7da; color: #721c24; }
+
+/* --- MODO OSCURO --- */
+:host-context(body.dark-mode) .modal-contenido { background: #1e1e1e; color: #e0e0e0; }
+:host-context(body.dark-mode) .modal-header { background: linear-gradient(135deg, #FF9F13 0%, #e08b0f 100%); }
+:host-context(body.dark-mode) .modal-footer { background: #2a2a2a; border-top-color: #333; }
+:host-context(body.dark-mode) .seccion-info { background: #2a2a2a; }
+:host-context(body.dark-mode) .seccion-info h3 { color: #FF9F13; border-bottom-color: #444; }
+:host-context(body.dark-mode) .campo-info label { color: #999; }
+:host-context(body.dark-mode) .campo-info span { color: #e0e0e0; }
+:host-context(body.dark-mode) .grupo-campo label { color: #e0e0e0; }
+:host-context(body.dark-mode) .grupo-campo textarea { background: #333; border-color: #444; color: #e0e0e0; }
+:host-context(body.dark-mode) .grupo-campo textarea:focus { border-color: #FF9F13; }

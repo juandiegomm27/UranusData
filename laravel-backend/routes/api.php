@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UbiElementoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioGestorController;
 use App\Http\Controllers\ReservaUsuarioController;
@@ -41,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/gestion/usuario/prestamos-activos', [UsuarioGestorController::class, 'obtenerPrestamosActivos']);
         Route::put('/gestion/usuario/prestamos-activos/{id}', [UsuarioGestorController::class, 'actualizarEstadoPrestamo']);
         Route::get('/gestion/usuario/prestamos-activos/exportar', [UsuarioGestorController::class, 'exportarPrestamos']);
+        Route::delete('/ubicaciones/{id}', [UbiElementoController::class, 'destroy']);
 
         // Recurso completo (CRUD de usuario)
         Route::apiResource('gestion/usuario', UsuarioGestorController::class);
@@ -51,6 +53,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/mis-reserva', [ReservaUsuarioController::class, 'crearReserva']);
     Route::put('/mis-reserva/{id}', [ReservaUsuarioController::class, 'actualizarReserva']);
     Route::delete('/mis-reserva/{id}', [ReservaUsuarioController::class, 'cancelarReserva']);
+    Route::get('/reservas/estados', [ReservaUsuarioController::class, 'estadosReserva']);
+    Route::get('/reservas/usuario/{documento}', [ReservaUsuarioController::class, 'historialUsuario']);
 
     //   reserva GENERALES (Gerente/Técnico)  
     Route::middleware(['role:Gerente,Técnico'])->group(function () {
@@ -59,15 +63,27 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //   INVENTARIO (Gerente/Técnico)  
     Route::middleware(['role:Gerente,Técnico'])->group(function () {
+        
+        // Rutas específicas unificadas ANTES de apiResource
+        Route::get('/inventario/opciones', [InventarioController::class, 'getOpciones']);
         Route::get('/inventario/elementos-tipo/{tipo}', [InventarioController::class, 'obtenerElementosPorTipo']);
         Route::get('/inventario/exportar', [InventarioController::class, 'exportarInventario']);
+        Route::post('/inventario/{id}/mantenimiento', [InventarioController::class, 'enviarMantenimiento']);
+        Route::post('/ubicaciones', [UbiElementoController::class, 'store']);
+        
+        // Recurso completo
         Route::apiResource('inventario', InventarioController::class);
     });
 
     // MANTENIMIENTO (Gerente/Técnico)
     Route::middleware(['role:Gerente,Técnico'])->group(function () {
+        // Rutas específicas de mantenimiento SIEMPRE antes de apiResource
+        Route::get('/mantenimiento/opciones', [MantenimientoController::class, 'getOpciones']);
+        Route::get('/mantenimiento/tipos/list', [MantenimientoController::class, 'getTipos']); 
         Route::get('/mantenimiento/activos', [MantenimientoController::class, 'obtenerMantenimientosActivos']);
         Route::put('/mantenimiento/{id}/completar', [MantenimientoController::class, 'completarMantenimiento']);
+        
+        // Recurso completo
         Route::apiResource('mantenimiento', MantenimientoController::class);
     });
 

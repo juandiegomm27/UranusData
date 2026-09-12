@@ -94,18 +94,16 @@
 
       <!-- Botones de acción -->
       <div class="botones-accion">
-        <button type="submit" class="btn-guardar" [disabled]="cargando">
+        <button type="submit" class="btn-guardar" [disabled]="cargando" style="background-color: #28a745;">
           @if (cargando) {
             <span>Creando...</span>
           } @else {
-            <span>✓ Crear Usuario</span>
+            <span>Crear Usuario</span>
           }
         </button>
-
         <button type="button" class="btn-limpiar" (click)="limpiarFormulario()" [disabled]="cargando">
           Limpiar
         </button>
-
         <button type="button" class="btn-cancelar" (click)="volver()" [disabled]="cargando">
           Cancelar
         </button>

@@ -1,0 +1,95 @@
+.contacto-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contacto-titulo {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1C74A0;
+  margin: 0 0 8px;
+}
+
+.contacto-subtitulo {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.contacto-card {
+  background: #e4e4e4;
+  border: 1px solid #1C74A0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.contacto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: inherit;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.btn-enviar {
+  background-color: #1C74A0;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.btn-enviar:hover {
+  background-color: #14597a;
+}
+
+/* Modo Oscuro */
+:host-context(body.dark-mode) .contacto-titulo {
+  color: #FF9F13;
+}
+:host-context(body.dark-mode) .contacto-subtitulo {
+  color: #999;
+}
+:host-context(body.dark-mode) .contacto-card {
+  background: #1e1e1e;
+  border-color: rgba(255, 159, 19, 0.25);
+}
+:host-context(body.dark-mode) .form-label {
+  color: #eee;
+}
+:host-context(body.dark-mode) .form-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+:host-context(body.dark-mode) .btn-enviar {
+  background-color: #FF9F13;
+  color: #121212;
+}
+:host-context(body.dark-mode) .btn-enviar:hover {
+  background-color: #e68a00;
+}

@@ -1,0 +1,68 @@
+@if (mostrar && mantenimiento) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-contenido" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Gestión de Mantenimiento #{{ mantenimiento.id_mantenimiento }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">{{ mensaje }}</div>
+        }
+        <div class="seccion-info">
+          <h3>Detalles del Reporte</h3>
+          <div class="grid-info">
+            <div class="campo-info"><label>Fecha:</label><span>{{ mantenimiento.fecha }}</span></div>
+            <div class="campo-info"><label>Equipo:</label><span>{{ mantenimiento.elemento }}</span></div>
+            <div class="campo-info"><label>ID / Serial:</label><span>#{{ mantenimiento.id_elemento || 'N/A' }} - {{ mantenimiento.serial || 'Sin serial' }}</span></div>
+            <div class="campo-info"><label>Estado:</label>
+              <span class="estado-badge" [ngClass]="{'estado-aprobada': mantenimiento.cod_estado_mantenimiento == 3, 'estado-pendiente': mantenimiento.cod_estado_mantenimiento == 1, 'estado-pausa': mantenimiento.cod_estado_mantenimiento == 2}">
+                {{ obtenerNombreEstado(mantenimiento.cod_estado_mantenimiento) }}
+              </span>
+            </div>
+            <div class="campo-info" style="grid-column: 1/-1;">
+              <label>Descripción del Problema:</label>
+              <span>{{ mantenimiento.descripcion || 'Sin detalles proporcionados.' }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (mantenimiento.cod_estado_mantenimiento != 1) {
+          <div class="seccion-info" [style.background-color]="mantenimiento.cod_estado_mantenimiento == 3 ? '#f1f8e9' : '#fff8e1'">
+            <h3 [style.color]="mantenimiento.cod_estado_mantenimiento == 3 ? '#33691e' : '#f57f17'">
+              {{ mantenimiento.cod_estado_mantenimiento == 3 ? 'Reporte Técnico Final' : 'Motivo de Pausa' }}
+            </h3>
+            <div class="grid-info">
+              <div class="campo-info" style="grid-column: 1/-1;">
+                <label>Observaciones del Técnico:</label>
+                <span style="white-space: pre-wrap;">{{ mantenimiento.observaciones || 'Sin observaciones registradas.' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (completando) {
+          <div class="seccion-edicion" style="margin-top: 20px;">
+            <h3>{{ accionSeleccionadaCod == 3 ? 'Finalizar Mantenimiento' : 'Pausar Mantenimiento' }}</h3>
+            <form class="modulo-form">
+              <div class="grupo-campo">
+                <label>{{ accionSeleccionadaCod == 3 ? 'Solución Aplicada *' : 'Razón de la Pausa *' }}</label>
+                <textarea [(ngModel)]="observaciones_tecnicas" name="observaciones" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        @if (completando) {
+          <button class="btn-modal-success" (click)="guardarCompletado()" [disabled]="cargando">Confirmar</button>
+          <button class="btn-modal-secondary" (click)="cancelarCompletar()" [disabled]="cargando">Cancelar</button>
+        } @else {
+          <button class="btn-modal-success" (click)="abrirCompletar(3)">Marcar como Reparado</button>
+          <button class="btn-modal-primary" (click)="abrirCompletar(2)" style="background-color: #ffc107; color: #000;">Poner en Pausa</button>
+          <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
+        }
+      </div>
+    </div>
+  </div>
+}

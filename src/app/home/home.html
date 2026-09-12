@@ -1,58 +1,67 @@
-<div class="home-container">
-  <div class="home-content">
-    <div class="dashboard-layout">
-      <!-- COLUMNA IZQUIERDA: BOTONES -->
-      <div class="buttons-grid">
-        @switch(rolUsuario()) {
-          @case('Docente') {
-            <app-docente />
-          }
-          @case('Tecnico') {
-            <app-tecnico />
-          }
-          @case('Gerente') {
-            <app-gerente />
-          }
-          @default {
-            <p>Rol no reconocido</p>
-          }
-        }
+@if (esDashboardResumen()) {
+
+  <app-dashboard-resumen></app-dashboard-resumen>
+
+} @else if (rolUsuario() === 'Docente') {
+
+  <div class="home-container">
+    <div class="home-content">
+
+      <div class="dashboard-greeting">
+        <h1 class="greeting-nombre">Hola, {{ nombreUsuario() || 'de nuevo' }}</h1>
+        <span class="greeting-rol">{{ rolUsuario() }}</span>
       </div>
 
-      <!-- COLUMNA DERECHA: CALENDARIO -->
-      <div class="dashboard-calendar">
-        <div class="calendar-header">
-          <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
-          <div>
-            <button class="btn-cal-nav" (click)="mesAnterior()">←</button>
-            <button class="btn-cal-nav" (click)="mesSiguiente()">→</button>
+      <div class="dashboard-layout">
+        <div class="panel-izquierda">
+          <app-docente />
+        </div>
+
+        <div class="dashboard-calendar">
+          <div class="calendar-header">
+            <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
+            <div>
+              <button class="btn-cal-nav" (click)="mesAnterior()">←</button>
+              <button class="btn-cal-nav" (click)="mesSiguiente()">→</button>
+            </div>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="day-name">Dom</div>
+            <div class="day-name">Lun</div>
+            <div class="day-name">Mar</div>
+            <div class="day-name">Mié</div>
+            <div class="day-name">Jue</div>
+            <div class="day-name">Vie</div>
+            <div class="day-name">Sab</div>
+
+            @for (celda of matrizDias(); track $index) {
+              @if (celda.numero !== null) {
+                <button
+                  class="day-number"
+                  [class.today]="celda.esHoy"
+                  (click)="seleccionarDia(celda.numero!)"
+                >
+                  {{ celda.numero }}
+                </button>
+              } @else {
+                <div class="day-number empty"></div>
+              }
+            }
           </div>
         </div>
-
-        <div class="calendar-grid">
-          <div class="day-name">Dom</div>
-          <div class="day-name">Lun</div>
-          <div class="day-name">Mar</div>
-          <div class="day-name">Mié</div>
-          <div class="day-name">Jue</div>
-          <div class="day-name">Vie</div>
-          <div class="day-name">Sab</div>
-
-          @for (celda of matrizDias(); track $index) {
-            @if (celda.numero !== null) {
-              <button 
-                class="day-number"
-                [class.today]="celda.esHoy"
-                (click)="seleccionarDia(celda.numero!)"
-              >
-                {{ celda.numero }}
-              </button>
-            } @else {
-              <div class="day-number empty"></div>
-            }
-          }
-        </div>
       </div>
-    </div>
+
+      <div class="actividad-panel">
+        <h3 class="actividad-titulo">Actividad reciente</h3>
+        <p class="actividad-vacia">
+          Todavía no hay actividad registrada. Aparecerá aquí cuando el módulo de reservas esté completo.
+        </p>
+      </div>
+
+        </div>
   </div>
-</div>
+
+} @else {
+  <p style="padding: 40px; text-align: center;">Rol no reconocido</p>
+}

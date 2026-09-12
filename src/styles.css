@@ -14,19 +14,24 @@ html, body {
 }
 
 :root {
-  --bg-page: #f4f6f9;
-  --bg-tarjeta: #ffffff;
-  --text-blue: #1c74a0;
-  --text-main: #222222;
-  --input-border: #d9dee2;
-  --shadow: rgba(0, 0, 0, 0.15);
-  --sombra: rgba(0, 0, 0, 0.1);
-  --texto-principal: #222222;
-  --borde-tarjeta: #d9e3e8;
-  --color-primario: #1c74a0;
-  --color-primario-hover: #155b7f;
-  --radio-borde: 6px;
-  --transicion: 0.3s ease;
+  --primary-color: #2563eb; 
+  --primary-hover: #1d4ed8;
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
 }
 
 app-root {

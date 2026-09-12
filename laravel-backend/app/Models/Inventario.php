@@ -1,38 +1,40 @@
-<?php
+<?php 
+namespace App\Models; 
+use Illuminate\Database\Eloquent\Model; 
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-
-class Inventario extends Model
-{
+class Inventario extends Model {
     protected $table = 'inventario';
     protected $primaryKey = 'id_elemento';
     public $timestamps = false;
-    protected $fillable = ['id_elemento', 'cod_elemento', 'No_ubicacion', 'cod_tipo', 'cod_estado', 'marca'];
+    
+    protected $fillable = [
+        'cod_elemento', 
+        'nombre_elemento', 
+        'serial', 
+        'modelo', 
+        'descripcion', 
+        'cod_tipo_elemento', 
+        'cod_estado_elemento', 
+        'cod_ubi_elemento'
+    ];
 
-    public function estado()
-    {
-        return $this->belongsTo(EstadoElemento::class, 'cod_estado', 'cod_estado');
+    public function estado() {
+        return $this->belongsTo(EstadoElemento::class, 'cod_estado_elemento', 'cod_estado_elemento');
     }
-
-    public function tipo()
-    {
-        return $this->belongsTo(TipoElemento::class, 'cod_tipo', 'cod_tipo');
+    public function tipo() {
+        return $this->belongsTo(TipoElemento::class, 'cod_tipo_elemento', 'cod_tipo_elemento');
     }
-
-    public function ubicacion()
-    {
-        return $this->belongsTo(UbiElemento::class, 'No_ubicacion', 'cod_ubicacion');
+    public function ubicacion() {
+        return $this->belongsTo(UbiElemento::class, 'cod_ubi_elemento', 'cod_ubi_elemento');
     }
-
-    public function mantenimiento()
-    {
+    public function mantenimiento() {
         return $this->hasMany(Mantenimiento::class, 'id_elemento', 'id_elemento');
     }
-
-    public function cantidades()
-    {
+    public function cantidades() {
         return $this->hasMany(Cantidad::class, 'id_elemento', 'id_elemento');
+    }
+    public function elementoInventario()
+    {
+        return $this->belongsTo(Inventario::class, 'id_elemento', 'id_elemento');
     }
 }

@@ -1,47 +1,40 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FondoService } from '../../core/service/fondo';
 import { AuthService } from '../../core/service/auth.service';
+import { SidebarService } from '../../core/service/sidebar.service';
 import { ProfileSidebar } from './profile-sidebar/profile-sidebar';
 import { filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header-privado',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ProfileSidebar],
+  imports: [CommonModule, FormsModule, ProfileSidebar],
   templateUrl: './header-privado.html',
   styleUrl: './header.css',
 })
-export class HeaderPrivado implements OnInit, OnDestroy {
+export class HeaderPrivado implements OnInit {
   nombre = '';
   rol = '';
-  menuAbierto = false;
-  private subscription: Subscription | null = null;
 
   constructor(
     private fondoService: FondoService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public sidebarService: SidebarService
   ) {}
 
   ngOnInit(): void {
     this.cargarDatos();
 
-    this.subscription = this.router.events
+    this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.cargarDatos();
-        this.cerrarMenu();
+        this.sidebarService.cerrar();
       });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 
   private cargarDatos(): void {
@@ -53,12 +46,8 @@ export class HeaderPrivado implements OnInit, OnDestroy {
     return this.fondoService.isOscuro();
   }
 
-  toggleMenu(): void {
-    this.menuAbierto = !this.menuAbierto;
-  }
-
-  cerrarMenu(): void {
-    this.menuAbierto = false;
+  toggleSidebar(): void {
+    this.sidebarService.toggle();
   }
 
   cambiarModo(): void {
@@ -66,7 +55,6 @@ export class HeaderPrivado implements OnInit, OnDestroy {
   }
 
   irAlInicio(): void {
-    this.cerrarMenu();
     this.authService.irAlInicio(this.router);
   }
 }

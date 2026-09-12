@@ -1,11 +1,14 @@
 <div class="pagina">
   @if (estaEnRutaProtegida()) {
     <app-header-privado></app-header-privado>
+    <div class="app-shell">
+      <app-sidebar></app-sidebar>
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   } @else {
     <app-header-publico></app-header-publico>
-  }
-
-  <main class="app-content">
     <router-outlet></router-outlet>
-  </main>
+  }
 </div>

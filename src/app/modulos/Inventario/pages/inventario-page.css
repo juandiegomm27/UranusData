@@ -1,0 +1,24 @@
+@import '../../styles/modulos-general.css';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.gestion-usuarios-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 30px;
+}
+
+/* Asegurar que lista-usuarios ocupe el espacio necesario */
+app-lista-usuarios {
+  display: block;
+  width: 100%;
+}
+
+/* Espaciado inferior para que el modal de crear usuario sea visible */
+.spacer-bottom {
+  height: 100px;
+}

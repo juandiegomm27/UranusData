@@ -189,6 +189,10 @@
   transform: translateX(22px);
 }
 
+.header-spacer {
+  flex-grow: 1;
+}
+
 /* RESPONSIVE - MÓVIL */
 @media (max-width: 768px) {
   .header-container {

@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 
 /**
- * Guard genérico de rol
+ * Guard genérico de lista de roles permitidos
  * Uso: canActivate: [rolesGuard], data: { rolPermitidos: ['Gerente', 'Tecnico'] }
  */
 export const rolesGuard: CanActivateFn = (route, state) => {
@@ -22,7 +22,6 @@ export const rolesGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si no tiene permisos, redirigir al home del rol
   const rolUsuario = authService.getRol() || 'Docente';
   router.navigate(['/home', rolUsuario]);
   return false;

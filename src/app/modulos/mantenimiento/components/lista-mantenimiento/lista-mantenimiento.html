@@ -1,0 +1,180 @@
+<!-- MODAL: CREAR NUEVO MANTENIMIENTO -->
+@if (mostrarCrear) {
+  <div class="modal-overlay" style="z-index: 1050;" (click)="cerrarCrear()">
+    <div class="modal-contenido" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Nuevo Reporte de Mantenimiento</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarCrear()">✕</button>
+      </div>
+      <div class="modal-body">
+        @if (mensajeModal) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensajeModal">
+            {{ mensajeModal }}
+          </div>
+        }
+        <form class="modulo-form">
+          <div class="grupo-campo">
+            <label>Buscar y Seleccionar Equipo</label>
+            <div class="buscador-equipos-container">
+              <input type="text" [(ngModel)]="busquedaEquipo" name="busquedaEquipo" (input)="filtrarEquipos()" placeholder="Escribe el nombre, ID o serial del equipo..." autocomplete="off">
+              @if (mostrarSugerencias && equiposFiltrados.length > 0) {
+                <div class="lista-sugerencias">
+                  @for (equipo of equiposFiltrados; track equipo.id_elemento) {
+                    <div class="sugerencia-item" (click)="seleccionarEquipo(equipo)">
+                      <strong>{{ equipo.nombre_elemento }}</strong> (ID: {{ equipo.id_elemento }} - Serial: {{ equipo.serial || 'N/A' }})
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            @if (equipoSeleccionadoNombre) {
+              <small style="color: #28a745; font-weight: 600; margin-top: 4px; display: block;">✓ Seleccionado: {{ equipoSeleccionadoNombre }}</small>
+            }
+          </div>
+          <div class="grupo-campo">
+            <label>Tipo de Mantenimiento *</label>
+            <select [(ngModel)]="nuevoMant.cod_tipo_mantenimiento" name="tipo">
+              <option value="">Seleccionar tipo...</option>
+              @for (tipo of tiposMantenimiento; track tipo.cod_tipo_mantenimiento) {
+                <option [value]="tipo.cod_tipo_mantenimiento">{{ tipo.tipo_mantenimiento || tipo.tipo || tipo.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="grupo-campo">
+            <label>Descripción del Problema</label>
+            <textarea [(ngModel)]="nuevoMant.descripcion" name="descripcion" rows="3" placeholder="Detalla la falla del equipo..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-primary" (click)="guardarNuevoMantenimiento()" [disabled]="cargandoModal">
+          @if (cargandoModal) { <span>Guardando...</span> } @else { <span>Crear Reporte</span> }
+        </button>
+        <button class="btn-modal-secondary" (click)="cerrarCrear()" [disabled]="cargandoModal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- COMPONENTE DETALLES -->
+@if (mostrarDetalles && mantenimientoSeleccionado) {
+  <app-detalle-mantenimiento 
+    [mostrar]="mostrarDetalles"
+    [mantenimiento]="mantenimientoSeleccionado"
+    [estadosMantenimiento]="estadosMantenimiento"
+    [accionDirecta]="accionParaCompletar"
+    (cerrar)="cerrarDetalles()">
+  </app-detalle-mantenimiento>
+}
+
+<div class="modulo-container">
+  <div class="modulo-header">
+    <h2>MANTENIMIENTO DE EQUIPOS</h2>
+    <div class="modulo-header-actions">
+      <button class="btn-agregar" (click)="abrirCrear()">+ Agregar Mantenimiento</button>
+    </div>
+  </div>
+
+  <div class="modulo-busqueda-filtros">
+    <div class="grupo-busqueda">
+      <input type="text" class="input-busqueda" placeholder="Buscar por equipo, documento..." [(ngModel)]="busqueda" (keyup.enter)="buscar()">
+      <button class="btn-primary" (click)="buscar()">Buscar</button>
+      <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+
+    <div class="grupo-filtros">
+      <select class="filtro-select" [(ngModel)]="filtroTipo" (change)="filtrar()">
+        <option value="">Todos los Tipos</option>
+        @for (tipo of tiposMantenimiento; track tipo.cod_tipo_mantenimiento) {
+          <option [value]="tipo.cod_tipo_mantenimiento">{{ tipo.tipo_mantenimiento || tipo.tipo || tipo.nombre }}</option>
+        }
+      </select>
+
+      <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+        <option value="">Todos los Estados</option>
+        @for (estado of estadosMantenimiento; track estado.cod_estado_mantenimiento) {
+          <option [value]="estado.cod_estado_mantenimiento">{{ estado.estado }}</option>
+        }
+      </select>
+
+      <input type="date" class="filtro-select" [(ngModel)]="filtroFecha" (change)="filtrar()" title="Filtrar por fecha">
+
+      <select class="filtro-select" [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="cargando">Cargando registros de mantenimiento...</div>
+  } @else if (mantenimientos.length === 0) {
+    <div class="sin-datos">No hay registros encontrados.</div>
+  } @else {
+    <div class="modulo-tabla-wrapper">
+      <table class="modulo-tabla">
+        <thead>
+          <tr>
+            <th>ID Reporte</th>
+            <th>Fecha</th>
+            <th>Equipo</th>
+            <th>ID / Serial</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Falla Reportada</th>
+            <th>Solución / Pausa</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (mant of mantenimientos; track mant.id_mantenimiento) {
+            <tr>
+              <td><strong>#{{ mant.id_mantenimiento }}</strong></td>
+              <td>{{ mant.fecha }}</td>
+              <td>{{ mant.elemento }}</td>
+              <td>#{{ mant.id_elemento || mant.elementoInventario?.id_elemento || 'N/A' }} / {{ mant.serial || mant.elementoInventario?.serial || 'Sin serial' }}</td>
+              <td>{{ obtenerNombreTipo(mant.cod_tipo_mantenimiento) }}</td>
+              <td>
+                <span class="estado-badge" [ngClass]="{'estado-aprobada': mant.cod_estado_mantenimiento == 3, 'estado-pendiente': mant.cod_estado_mantenimiento == 1, 'estado-pausa': mant.cod_estado_mantenimiento == 2}">
+                  {{ mant.cod_estado_mantenimiento == 1 ? 'Pendiente' : mant.cod_estado_mantenimiento == 2 ? 'En pausa' : mant.cod_estado_mantenimiento == 3 ? 'Aprobada' : 'Desconocido' }}
+                </span>
+              </td>
+              <td title="{{ mant.descripcion }}">{{ mant.descripcion ? (mant.descripcion | slice:0:20) + '...' : '-' }}</td>
+              <td title="{{ mant.observaciones }}">{{ mant.observaciones ? (mant.observaciones | slice:0:20) + '...' : 'Pendiente...' }}</td>
+              <td>
+                <div class="botones-accion-tabla">
+                  <td>
+                    <div class="botones-accion-tabla">
+                      <button class="btn-icon btn-icon-ver" (click)="verDetalles(mant)" title="Ver detalles">
+                        <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                        <span>Ver</span>
+                      </button>
+                      @if (mant.cod_estado_mantenimiento != 3) {
+                        <button class="btn-icon btn-icon-success" (click)="abrirYCompletar(mant)" title="Marcar como Reparado">
+                          <svg class="icon-tabla" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Reparar</span>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPaginas > 0) {
+      <div class="paginacion">
+        <button class="btn-paginacion" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+        <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} reportes)</span>
+        <button class="btn-paginacion" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,103 @@
+.app-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: #1C74A0;
+  border-right: 1px solid #1C74A0;
+  padding: 24px 16px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.sidebar-seccion {
+  font-size: 11px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0 0 12px 8px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-icono {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.sidebar-link:hover {
+  background-color: #56b0dd;
+}
+
+.sidebar-link.activo {
+  background-color: #005a87;
+  color: #1C74A0;
+}
+
+.sidebar-link.activo .sidebar-icono {
+  opacity: 1;
+}
+
+:host-context(body.dark-mode) .app-sidebar {
+  background: #1e1e1e;
+  border-right-color: #333;
+}
+
+:host-context(body.dark-mode) .sidebar-link {
+  color: #ccc;
+}
+
+:host-context(body.dark-mode) .sidebar-link:hover {
+  background-color: #2a2a2a;
+}
+
+:host-context(body.dark-mode) .sidebar-link.activo {
+  background-color: rgba(255, 159, 19, 0.15);
+  color: #FF9F13;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* MÓVIL: sidebar se convierte en cajón deslizante */
+@media (max-width: 850px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    z-index: 1200;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s ease;
+  }
+
+  .app-sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1150;
+  }
+}

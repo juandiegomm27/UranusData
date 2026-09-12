@@ -2,8 +2,12 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 
-// Verifica que el rol en la URL (:rol) coincida con el rol real del usuario autenticado
-export const rolesGuard: CanActivateFn = (route, state) => {
+/**
+ * Guard de coincidencia de rol en la URL
+ * Uso exclusivo para rutas con parámetro :rol, ej. 'home/:rol'
+ * Verifica que el rol en la URL coincida con el rol real del usuario autenticado
+ */
+export const rolUrlGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 

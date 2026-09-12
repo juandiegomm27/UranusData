@@ -1,0 +1,98 @@
+/* Importar los estilos base de modales y formularios (igual que crear-elemento) */
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-forms.css';
+
+/* Estilos específicos para la sección de información del equipo */
+.seccion-info {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.seccion-info h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #1C74A0;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 8px;
+}
+
+.grid-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.campo-info label {
+  font-weight: 600;
+  font-size: 12px;
+  color: #6c757d;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.campo-info span {
+  font-size: 14px;
+  color: #212529;
+  font-weight: 500;
+}
+
+/* --- ESTILOS BASE --- */
+.seccion-info {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.seccion-info h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #1C74A0;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 8px;
+}
+
+.grid-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.campo-info label {
+  font-weight: 600;
+  font-size: 12px;
+  color: #6c757d;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.campo-info span {
+  font-size: 14px;
+  color: #212529;
+  font-weight: 500;
+}
+
+/* --- MODO OSCURO PARA EL MODAL DE MANTENIMIENTO --- */
+:host-context(body.dark-mode) .seccion-info {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+:host-context(body.dark-mode) .seccion-info h3 {
+  color: #FF9F13;
+  border-bottom-color: #444;
+}
+
+:host-context(body.dark-mode) .campo-info label {
+  color: #999;
+}
+
+:host-context(body.dark-mode) .campo-info span {
+  color: #e0e0e0;
+}

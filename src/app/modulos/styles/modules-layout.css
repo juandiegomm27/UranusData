@@ -325,3 +325,26 @@
     opacity: 1;
   }
 }
+
+/* NUEVO BOTÓN AGREGAR (VERDE) */
+.btn-agregar {
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+.btn-agregar:hover { background-color: #218838; transform: translateY(-2px); }
+
+:host-context(body.dark-mode) .btn-agregar {
+  background-color: #2ea043;
+  color: #ffffff;
+}
+:host-context(body.dark-mode) .btn-agregar:hover {
+  background-color: #3fb950;
+}

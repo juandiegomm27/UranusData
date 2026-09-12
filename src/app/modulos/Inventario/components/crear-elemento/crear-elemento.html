@@ -1,0 +1,155 @@
+@if (mostrar) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-contenido" (click)="$event.stopPropagation()">
+      
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h2>Nuevo Elemento</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+        
+        <!-- MENSAJE ALERTA -->
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            {{ mensaje }}
+          </div>
+        }
+
+        <!-- FORMULARIO -->
+        <form class="modulo-form">
+          
+          <!-- FILA 1 -->
+          <div class="fila-formulario">
+            <div class="grupo-campo">
+              <label for="nombre">Nombre del Elemento *</label>
+              <input 
+                id="nombre"
+                type="text" 
+                [(ngModel)]="nombre_elemento"
+                name="nombre"
+                placeholder="Ej: Laptop Dell XPS">
+            </div>
+
+            <div class="grupo-campo">
+              <label for="tipo">Tipo de Elemento *</label>
+              <select 
+                id="tipo"
+                [(ngModel)]="cod_tipo_elemento"
+                name="tipo">
+                <option value="">Seleccionar tipo...</option>
+                @for (tipo of tipos; track tipo.cod_tipo_elemento) {
+                  <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- UBICACIÓN -->
+          <div class="grupo-campo" style="grid-column: 1 / -1;">
+            <label for="ubicacion">Ubicación *</label>
+            <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
+              <select 
+                id="ubicacion"
+                [(ngModel)]="cod_ubi_elemento"
+                name="ubicacion"
+                style="flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;">
+                <option value="">Seleccionar ubicación...</option>
+                @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
+                  <option [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
+                }
+              </select>
+              <button type="button" class="btn-secondary" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación" style="padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold;">+</button>
+              <button type="button" class="btn-icon btn-icon-danger" (click)="eliminarUbicacion(+cod_ubi_elemento)" title="Eliminar ubicación seleccionada" style="padding: 10px 14px; cursor: pointer; background: #dc3545; color: white; border: none; border-radius: 6px;">🗑️</button>
+            </div>
+          </div>
+
+          <!-- MODAL VISUAL PARA NUEVA UBICACIÓN -->
+          @if (mostrarModalUbicacion) {
+            <div class="modal-overlay" style="z-index: 1100;" (click)="cerrarModalUbicacion()">
+              <div class="modal-contenido" style="max-width: 400px;" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                  <h2>Nueva Ubicación</h2>
+                  <button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
+                </div>
+                <div class="modal-body">
+                  <div class="grupo-campo">
+                    <label for="nombre-ubi">Nombre de la Ubicación *</label>
+                    <input 
+                      id="nombre-ubi" 
+                      type="text" 
+                      [(ngModel)]="nuevaUbicacionNombre" 
+                      name="nuevaUbicacionNombre" 
+                      placeholder="Ej: Sala 4, Laboratorio de Redes..." 
+                      style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button>
+                  <button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- FILA 3 -->
+          <div class="fila-formulario">
+            <div class="grupo-campo">
+              <label for="serial">Serial/Número de Serie</label>
+              <input 
+                id="serial"
+                type="text" 
+                [(ngModel)]="serial"
+                name="serial"
+                placeholder="Ej: ABC123456">
+            </div>
+
+            <div class="grupo-campo">
+              <label for="modelo">Modelo</label>
+              <input 
+                id="modelo"
+                type="text" 
+                [(ngModel)]="modelo"
+                name="modelo"
+                placeholder="Ej: XPS 15">
+            </div>
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="grupo-campo">
+            <label for="descripcion">Descripción</label>
+            <textarea 
+              id="descripcion"
+              [(ngModel)]="descripcion"
+              name="descripcion"
+              placeholder="Notas adicionales sobre el elemento..."></textarea>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button 
+          class="btn-modal-primary"
+          (click)="guardar()"
+          [disabled]="cargando">
+          @if (cargando) {
+            <span>Guardando...</span>
+          } @else {
+            <span>✓ Guardar</span>
+          }
+        </button>
+        <button 
+          class="btn-modal-secondary"
+          (click)="cerrarModal()"
+          [disabled]="cargando">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}

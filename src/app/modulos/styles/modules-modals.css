@@ -237,7 +237,6 @@
   background-color: #28a745;
   color: #ffffff;
 }
-
 .btn-modal-success:hover:not(:disabled) {
   background-color: #218838;
 }
@@ -309,12 +308,11 @@
 }
 
 :host-context(body.dark-mode) .btn-modal-success {
-  background-color: #FF9F13;
-  color: #000;
+  background-color: #2ea043;
+  color: #ffffff;
 }
-
 :host-context(body.dark-mode) .btn-modal-success:hover:not(:disabled) {
-  background-color: #e08b0f;
+  background-color: #3fb950;
 }
 
 /* RESPONSIVE */

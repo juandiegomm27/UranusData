@@ -7,21 +7,34 @@ use Illuminate\Database\Eloquent\Model;
 class Mantenimiento extends Model
 {
     protected $table = 'mantenimiento';
-    protected $primaryKey = 'No_mantenimiento';
+    protected $primaryKey = 'id_mantenimiento';
+    
+    // ESTA LÍNEA APAGA LA INSERCIÓN AUTOMÁTICA DE TIMESTAMPS Y EVITA EL ERROR
     public $timestamps = false;
-    protected $fillable = ['No_mantenimiento', 'id_elemento', 'cod_elemento', 'tipo_cod_tipo', 'documento', 'descripcion'];
+
+    protected $fillable = [
+        'fecha',
+        'cod_tipo_mantenimiento',
+        'documento',
+        'elemento',
+        'id_elemento',
+        'serial',
+        'descripcion',
+        'observaciones',
+        'cod_estado_mantenimiento'
+    ];
+
+    public function tipo()
+    {
+        return $this->belongsTo(TipoMantenimiento::class, 'cod_tipo_mantenimiento', 'cod_tipo_mantenimiento');
+    }
 
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'documento', 'documento');
     }
 
-    public function tipo()
-    {
-        return $this->belongsTo(TipoMantenimiento::class, 'tipo_cod_tipo', 'cod_tipo');
-    }
-
-    public function inventario()
+    public function elementoInventario()
     {
         return $this->belongsTo(Inventario::class, 'id_elemento', 'id_elemento');
     }

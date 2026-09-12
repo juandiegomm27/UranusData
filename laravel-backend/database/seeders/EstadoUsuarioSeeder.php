@@ -16,7 +16,7 @@ class EstadoUsuarioSeeder extends Seeder
         ];
 
         foreach ($estados as $estado) {
-            DB::table('estado_usuarios')->updateOrInsert(
+            DB::table('estado_usuario')->updateOrInsert(
                 ['cod_estado_usuario' => $estado['cod_estado_usuario']],
                 $estado
             );

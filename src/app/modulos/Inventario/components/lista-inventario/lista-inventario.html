@@ -1,0 +1,180 @@
+<!-- COMPONENTE CREAR ELEMENTO -->
+@if (mostrarCrear) {
+  <app-crear-elemento 
+    [mostrar]="mostrarCrear"
+    (cerrar)="cerrarCrear()"
+    (guardado)="cargarElementos()">
+  </app-crear-elemento>
+}
+
+<!-- COMPONENTE DETALLES -->
+@if (mostrarDetalles && elementoSeleccionado) {
+  <app-detalle-elemento 
+    [mostrar]="mostrarDetalles"
+    [elemento]="elementoSeleccionado"
+    [tipos]="tipos"
+    [estados]="estados"
+    [ubicaciones]="ubicaciones"
+    (cerrar)="cerrarDetalles()"
+    (actualizado)="cargarElementos()">
+  </app-detalle-elemento>
+}
+
+<!-- COMPONENTE MANTENIMIENTO -->
+@if (mostrarMantenimiento && elementoSeleccionado) {
+  <app-mantenimiento-modal 
+    [mostrar]="mostrarMantenimiento"
+    [elemento]="elementoSeleccionado"
+    (cerrar)="cerrarMantenimiento()"
+    (enviado)="cargarElementos()">
+  </app-mantenimiento-modal>
+}
+
+<!-- TABLA DE INVENTARIO -->
+<div class="modulo-container">
+  <!-- HEADER -->
+  <div class="modulo-header">
+    <h2>INVENTARIO</h2>
+    <div class="modulo-header-actions">
+      <button class="btn-agregar" (click)="abrirCrear()">
+        Agregar Elemento
+      </button>
+    </div>
+  </div>
+
+  <!-- BÚSQUEDA Y FILTROS -->
+  <div class="modulo-busqueda-filtros">
+    <div class="grupo-busqueda">
+      <input 
+        type="text" 
+        class="input-busqueda" 
+        placeholder="Buscar por nombre, serial, modelo..."
+        [(ngModel)]="busqueda"
+        (keyup.enter)="buscar()">
+      <button class="btn-primary" (click)="buscar()">Buscar</button>
+      <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+    
+    <div class="grupo-filtros">
+      <select class="filtro-select" [(ngModel)]="filtroTipo" (change)="filtrar()">
+        <option value="">Todos los Tipos</option>
+        @for (tipo of tipos; track tipo.cod_tipo_elemento) {
+          <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
+        }
+      </select>
+      
+      <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+        <option value="">Todos los Estados</option>
+        @for (estado of estados; track estado.cod_estado_elemento) {
+          <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option>
+        }
+      </select>
+      
+      <select class="filtro-select" [(ngModel)]="filtroUbicacion" (change)="filtrar()">
+        <option value="">Todas las Ubicaciones</option>
+        @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
+          <option [value]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
+        }
+      </select>
+
+      <!-- NUEVO FILTRO: Cantidad de elementos mostrados por página (igual a Gestión de Usuarios) -->
+      <select class="filtro-select" [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MENSAJE ALERTA -->
+  @if (mensaje) {
+    <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+      {{ mensaje }}
+    </div>
+  }
+
+  <!-- TABLA -->
+  @if (cargando) {
+    <div class="cargando">
+      Cargando elementos...
+    </div>
+  } @else if (elementos.length === 0) {
+    <div class="sin-datos">
+      No se encontraron elementos
+    </div>
+  } @else {
+    <div class="modulo-tabla-wrapper">
+      <table class="modulo-tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Elemento</th>
+            <th>Tipo</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Serial</th>
+            <th>Modelo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (elemento of elementos; track elemento.id_elemento; let i = $index) {
+            <tr>
+              <td>{{ (paginaActual - 1) * perPage + i + 1 }}</td>
+              <td>{{ elemento.id_elemento }}</td>
+              <td>{{ elemento.nombre_elemento }}</td>
+              <td>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</td>
+              <td>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</td>
+              <td>
+                <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
+                  {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
+                </span>
+              </td>
+              <td>{{ elemento.serial || '-' }}</td>
+              <td>{{ elemento.modelo || '-' }}</td>
+              <td>
+                <div class="botones-accion-tabla">
+                  <button class="btn-icon btn-icon-ver" (click)="verDetalles(elemento)" title="Ver detalles">
+                    <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                    <span>Ver</span>
+                  </button>
+                  <button class="btn-icon btn-icon-mantenimiento" (click)="abrirMantenimiento(elemento)" title="Enviar a mantenimiento">
+                    <img src="icons/settings.svg" alt="Mantenimiento" class="icon-tabla">
+                    <span>Enviar a Mantenimiento</span>
+                  </button>
+                  <button class="btn-icon btn-icon-danger" (click)="eliminarElemento(elemento.id_elemento)" title="Eliminar">
+                    <img src="icons/papelera.svg" alt="Eliminar" class="icon-tabla">
+                    <span>Eliminar</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINACIÓN -->
+    @if (totalPaginas > 0) {
+      <div class="paginacion">
+        <button 
+          class="btn-paginacion"
+          (click)="irPaginaAnterior()"
+          [disabled]="paginaActual === 1">
+          Anterior
+        </button>
+        <span class="indicador-pagina">
+          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} elementos)
+        </span>
+        <button 
+          class="btn-paginacion"
+          (click)="irPaginaSiguiente()"
+          [disabled]="paginaActual === totalPaginas">
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</div>

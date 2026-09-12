@@ -8,7 +8,6 @@
 }
 
 /*   HEADER   */
-
 .lista-usuarios-header {
   display: flex;
   justify-content: space-between;
@@ -26,19 +25,39 @@
 }
 
 .btn-crear {
-  background-color: #1C74A0;
+  background-color: #28a745;
   color: #ffffff;
   border: none;
-  padding: 12px 20px;
+  padding: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .btn-crear:hover {
-  background-color: #175e81;
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+/* --- BOTÓN CREAR --- */
+.btn-agregar {
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+.btn-agregar:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
 }
 
 /*   BÚSQUEDA Y FILTROS   */
@@ -200,19 +219,48 @@
 .botones-accion-tabla {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-icon {
-  background-color: #81c1e1; 
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 6px 12px;
   border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.icon-tabla {
-  width: 20px;
-  height: 20px;
+.icon-tabla { 
+  width: 16px; 
+  height: 16px; 
+  filter: brightness(0) invert(1); 
+}
+
+.btn-icon-ver { 
+  background-color: #1C74A0; 
+  color: #ffffff; 
+}
+.btn-icon-ver:hover:not(:disabled) { 
+  background-color: #155b7f; 
+  transform: translateY(-2px); 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
+}
+
+.btn-icon-bloquear { 
+  background-color: #dc3545; 
+  color: #ffffff; 
+}
+.btn-icon-bloquear:hover:not(:disabled) { 
+  background-color: #c82333; 
+  transform: translateY(-2px); 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
 }
 
 /*   PAGINACIÓN   */
@@ -289,12 +337,11 @@
 }
 
 :host-context(body.dark-mode) .btn-crear {
-  background-color: #FF9F13;
-  color: #000;
+  background-color: #2ea043;
+  color: #ffffff;
 }
-
 :host-context(body.dark-mode) .btn-crear:hover {
-  background-color: #e08b0f;
+  background-color: #3fb950;
 }
 
 :host-context(body.dark-mode) .busqueda-filtros {
@@ -326,12 +373,24 @@
   background: #2a2a2a;
 }
 
-:host-context(body.dark-mode) .btn-icon {
-  background-color: #e4b56f;
+:host-context(body.dark-mode) .btn-icon-ver { 
+  background-color: #e08b0f; 
+  color: #000000; 
+}
+:host-context(body.dark-mode) .btn-icon-ver .icon-tabla { 
+  filter: brightness(0); 
+}
+
+:host-context(body.dark-mode) .btn-icon-bloquear { 
+  background-color: #ff6b6b; 
+  color: #000000; 
+}
+:host-context(body.dark-mode) .btn-icon-bloquear .icon-tabla { 
+  filter: brightness(0); 
 }
 
 :host-context(body.dark-mode) .tabla-usuario thead {
-  background-color: #c07300;
+  background-color: #e08b0f;
   color: #ffffff;
 }
 

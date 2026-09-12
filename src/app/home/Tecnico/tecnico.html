@@ -1,14 +1,51 @@
-<div class="buttons-grid">
-  <button class="btn-dash btn-small" [routerLink]="['/inventario/ver']">
-    <span class="icon">📋</span> Inventario
+<div class="metricas-grid">
+  <div class="metrica-card">
+    <span class="metrica-label">Mantenimientos</span>
+    <span class="metrica-valor metrica-pendiente">—</span>
+    <span class="metrica-nota">Próximamente</span>
+  </div>
+  <div class="metrica-card">
+    <span class="metrica-label">Por entregar</span>
+    <span class="metrica-valor metrica-pendiente">—</span>
+    <span class="metrica-nota">Próximamente</span>
+  </div>
+  <div class="metrica-card">
+    <span class="metrica-label">Elementos dañados</span>
+    <span class="metrica-valor metrica-pendiente">—</span>
+    <span class="metrica-nota">Próximamente</span>
+  </div>
+</div>
+
+<div class="acciones-grid">
+  <button class="accion-card" [routerLink]="['/modulos/inventario']">
+    <img src="/icons/inventario.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Inventario</span>
+      <span class="accion-subtitulo">Ver elementos</span>
+    </div>
   </button>
-  <button class="btn-dash btn-small" [routerLink]="['/reserva/ver']">
-    <span class="icon">ℹ️</span> Reserva
+
+  <button class="accion-card" [routerLink]="['/reserva/ver']">
+    <img src="/icons/consultar.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Reserva</span>
+      <span class="accion-subtitulo">Ver detalle</span>
+    </div>
   </button>
-  <button class="btn-dash btn-wide" [routerLink]="['/inventario/reportes']">
-    <span class="icon">📄</span> Consulta Reserva
+
+  <button class="accion-card" [routerLink]="['/inventario/reportes']">
+    <img src="/icons/consultar.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Consulta reserva</span>
+      <span class="accion-subtitulo">Reportes</span>
+    </div>
   </button>
-  <button class="btn-dash btn-wide" [routerLink]="['/mantenimiento/gestion']">
-    <span class="icon">🛠️</span> Mantenimiento
+
+  <button class="accion-card" [routerLink]="['/modulos/mantenimiento']">
+    <img src="/icons/mantenimiento.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Mantenimiento</span>
+      <span class="accion-subtitulo">Historial de reportes</span>
+    </div>
   </button>
 </div>

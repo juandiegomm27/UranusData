@@ -1,0 +1,22 @@
+@if (sidebarService.abierto()) {
+  <div class="sidebar-overlay" (click)="sidebarService.cerrar()"></div>
+}
+
+<aside class="app-sidebar" [class.open]="sidebarService.abierto()">
+  <p class="sidebar-seccion">Módulos</p>
+
+  <nav class="sidebar-nav">
+    @for (enlace of enlaces(); track enlace.ruta) {
+      <a
+        [routerLink]="[enlace.ruta]"
+        routerLinkActive="activo"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="sidebar-link"
+        (click)="cerrarEnMobile()"
+      >
+        <img [src]="enlace.icono" alt="" class="sidebar-icono">
+        <span>{{ enlace.etiqueta }}</span>
+      </a>
+    }
+  </nav>
+</aside>

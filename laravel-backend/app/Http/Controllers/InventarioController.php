@@ -3,207 +3,253 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventario;
-use App\Traits\ApiResponse;
+use App\Models\TipoElemento;
+use App\Models\UbiElemento;
+use App\Models\EstadoElemento;
+use App\Models\Mantenimiento;
+use App\Models\TipoMantenimiento;
 use Illuminate\Http\Request;
 
 class InventarioController extends Controller
 {
-    use ApiResponse;
-
-    /**
-     * GET /api/inventario
-     * Listar inventario con paginación y filtros
-     */
     public function index(Request $request)
     {
-        $perPage = min($request->get('per_page', 10), 100);
-        $page = $request->get('page', 1);
+        $query = Inventario::query();
 
-        $query = Inventario::with('estado', 'tipo', 'ubicacion');
-
-        // Filtros opcionales
-        if ($request->filled('busqueda')) {
-            $busqueda = $request->busqueda;
-            $query->where('elemento', 'like', "%$busqueda%")
-                  ->orWhere('cod_elemento', 'like', "%$busqueda%");
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('nombre_elemento', 'like', $searchTerm)
+                  ->orWhere('serial', 'like', $searchTerm)
+                  ->orWhere('modelo', 'like', $searchTerm);
+            });
         }
 
-        if ($request->filled('cod_estado_elemento')) {
-            $query->where('cod_estado_elemento', $request->cod_estado_elemento);
+        if ($request->filled('tipo')) {
+            $query->where('cod_tipo_elemento', $request->tipo);
         }
 
-        if ($request->filled('cod_tipo_elemento')) {
-            $query->where('cod_tipo_elemento', $request->cod_tipo_elemento);
+        if ($request->filled('estado')) {
+            $query->where('cod_estado_elemento', $request->estado);
         }
 
-        $inventario = $query->paginate($perPage, ['*'], 'page', $page);
+        if ($request->filled('ubicacion')) {
+            $query->where('cod_ubi_elemento', $request->ubicacion);
+        }
 
-        return $this->paginatedResponse($inventario, 'Inventario obtenido correctamente');
+        // CAPTURAR EL TAMAÑO DE PÁGINA DEL FRONTEND (por defecto 10 si no viene)
+        $perPage = $request->input('per_page', 10);
+        
+        // APLICAR LA PAGINACIÓN DINÁMICA
+        $elementos = $query->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => $elementos->items(),
+            'total' => $elementos->total(),
+            'last_page' => $elementos->lastPage()
+        ]);
     }
 
-    /**
-     * POST /api/inventario
-     * Crear nuevo elemento
-     */
+    public function show($id)
+    {
+        $elemento = Inventario::with(['tipo', 'ubicacion', 'estado', 'mantenimiento.tipo'])->find($id);
+
+        if (!$elemento) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Elemento no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $elemento
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'elemento' => 'required|string|max:100',
-            'cod_elemento' => 'required|unique:inventario,cod_elemento',
-            'id_ubicacion' => 'required|exists:ubi_elemento,cod_ubicacion',
-            'cod_tipo_elemento' => 'required|exists:tipo_elemento,cod_tipo',
-            'cod_estado_elemento' => 'required|exists:estado_elemento,cod_estado',
-            'marca' => 'nullable|string|max:50',
-            'descripcion' => 'nullable|string'
+            'nombre_elemento' => 'required|string|max:255',
+            'cod_tipo_elemento' => 'required|exists:tipo_elemento,cod_tipo_elemento',
+            'cod_ubi_elemento' => 'required|exists:ubi_elemento,cod_ubi_elemento',
+            'cod_estado_elemento' => 'required|exists:estado_elemento,cod_estado_elemento',
+            'serial' => 'nullable|string|max:100|unique:inventario,serial',
+            'modelo' => 'nullable|string|max:100',
+            'descripcion' => 'nullable|string',
+            'cantidad' => 'nullable|integer|min:1'
         ]);
 
-        try {
-            $inventario = Inventario::create($validated);
+        $elemento = Inventario::create($validated);
 
-            return $this->successResponse(
-                $inventario->load('estado', 'tipo', 'ubicacion'),
-                'Elemento creado correctamente',
-                201
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al crear elemento: ' . $e->getMessage(),
-                500
-            );
-        }
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Elemento creado exitosamente',
+            'data' => $elemento
+        ], 201);
     }
 
-    /**
-     * GET /api/inventario/{id}
-     * Obtener elemento específico
-     */
-    public function show($id)
-    {
-        $inventario = Inventario::with('estado', 'tipo', 'ubicacion')->find($id);
-
-        if (!$inventario) {
-            return $this->notFoundResponse('Elemento de inventario');
-        }
-
-        return $this->successResponse(
-            $inventario,
-            'Elemento obtenido correctamente'
-        );
-    }
-
-    /**
-     * PUT /api/inventario/{id}
-     * Actualizar elemento
-     */
     public function update(Request $request, $id)
     {
-        $inventario = Inventario::find($id);
+        $elemento = Inventario::find($id);
 
-        if (!$inventario) {
-            return $this->notFoundResponse('Elemento de inventario');
+        if (!$elemento) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Elemento no encontrado'
+            ], 404);
         }
 
         $validated = $request->validate([
-            'elemento' => 'sometimes|string|max:100',
-            'id_ubicacion' => 'sometimes|exists:ubi_elemento,cod_ubicacion',
-            'cod_tipo_elemento' => 'sometimes|exists:tipo_elemento,cod_tipo',
-            'cod_estado_elemento' => 'sometimes|exists:estado_elemento,cod_estado',
-            'marca' => 'nullable|string|max:50',
-            'descripcion' => 'nullable|string'
+            'nombre_elemento' => 'string|max:255',
+            'cod_tipo_elemento' => 'exists:tipo_elemento,cod_tipo_elemento',
+            'cod_ubi_elemento' => 'exists:ubi_elemento,cod_ubi_elemento',
+            'cod_estado_elemento' => 'exists:estado_elemento,cod_estado_elemento',
+            'serial' => 'nullable|string|max:100|unique:inventario,serial,' . $id . ',id_elemento',
+            'modelo' => 'nullable|string|max:100',
+            'descripcion' => 'nullable|string',
+            'cantidad' => 'nullable|integer|min:1'
         ]);
 
-        try {
-            $inventario->update($validated);
+        $elemento->update($validated);
 
-            return $this->successResponse(
-                $inventario->load('estado', 'tipo', 'ubicacion'),
-                'Elemento actualizado correctamente'
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al actualizar elemento: ' . $e->getMessage(),
-                500
-            );
-        }
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Elemento actualizado exitosamente',
+            'data' => $elemento
+        ]);
     }
 
-    /**
-     * DELETE /api/inventario/{id}
-     * Eliminar elemento
-     */
+    // ELIMINAR ELEMENTO
     public function destroy($id)
     {
-        $inventario = Inventario::find($id);
+        $elemento = Inventario::find($id);
 
-        if (!$inventario) {
-            return $this->notFoundResponse('Elemento de inventario');
+        if (!$elemento) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Elemento no encontrado'
+            ], 404);
         }
 
-        try {
-            $inventario->delete();
+        $elemento->delete();
 
-            return $this->successResponse(
-                null,
-                'Elemento eliminado correctamente'
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al eliminar elemento: ' . $e->getMessage(),
-                500
-            );
-        }
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Elemento eliminado exitosamente'
+        ]);
     }
 
-    /**
-     * GET /api/inventario/elementos-tipo/{tipo}
-     * Obtener elementos por tipo
-     */
-    public function obtenerElementosPorTipo($tipo, Request $request)
+    // OBTENER OPCIONES PARA FILTROS
+    public function getOpciones()
     {
-        $perPage = min($request->get('per_page', 10), 100);
-
-        $elementos = Inventario::where('cod_tipo_elemento', $tipo)
-            ->with('estado', 'tipo', 'ubicacion')
-            ->paginate($perPage);
-
-        if ($elementos->isEmpty()) {
-            return $this->successResponse(
-                [],
-                'No hay elementos de este tipo'
-            );
-        }
-
-        return $this->paginatedResponse($elementos, 'Elementos obtenidos por tipo');
+        return response()->json([
+            'success' => true,
+            'tipos' => TipoElemento::all(),
+            'ubicaciones' => UbiElemento::all(),
+            'estados' => EstadoElemento::all(),
+            'tipos_mantenimiento' => TipoMantenimiento::all()
+        ]);
     }
 
-    /**
-     * GET /api/inventario/exportar
-     * Exportar inventario (simulado, retorna JSON)
-     */
+    // ENVIAR A MANTENIMIENTO (CORREGIDO PARA EVITAR EL ERROR 1054)
+    public function enviarMantenimiento(Request $request, $id)
+    {
+        $elemento = Inventario::find($id);
+
+        if (!$elemento) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Elemento no encontrado'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'cod_tipo_mantenimiento' => 'required|exists:tipo_mantenimiento,cod_tipo_mantenimiento',
+            'descripcion' => 'required|string',
+            'documento_tecnico' => 'nullable|exists:usuario,documento',
+            'observaciones' => 'nullable|string'
+        ]);
+
+        // Crear registro de mantenimiento con las columnas exactas de la Base de Datos actual
+        $mantenimiento = Mantenimiento::create([
+            'documento' => $request->user()?->documento ?? $validated['documento_tecnico'] ?? null,
+            'id_elemento' => $elemento->id_elemento, 
+            'serial' => $elemento->serial ?? 'N/A',  
+            'elemento' => $elemento->nombre_elemento,
+            'fecha' => now()->toDateString(),
+            'cod_tipo_mantenimiento' => $validated['cod_tipo_mantenimiento'],
+            'descripcion' => $validated['descripcion'],
+            'cod_estado_mantenimiento' => 1 // 1 = Pendiente (ESTA ES LA LÍNEA QUE SOLUCIONA EL CRASH)
+        ]);
+
+        // Cambiar estado del elemento a "Mantenimiento"
+        $elemento->update(['cod_estado_elemento' => 4]); // 4 = Mantenimiento
+
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Elemento enviado a mantenimiento exitosamente',
+            'data' => $mantenimiento
+        ], 201);
+    }
+
+    // OBTENER ELEMENTOS POR TIPO
+    public function obtenerElementosPorTipo($tipo)
+    {
+        $elementos = Inventario::where('cod_tipo_elemento', $tipo)
+            ->with(['tipo', 'ubicacion', 'estado'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $elementos
+        ]);
+    }
+
+    // EXPORTAR INVENTARIO A CSV
     public function exportarInventario()
     {
         try {
-            $inventario = Inventario::with('estado', 'tipo', 'ubicacion')->get();
+            $elementos = Inventario::with(['tipo', 'ubicacion', 'estado'])->get();
 
-            if ($inventario->isEmpty()) {
-                return $this->successResponse(
-                    [],
-                    'No hay datos para exportar'
-                );
-            }
+            $filename = 'inventario_' . now()->format('Y-m-d') . '.csv';
 
-            // Retornar JSON que el frontend puede descargar como CSV/Excel
-            return response()->json([
-                'success' => true,
-                'data' => $inventario,
-                'total' => $inventario->count(),
-                'timestamp' => now()->toIso8601String()
-            ]);
+            $headers = [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => "attachment; filename=\"$filename\"",
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
+
+            $callback = function () use ($elementos) {
+                $file = fopen('php://output', 'w');
+                fputs($file, "\xEF\xBB\xBF");
+                fputcsv($file, ['ID', 'Código', 'Nombre', 'Serial', 'Modelo', 'Tipo', 'Estado', 'Ubicación', 'Cantidad']);
+
+                foreach ($elementos as $item) {
+                    fputcsv($file, [
+                        $item->id_elemento,
+                        $item->cod_elemento ?? '',
+                        $item->nombre_elemento,
+                        $item->serial ?? '',
+                        $item->modelo ?? '',
+                        $item->tipo?->tipo ?? '',
+                        $item->estado?->estado ?? '',
+                        $item->ubicacion?->ubicacion ?? '',
+                        $item->cantidad ?? 1
+                    ]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al exportar inventario: ' . $e->getMessage(),
-                500
-            );
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Error al exportar inventario: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

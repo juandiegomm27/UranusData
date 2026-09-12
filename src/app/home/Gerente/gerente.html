@@ -1,15 +1,58 @@
-<div class="buttons-grid">
-  <button class="btn-dash btn-small" [routerLink]="['/modulos/gestion-usuarios']">
-    <span class="modulo-icono">👥</span>
-    <span class="modulo-nombre">Gestión de usuario</span>
+<div class="metricas-grid">
+  <div class="metrica-card">
+    <span class="metrica-label">Préstamos activos</span>
+    <span class="metrica-valor">{{ prestamosActivos() !== null ? prestamosActivos() : '—' }}</span>
+  </div>
+  <div class="metrica-card">
+    <span class="metrica-label">Reservas por aprobar</span>
+    <span class="metrica-valor metrica-pendiente">—</span>
+    <span class="metrica-nota">Próximamente</span>
+  </div>
+  <div class="metrica-card">
+    <span class="metrica-label">En mantenimiento</span>
+    <span class="metrica-valor metrica-pendiente">—</span>
+    <span class="metrica-nota">Próximamente</span>
+  </div>
+</div>
+
+<div class="acciones-grid">
+  <button class="accion-card" [routerLink]="['/modulos/gestion-usuarios']">
+    <img src="/icons/usuarios.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Gestión de usuarios</span>
+      <span class="accion-subtitulo">Roles y estados</span>
+    </div>
   </button>
-  <button class="btn-dash btn-small" [routerLink]="['/inventario/reportes']">
-    <span class="icon">📄</span> Inventario
+
+  <button class="accion-card" [routerLink]="['/modulos/inventario']">
+    <img src="/icons/inventario.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Inventario</span>
+      <span class="accion-subtitulo">Ver elementos</span>
+    </div>
   </button>
-  <button class="btn-dash btn-wide" [routerLink]="['/inventario/reportes']">
-    <span class="icon">📄</span> Consulta Reserva
+
+  <button class="accion-card" [routerLink]="['/reserva/consultar']">
+    <img src="/icons/consultar.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Consultar reserva</span>
+      <span class="accion-subtitulo">Ver todas</span>
+    </div>
   </button>
-  <button class="btn-dash btn-wide" [routerLink]="['/mantenimiento/reportes']">
-    <span class="icon">🛠️</span> Mantenamientos
+
+  <button class="accion-card" [routerLink]="['/prestamos/activos']">
+    <img src="/icons/prestamos.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Préstamos activos</span>
+      <span class="accion-subtitulo">Entregas y devoluciones</span>
+    </div>
+  </button>
+
+  <button class="accion-card accion-ancha" [routerLink]="['/modulos/mantenimiento']">
+    <img src="/icons/mantenimiento.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Mantenimientos</span>
+      <span class="accion-subtitulo">Historial de reportes</span>
+    </div>
   </button>
 </div>

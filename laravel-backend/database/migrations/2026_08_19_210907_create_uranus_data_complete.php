@@ -9,13 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // La base existente puede haber sido creada previamente fuera de Laravel.
-        // En ese caso, no repetir la creación del esquema completo.
         if (Schema::hasTable('rol')) {
             return;
         }
-
-        //  TABLAS BASE
         
         // Tabla: rol
         Schema::create('rol', function (Blueprint $table) {
@@ -81,7 +77,12 @@ return new class extends Migration
         Schema::create('inventario', function (Blueprint $table) {
             $table->increments('id_elemento');
             $table->string('cod_elemento', 45)->nullable();
-            $table->string('elemento', 100)->nullable();
+            
+            $table->string('nombre_elemento', 100)->nullable(); 
+            $table->string('serial', 100)->nullable();          
+            $table->string('modelo', 100)->nullable();          
+            $table->text('descripcion')->nullable();            
+            
             $table->unsignedInteger('cod_tipo_elemento')->nullable();
             $table->unsignedInteger('cod_estado_elemento')->nullable();
             $table->unsignedInteger('cod_ubi_elemento')->nullable();
@@ -99,18 +100,30 @@ return new class extends Migration
             $table->string('tipo', 45)->nullable();
         });
 
-        // Tabla: mantenimiento
+        // Tabla: estado_mantenimiento
+        Schema::create('estado_mantenimiento', function (Blueprint $table) {
+            $table->increments('cod_estado_mantenimiento');
+            $table->string('estado', 50); 
+        });
+
+// Tabla: mantenimiento
         Schema::create('mantenimiento', function (Blueprint $table) {
             $table->increments('id_mantenimiento');
             $table->date('fecha')->nullable();
             $table->unsignedInteger('cod_tipo_mantenimiento')->nullable();
             $table->string('documento', 20)->nullable();
             $table->string('elemento', 100)->nullable();
+            $table->unsignedInteger('id_elemento')->nullable();
+            $table->string('serial', 50)->nullable();
             $table->text('descripcion')->nullable();
+            $table->text('observaciones')->nullable();
+            $table->unsignedInteger('cod_estado_mantenimiento')->default(1);
+
+            // Relaciones
+            $table->foreign('id_elemento')->references('id_elemento')->on('inventario');
+            $table->foreign('cod_estado_mantenimiento')->references('cod_estado_mantenimiento')->on('estado_mantenimiento');
             $table->foreign('cod_tipo_mantenimiento')->references('cod_tipo_mantenimiento')->on('tipo_mantenimiento');
             $table->foreign('documento')->references('documento')->on('usuario');
-            $table->index('cod_tipo_mantenimiento');
-            $table->index('documento');
         });
 
         // Tabla: estado_reserva
@@ -208,6 +221,7 @@ return new class extends Migration
             CREATE VIEW v_historial_prestamos AS
             SELECT 
                 p.id_Reserva,
+                p.cod_estado_prestamo,
                 ep.estado AS estado_prestamo,
                 p.fecha_inicio,
                 p.fecha_entrega,
@@ -226,6 +240,7 @@ return new class extends Migration
             CREATE VIEW v_historial_reservas AS
             SELECT 
                 r.id_Reserva,
+                r.Num_estado,
                 er.estado AS estado_reserva,
                 r.fecha,
                 r.plazo,

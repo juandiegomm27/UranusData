@@ -207,7 +207,17 @@ class UsuarioGestorController extends Controller
     {
         $perPage = min($request->get('per_page', 10), 100);
         $page = $request->get('page', 1);
-        $query = VHistorialPrestamos::where('cod_estado_prestamo', '<>', 3); 
+        $query = VHistorialPrestamos::query();
+
+        // Filtro por estado activo si existe la columna cod_estado_prestamo
+        if (\Illuminate\Support\Facades\Schema::hasColumn('v_historial_prestamos', 'cod_estado_prestamo')) {
+            $query->where('cod_estado_prestamo', '<>', 3);
+            if ($request->filled('estado')) {
+                $query->where('cod_estado_prestamo', $request->estado);
+            }
+        } elseif ($request->filled('estado')) {
+            $query->where('estado_prestamo', 'like', '%' . $request->estado . '%');
+        }
 
         // Filtros
         if ($request->filled('busqueda')) {
@@ -219,11 +229,7 @@ class UsuarioGestorController extends Controller
             });
         }
 
-        if ($request->filled('estado')) {
-            $query->where('cod_estado_prestamo', $request->estado);
-        }
-
-        if ($request->filled('tipo')) {
+        if ($request->filled('tipo') && \Illuminate\Support\Facades\Schema::hasColumn('v_historial_prestamos', 'cod_tipo_elemento')) {
             $query->where('cod_tipo_elemento', $request->tipo);
         }
 
@@ -274,34 +280,52 @@ class UsuarioGestorController extends Controller
     }
 
     /**
-     GET /gestion/usuario/prestamos-activos/exportar
-     Exportar préstamos a Excel o PDF
-    
+     * GET /gestion/usuario/prestamos-activos/exportar
+     * Exportar préstamos a CSV
+     */
     public function exportarPrestamos(Request $request)
     {
-        $formato = $request->get('formato', 'excel');
-
         try {
-            $prestamos = VHistorialPrestamos::where('cod_estado_prestamo', '<>', 3)->get();
-
-            if ($formato === 'pdf') {
-                // Implementar exportación a PDF si es necesario
-                return $this->errorResponse(
-                    'Exportación PDF aún no implementada',
-                    501
-                );
+            $query = VHistorialPrestamos::query();
+            if (\Illuminate\Support\Facades\Schema::hasColumn('v_historial_prestamos', 'cod_estado_prestamo')) {
+                $query->where('cod_estado_prestamo', '<>', 3);
             }
+            $prestamos = $query->get();
 
-            // Excel por defecto
-            return \Maatwebsite\Excel\Facades\Excel::download(
-                new \App\Exports\PrestamosExport($prestamos),
-                'prestamos_activos_' . now()->format('Y-m-d') . '.xlsx'
-            );
+            $filename = 'prestamos_activos_' . now()->format('Y-m-d') . '.csv';
+
+            $headers = [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => "attachment; filename=\"$filename\"",
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
+
+            $callback = function () use ($prestamos) {
+                $file = fopen('php://output', 'w');
+                fputs($file, "\xEF\xBB\xBF"); // BOM UTF-8 para Excel
+                fputcsv($file, ['ID Reserva', 'Estado', 'Fecha Inicio', 'Fecha Entrega', 'Elemento', 'Cantidad', 'Documento', 'Nombre', 'Apellido']);
+
+                foreach ($prestamos as $p) {
+                    fputcsv($file, [
+                        $p->id_Reserva ?? '',
+                        $p->estado_prestamo ?? '',
+                        $p->fecha_inicio ?? '',
+                        $p->fecha_entrega ?? '',
+                        $p->elemento ?? '',
+                        $p->cantidad ?? '',
+                        $p->documento ?? '',
+                        $p->nombre ?? '',
+                        $p->apellido ?? ''
+                    ]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al exportar: ' . $e->getMessage(),
-                500
-            );
+            return $this->errorResponse('Error al exportar préstamos: ' . $e->getMessage(), 500);
         }
-    }**/
+    }
 }

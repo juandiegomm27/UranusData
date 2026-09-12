@@ -1,0 +1,72 @@
+<!-- 6. src/app/modulos/prestamos/components/lista-prestamos/lista-prestamos.html -->
+@if (mostrarModal && prestamoSeleccionado) {
+  <div class="modal-detalles-prestamo" role="dialog" aria-modal="true">
+    <div class="modal-detalles-contenido">
+      <button type="button" class="btn-cerrar-modal" (click)="cerrarModal()" aria-label="Cerrar">×</button>
+      <h3>Detalles del préstamo #{{ prestamoSeleccionado.id_reserva }}</h3>
+      <p><strong>Usuario:</strong> {{ prestamoSeleccionado.nombre }} ({{ prestamoSeleccionado.documento }})</p>
+      <p><strong>Elemento:</strong> {{ prestamoSeleccionado.elemento }}</p>
+      <p><strong>Cantidad:</strong> {{ prestamoSeleccionado.cantidad }}</p>
+      <p><strong>Fecha de inicio:</strong> {{ prestamoSeleccionado.fecha_inicio | date:'short' }}</p>
+      <p><strong>Estado:</strong> {{ obtenerNombreEstado(prestamoSeleccionado.cod_estado_prestamo) }}</p>
+      <button type="button" class="btn-actualizar-prestamo" (click)="cargarPrestamos()">Actualizar</button>
+    </div>
+  </div>
+}
+
+<div class="modulo-container">
+  <div class="modulo-header">
+    <h2>GESTIÓN DE PRÉSTAMOS</h2>
+  </div>
+
+  @if (cargando) {
+    <div class="cargando">Cargando préstamos activos...</div>
+  } @else if (prestamos.length === 0) {
+    <div class="sin-datos">No se encontraron préstamos registrados.</div>
+  } @else {
+    <div class="modulo-tabla-wrapper">
+      <table class="modulo-tabla">
+        <thead>
+          <tr>
+            <th>ID Reserva</th>
+            <th>Usuario</th>
+            <th>Elemento</th>
+            <th>Cantidad</th>
+            <th>Fecha Inicio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prestamo of prestamos; track prestamo.id_reserva) {
+            <tr>
+              <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+              <td>{{ prestamo.nombre }} ({{ prestamo.documento }})</td>
+              <td>{{ prestamo.elemento }}</td>
+              <td>{{ prestamo.cantidad }}</td>
+              <td>{{ prestamo.fecha_inicio | date:'short' }}</td>
+              <td>
+                <span class="estado-badge" [ngClass]="'estado-' + obtenerClaseEstado(prestamo.cod_estado_prestamo)">
+                  {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
+                </span>
+              </td>
+              <td>
+                <div class="botones-accion-tabla">
+                  <button class="btn-icon" style="background-color: #1C74A0; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;" (click)="abrirDetalles(prestamo)">
+                    Gestionar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="paginacion">
+      <button class="btn-paginacion" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+      <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} registros)</span>
+      <button class="btn-paginacion" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+  }
+</div>

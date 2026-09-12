@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { rolesGuard } from './core/guards/rol.guard';
+import { rolUrlGuard } from './core/guards/rol.guard';
+import { rolesGuard } from './core/guards/roles.guard';
 import { EnConstruccion } from './modulos/en-construccion/en-construccion';
 
 export const routes: Routes = [
-  // Al entrar a la web, carga de inmediato tu interfaz de presentación
   { 
     path: '', 
     loadComponent: () => import('./layout/inicio/inicio').then(m => m.Inicio) 
@@ -28,13 +28,19 @@ export const routes: Routes = [
   { 
     path: 'home/:rol', 
     loadComponent: () => import('./home/home').then(m => m.Home),
-    canActivate: [authGuard, rolesGuard]
+    canActivate: [authGuard, rolUrlGuard]
   },
 
   { 
     path: 'contactanos', 
     loadComponent: () => import('./soporte/contactanos/contactanos').then(m => m.Contactanos) 
   },
+
+{ 
+  path: 'usuario/contacto',
+  loadComponent: () => import('./soporte/contacto-interno/contacto-interno').then(m => m.ContactoInternoComponent),
+  canActivate: [authGuard] 
+},
 
   { 
   path: 'usuario/ajustes', 
@@ -54,14 +60,29 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  { 
+ { 
     path: 'modulos/gestion-usuarios', 
     loadComponent: () => import('./modulos/gestion-usuarios/pages/gestion-usuarios-page').then(m => m.GestionUsuariosPage),
-    canActivate: [authGuard]
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Gerente'] }
+  },
+
+  {
+    path: 'modulos/inventario',
+    loadComponent: () => import('./modulos/Inventario/pages/inventario-page').then(m => m.InventarioPageComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Gerente', 'Tecnico'] } 
+  },
+
+  {
+    path: 'modulos/mantenimiento',
+    loadComponent: () => import('./modulos/mantenimiento/pages/mantenimiento-page').then(m => m.MantenimientoPageComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Gerente', 'Tecnico'] }
   },
 
   { 
-    path: 'prestamos-activos', 
+    path: 'prestamos/activos', 
     loadComponent: () => import('./modulos/gestion-usuarios/components/lista-prestamos-activos/lista-prestamos-activos').then(m => m.ListaPrestamosActivosComponent),
     canActivate: [authGuard, rolesGuard],
     data: { rolPermitidos: ['Gerente', 'Tecnico'] }
@@ -70,7 +91,8 @@ export const routes: Routes = [
   {
   path: 'modulos/crear-usuario',
   loadComponent: () => import('./modulos/gestion-usuarios/components/crear-usuario/crear-usuario').then(m => m.CrearUsuario),
-  canActivate: [authGuard]
+  canActivate: [authGuard, rolesGuard],
+  data: { rolPermitidos: ['Gerente'] }
   },
 
   { 

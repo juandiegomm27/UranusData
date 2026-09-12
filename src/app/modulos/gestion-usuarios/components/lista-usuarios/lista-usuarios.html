@@ -1,12 +1,12 @@
 <div class="lista-usuarios-container">
 
   <!-- Título -->
-  <div class="lista-usuarios-header">
-    <h2>Gestión de usuario</h2>
-    <button class="btn-crear" (click)="abrirCrearUsuario()">
-      Crear Usuario
-    </button>
-  </div>
+<div class="lista-usuarios-header">
+  <h2>Gestión de usuario</h2>
+  <button class="btn-crear" (click)="abrirCrearUsuario()">
+    Crear Usuario
+  </button>
+</div>
 
   <!-- Búsqueda y Filtros -->
   <div class="busqueda-filtros">
@@ -78,11 +78,13 @@
               </td>
               <td>
                 <div class="botones-accion-tabla">
-                  <button class="btn-icon" (click)="abrirDetalleUsuario(usuario)" title="Ver detalles">
+                  <button class="btn-icon btn-icon-ver" (click)="abrirDetalleUsuario(usuario)" title="Ver detalles">
                     <img src="/icons/ojo.svg" alt="Ver" class="icon-tabla">
+                    <span>Ver</span>
                   </button>
-                  <button class="btn-icon" (click)="bloquearUsuario(usuario.documento)" title="Bloquear Usuario">
+                  <button class="btn-icon btn-icon-bloquear" (click)="bloquearUsuario(usuario.documento)" title="Bloquear Usuario">
                     <img src="/icons/bloqueo.svg" alt="Bloquear" class="icon-tabla">
+                    <span>Bloquear</span>
                   </button>
                 </div>
               </td>

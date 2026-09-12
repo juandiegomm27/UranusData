@@ -1,11 +1,61 @@
-<div class="buttons-grid">
-  <button class="btn-dash btn-small" [routerLink]="['/reserva/crear']">
-    <span class="icon">+</span> RESERVA
+<div class="metricas-grid">
+  <div class="metrica-card">
+    <span class="metrica-label">Mis reservas activas</span>
+    <span class="metrica-valor" [class.metrica-pendiente]="reservasActivas() === null">
+      {{ reservasActivas() ?? '—' }}
+    </span>
+    @if (reservasActivas() === null) {
+      <span class="metrica-nota">Próximamente</span>
+    } @else {
+      <span class="metrica-nota">Vigentes en sistema</span>
+    }
+  </div>
+
+  <div class="metrica-card">
+    <span class="metrica-label">Solicitudes pendientes</span>
+    <span class="metrica-valor" [class.metrica-pendiente]="solicitudesPendientes() === null">
+      {{ solicitudesPendientes() ?? '—' }}
+    </span>
+    @if (solicitudesPendientes() === null) {
+      <span class="metrica-nota">Próximamente</span>
+    } @else {
+      <span class="metrica-nota">Por aprobar</span>
+    }
+  </div>
+
+  <div class="metrica-card">
+    <span class="metrica-label">Préstamos actuales</span>
+    <span class="metrica-valor" [class.metrica-pendiente]="prestamosActuales() === null">
+      {{ prestamosActuales() ?? '—' }}
+    </span>
+    @if (prestamosActuales() === null) {
+      <span class="metrica-nota">Próximamente</span>
+    } @else {
+      <span class="metrica-nota">Elementos en poder</span>
+    }
+  </div>
+</div>
+
+<div class="acciones-grid" style="margin-top: 20px;">
+  <button class="accion-card" [routerLink]="['/reserva/crear']">
+    <img src="/icons/reserva.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Nueva reserva</span>
+      <span class="accion-subtitulo">Reservar un elemento</span>
+    </div>
   </button>
-  <button class="btn-dash btn-small" [routerLink]="['/reserva/consultar']">
-    <span class="icon">🔍</span> CONSULTA RESERVA
+  <button class="accion-card" [routerLink]="['/reserva/consultar']">
+    <img src="/icons/consultar.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Consultar reserva</span>
+      <span class="accion-subtitulo">Ver mis reservas</span>
+    </div>
   </button>
-  <button class="btn-dash btn-wide" [routerLink]="['/reserva/editar']">
-    <span class="icon">✏️</span> EDITAR RESERVA
+  <button class="accion-card accion-ancha" [routerLink]="['/reserva/editar']">
+    <img src="/icons/editar.svg" alt="" class="accion-icono">
+    <div class="accion-texto">
+      <span class="accion-titulo">Editar reserva</span>
+      <span class="accion-subtitulo">Modificar o cancelar</span>
+    </div>
   </button>
 </div>

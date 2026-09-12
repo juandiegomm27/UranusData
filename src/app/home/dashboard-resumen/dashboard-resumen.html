@@ -1,0 +1,129 @@
+<div class="resumen-container">
+   <div class="resumen-header">
+     <div>
+       <p class="resumen-eyebrow">Observatorio de activos</p>
+       <h1 class="resumen-titulo">Inicio</h1>
+     </div>
+     <button class="btn-primary" [routerLink]="['/modulos/inventario']">
+       Ir al inventario
+     </button>
+   </div>
+   <!-- MÉTRICAS -->
+   <div class="resumen-metricas">
+     <div class="resumen-tarjeta">
+       <span class="resumen-label">Elementos</span>
+       <span class="resumen-valor">{{ totalElementos() }}</span>
+       <span class="resumen-nota">Catálogo completo</span>
+     </div>
+     <div class="resumen-tarjeta">
+       <span class="resumen-label">Activos</span>
+       <span class="resumen-valor">{{ totalActivos() }}</span>
+       <span class="resumen-nota">Disponibles en sala</span>
+     </div>
+     <div class="resumen-tarjeta">
+       <span class="resumen-label">En préstamo</span>
+       <span class="resumen-valor">{{ totalEnPrestamo() }}</span>
+       <span class="resumen-nota">Fuera de inventario</span>
+     </div>
+     <div class="resumen-tarjeta">
+       <span class="resumen-label">Solicitudes abiertas</span>
+       <span class="resumen-valor">{{ totalSolicitudesAbiertas() }}</span>
+       <span class="resumen-nota">Pendientes de entrega</span>
+     </div>
+   </div>
+   <!-- ACCESOS RÁPIDOS SEGÚN ROL -->
+   @if (accesosRapidos().length > 0) {
+     <div class="resumen-accesos">
+       @for (acceso of accesosRapidos(); track acceso.ruta) {
+         <button class="accion-card" [routerLink]="[acceso.ruta]">
+           <img [src]="acceso.icono" alt="" class="accion-icono">
+           <div class="accion-texto">
+             <span class="accion-titulo">{{ acceso.titulo }}</span>
+             <span class="accion-subtitulo">{{ acceso.subtitulo }}</span>
+           </div>
+         </button>
+       }
+     </div>
+   }
+
+   <!-- GRÁFICO + PRÉSTAMOS RECIENTES -->
+   <div class="resumen-fila">
+     <div class="resumen-panel">
+       <h3 class="resumen-panel-titulo">Distribución por tipo</h3>
+       @if (cargandoInventario()) {
+         <p class="cargando">Cargando...</p>
+       } @else if (distribucionTipo().length > 0) {
+         <ngx-charts-pie-chart
+           [results]="distribucionTipo()"
+           [scheme]="colorScheme"
+           [doughnut]="true"
+           [labels]="false"
+           [legend]="true"
+           [legendPosition]="posicionLeyenda"
+           [view]="vistaGrafico">
+         </ngx-charts-pie-chart>
+       } @else {
+         <p class="sin-datos">Sin datos de inventario</p>
+       }
+     </div>
+     <div class="resumen-panel">
+       <h3 class="resumen-panel-titulo">Préstamos recientes</h3>
+       @if (cargandoPrestamos()) {
+         <p class="cargando">Cargando...</p>
+       } @else if (prestamosRecientes().length > 0) {
+         <div class="resumen-lista">
+           @for (p of prestamosRecientes(); track p.id_reserva) {
+             <div class="resumen-lista-item">
+               <div>
+                 <p class="resumen-lista-titulo">{{ p.elemento }}</p>
+                 <p class="resumen-lista-subtitulo">{{ p.nombre }} • {{ p.fecha_inicio | date: 'yyyy-MM-dd' }}</p>
+               </div>
+               <span class="estado-badge" [ngClass]="obtenerClaseEstadoPrestamo(p.cod_estado_prestamo)">
+                 {{ obtenerNombreEstadoPrestamo(p.cod_estado_prestamo) }}
+               </span>
+             </div>
+           }
+         </div>
+         <a [routerLink]="['/prestamos/activos']" class="resumen-ver-todos">Ver todos los préstamos</a>
+       } @else {
+         <p class="sin-datos">No hay préstamos recientes</p>
+       }
+     </div>
+   </div>
+   <!-- TABLA INVENTARIO -->
+   <div class="resumen-panel resumen-panel-ancho">
+     <h3 class="resumen-panel-titulo">Estado del inventario</h3>
+     @if (cargandoInventario()) {
+       <p class="cargando">Cargando...</p>
+     } @else if (inventarioTabla().length > 0) {
+       <div class="modulo-tabla-wrapper">
+         <table class="modulo-tabla">
+           <thead>
+             <tr>
+               <th>Elemento</th>
+               <th>Tipo</th>
+               <th>Ubicación</th>
+               <th>Estado</th>
+             </tr>
+           </thead>
+           <tbody>
+             @for (item of inventarioTabla(); track item.id_elemento) {
+               <tr>
+                 <td>{{ item.nombre_elemento }}</td>
+                 <td>{{ obtenerNombreTipoItem(item) }}</td>
+                 <td>{{ obtenerNombreUbicacionItem(item) }}</td>
+                 <td>
+                   <span class="estado-badge" [ngClass]="obtenerClaseEstadoElemento(obtenerNombreEstadoItem(item))">
+                     {{ obtenerNombreEstadoItem(item) }}
+                   </span>
+                 </td>
+               </tr>
+             }
+           </tbody>
+         </table>
+       </div>
+     } @else {
+       <p class="sin-datos">No hay elementos en inventario</p>
+     }
+   </div>
+</div>

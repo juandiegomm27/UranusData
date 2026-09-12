@@ -1,36 +1,25 @@
 <header class="main-header">
   <div class="header-container">
-    
+
+    <!-- Hamburguesa: ahora abre/cierra el sidebar, no un menú -->
+    <button
+      type="button"
+      class="menu-hamburger"
+      (click)="toggleSidebar()"
+      title="Menú">
+      <img src="icons/menu.svg" alt="Menú" class="hamburger-icon">
+    </button>
+
     <!-- Logo -->
     <a (click)="irAlInicio()" class="logo" title="UranusData">
       <img src="logo-blanco-largo.svg" alt="Logo UranusData" class="logo-img">
     </a>
 
-    <!-- Hamburguesa (solo móvil) -->
-    <button 
-      type="button" 
-      class="menu-hamburger" 
-      (click)="toggleMenu()"
-      title="Menú">
-      <img src="icons/menu.svg" alt="Menú" class="hamburger-icon">
-    </button>
-
-    <!-- Navegación -->
-    <nav class="navbar" [class.open]="menuAbierto">
-      <ul>
-        <li>
-          <a (click)="irAlInicio()" class="nav-link">Inicio</a>
-        </li>
-        <li>
-          <a [routerLink]="['/contactanos']" class="nav-link" (click)="cerrarMenu()">Contactanos</a>
-        </li>
-      </ul>
-    </nav>
+    <div class="header-spacer"></div>
 
     <!-- Acciones Derecha -->
     <div class="header-actions">
-      
-      <!-- Información del Usuario -->
+
       @if (nombre || rol) {
         <div class="user-info-header">
           <span class="user-name">{{ nombre }}</span>
@@ -38,17 +27,15 @@
         </div>
       }
 
-      <!-- Switch Modo Oscuro -->
       <label class="switch-modo" title="Cambiar modo oscuro">
-        <input 
-          type="checkbox" 
-          [checked]="modoOscuro" 
+        <input
+          type="checkbox"
+          [checked]="modoOscuro"
           (change)="cambiarModo()"
           id="dark-mode-toggle-private">
         <span class="switch-slider"></span>
       </label>
 
-      <!-- Avatar -->
       <app-profile-sidebar></app-profile-sidebar>
 
     </div>

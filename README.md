@@ -17,9 +17,12 @@ El proyecto está construido bajo una arquitectura separada:
 ### Pasos
 
 ```bash
-# 1. Clonar el repositorio
+# 0. Clonar el repositorio
 git clone <url-del-repositorio>
 cd sana-uranus-data
+
+# 1. Instalación de Ngx-Charts para las gráficas del dashboard (Gerente/Técnico)
+npm install @swimlane/ngx-charts --save
 
 # 2. Instalar dependencias del frontend
 npm install
