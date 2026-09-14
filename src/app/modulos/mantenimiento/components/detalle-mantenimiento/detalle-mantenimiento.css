@@ -148,14 +148,6 @@
 .grupo-campo label { font-size: 12px; font-weight: 600; color: #333; text-transform: uppercase; }
 .grupo-campo textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 90px; }
 .grupo-campo textarea:focus { border-color: #1C74A0; outline: none; background: #fff; }
-
-.mensaje-alerta {
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 13px;
-  font-weight: 600;
-}
 .mensaje-success { background: #d4edda; color: #155724; }
 .mensaje-error { background: #f8d7da; color: #721c24; }
 

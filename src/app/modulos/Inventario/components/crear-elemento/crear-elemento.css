@@ -1,2 +1,86 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-forms.css';
+
+/* Estilos para inputs agrupados y botones de acción */
+.grupo-input-flex {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.select-flex {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.select-flex:focus {
+  outline: none;
+  border-color: #1C74A0;
+}
+
+.btn-accion {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-accion:hover {
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+.input-full {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Modo oscuro para los nuevos elementos */
+:host-context(body.dark-mode) .select-flex,
+:host-context(body.dark-mode) .input-full {
+  background: #333;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .select-flex:focus {
+  border-color: #FF9F13;
+}
+
+.icono-btn {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1); 
+  object-fit: contain;
+  display: block;
+}

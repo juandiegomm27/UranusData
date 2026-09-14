@@ -149,14 +149,68 @@
 
 /* MENSAJES */
 
+/* --- ESTILOS CENTRALIZADOS PARA MENSAJES DE ALERTA --- */
 .mensaje-alerta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 20px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  animation: slideDown 0.3s ease;
+  font-weight: 500;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.mensaje-alerta .icono-alerta {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: contain;
+  width: 24px; 
+  height: 24px; 
+  flex-shrink: 0;
+}
+
+.icono-alerta {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* Tipos de alerta */
+.mensaje-error {
+  background-color: #fff3f3;
+  color: #dc3545;
+  border: 1px solid #f5c6cb;
+}
+
+.mensaje-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* Modo Oscuro global para alertas */
+:host-context(body.dark-mode) .mensaje-error,
+body.dark-mode .mensaje-error {
+  background-color: #2c1f1f;
+  color: #ff6b6b;
+  border-color: #5c2c2c;
+}
+
+:host-context(body.dark-mode) .mensaje-success,
+body.dark-mode .mensaje-success {
+  background-color: #1b2e1b;
+  color: #81c784;
+  border-color: #2c5233;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .mensaje-success {

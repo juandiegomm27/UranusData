@@ -37,6 +37,11 @@ export class InventarioService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
+  // Obtener historial de mantenimiento de un elemento específico
+  obtenerHistorialMantenimiento(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/historial`);
+  }
+
   // Crear elemento
   crearElemento(elemento: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, elemento);
@@ -65,6 +70,19 @@ export class InventarioService {
   // Crear nueva ubicación
   crearUbicacion(datos: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/ubicaciones`, datos);
+  }
+
+  // Crear nuevo tipo de elemento
+  crearTipo(datos: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/tipos-elemento`, datos);
+  }
+
+  actualizarTipo(id: number, datos: any): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/tipos-elemento/${id}`, datos);
+  }
+
+  eliminarTipo(id: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/tipos-elemento/${id}`);
   }
 
   // Eliminar ubicación

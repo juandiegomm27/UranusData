@@ -7,7 +7,10 @@
       </div>
       <div class="modal-body">
         @if (mensaje) {
-          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">{{ mensaje }}</div>
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
+          </div>
         }
         <div class="seccion-info">
           <h3>Detalles del Reporte</h3>

@@ -343,14 +343,6 @@
   background: #fff;
 }
 
-.mensaje-alerta {
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .mensaje-success {
   background: #d4edda;
   color: #155724;

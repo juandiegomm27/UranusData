@@ -14,119 +14,77 @@
         <!-- MENSAJE ALERTA -->
         @if (mensaje) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            {{ mensaje }}
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
           </div>
         }
 
         <!-- FORMULARIO -->
-        <form class="modulo-form">
+<form class="modulo-form">
           
-          <!-- FILA 1 -->
+          <!-- FILA 1: Nombre y Código -->
           <div class="fila-formulario">
             <div class="grupo-campo">
               <label for="nombre">Nombre del Elemento *</label>
-              <input 
-                id="nombre"
-                type="text" 
-                [(ngModel)]="nombre_elemento"
-                name="nombre"
-                placeholder="Ej: Laptop Dell XPS">
+              <input id="nombre" type="text" [(ngModel)]="nombre_elemento" name="nombre" placeholder="Ej: Laptop Dell XPS">
             </div>
-
             <div class="grupo-campo">
-              <label for="tipo">Tipo de Elemento *</label>
-              <select 
-                id="tipo"
-                [(ngModel)]="cod_tipo_elemento"
-                name="tipo">
+              <label for="codigo">Código (Placa)</label>
+              <input id="codigo" type="text" [(ngModel)]="cod_elemento" name="cod_elemento" placeholder="Dejar en blanco para autogenerar">
+            </div>
+          </div>
+
+          <!-- TIPO DE ELEMENTO (Fila completa) -->
+          <div class="grupo-campo">
+            <label for="tipo">Tipo de Elemento *</label>
+            <div class="grupo-input-flex">
+              <select id="tipo" [(ngModel)]="cod_tipo_elemento" name="tipo" class="select-flex">
                 <option value="">Seleccionar tipo...</option>
                 @for (tipo of tipos; track tipo.cod_tipo_elemento) {
                   <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
                 }
               </select>
+              <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Agregar nuevo tipo">+</button>
+              <button type="button" class="btn-accion btn-danger" (click)="eliminarTipo(+cod_tipo_elemento)" title="Eliminar tipo seleccionado">
+                 <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+              </button>
             </div>
           </div>
 
-          <!-- UBICACIÓN -->
-          <div class="grupo-campo" style="grid-column: 1 / -1;">
+          <!-- UBICACIÓN (Fila completa) -->
+          <div class="grupo-campo">
             <label for="ubicacion">Ubicación *</label>
-            <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
-              <select 
-                id="ubicacion"
-                [(ngModel)]="cod_ubi_elemento"
-                name="ubicacion"
-                style="flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;">
+            <div class="grupo-input-flex">
+              <select id="ubicacion" [(ngModel)]="cod_ubi_elemento" name="ubicacion" class="select-flex">
                 <option value="">Seleccionar ubicación...</option>
                 @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
-                  <option [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
+                  <option [value]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
                 }
               </select>
-              <button type="button" class="btn-secondary" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación" style="padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold;">+</button>
-              <button type="button" class="btn-icon btn-icon-danger" (click)="eliminarUbicacion(+cod_ubi_elemento)" title="Eliminar ubicación seleccionada" style="padding: 10px 14px; cursor: pointer; background: #dc3545; color: white; border: none; border-radius: 6px;">🗑️</button>
+              <button type="button" class="btn-accion btn-success" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación">+</button>
+              <button type="button" class="btn-accion btn-danger" (click)="eliminarUbicacion(+cod_ubi_elemento)" title="Eliminar ubicación seleccionada">
+                 <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+              </button>
             </div>
           </div>
 
-          <!-- MODAL VISUAL PARA NUEVA UBICACIÓN -->
-          @if (mostrarModalUbicacion) {
-            <div class="modal-overlay" style="z-index: 1100;" (click)="cerrarModalUbicacion()">
-              <div class="modal-contenido" style="max-width: 400px;" (click)="$event.stopPropagation()">
-                <div class="modal-header">
-                  <h2>Nueva Ubicación</h2>
-                  <button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
-                </div>
-                <div class="modal-body">
-                  <div class="grupo-campo">
-                    <label for="nombre-ubi">Nombre de la Ubicación *</label>
-                    <input 
-                      id="nombre-ubi" 
-                      type="text" 
-                      [(ngModel)]="nuevaUbicacionNombre" 
-                      name="nuevaUbicacionNombre" 
-                      placeholder="Ej: Sala 4, Laboratorio de Redes..." 
-                      style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button>
-                  <button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button>
-                </div>
-              </div>
-            </div>
-          }
-
-          <!-- FILA 3 -->
+          <!-- FILA 3: Serial y Modelo -->
           <div class="fila-formulario">
             <div class="grupo-campo">
               <label for="serial">Serial/Número de Serie</label>
-              <input 
-                id="serial"
-                type="text" 
-                [(ngModel)]="serial"
-                name="serial"
-                placeholder="Ej: ABC123456">
+              <input id="serial" type="text" [(ngModel)]="serial" name="serial" placeholder="Ej: ABC123456">
             </div>
-
             <div class="grupo-campo">
               <label for="modelo">Modelo</label>
-              <input 
-                id="modelo"
-                type="text" 
-                [(ngModel)]="modelo"
-                name="modelo"
-                placeholder="Ej: XPS 15">
+              <input id="modelo" type="text" [(ngModel)]="modelo" name="modelo" placeholder="Ej: XPS 15">
             </div>
           </div>
 
           <!-- DESCRIPCIÓN -->
           <div class="grupo-campo">
             <label for="descripcion">Descripción</label>
-            <textarea 
-              id="descripcion"
-              [(ngModel)]="descripcion"
-              name="descripcion"
-              placeholder="Notas adicionales sobre el elemento..."></textarea>
+            <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" placeholder="Notas adicionales sobre el elemento..."></textarea>
           </div>
-
         </form>
 
       </div>

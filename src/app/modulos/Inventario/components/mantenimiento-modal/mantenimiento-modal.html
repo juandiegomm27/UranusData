@@ -14,7 +14,8 @@
         <!-- MENSAJE ALERTA -->
         @if (mensaje) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            {{ mensaje }}
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
           </div>
         }
 

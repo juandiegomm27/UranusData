@@ -9,7 +9,8 @@
     <!-- Mensaje de retroalimentación -->
     @if (mensaje) {
       <div class="mensaje-alerta" [ngClass]="tipoMensaje === 'success' ? 'mensaje-success' : 'mensaje-error'">
-        {{ mensaje }}
+        <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
       </div>
     }
 

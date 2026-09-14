@@ -9,7 +9,8 @@
       <div class="modal-body">
         @if (mensajeModal) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensajeModal">
-            {{ mensajeModal }}
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensajeModal }}</span>
           </div>
         }
         <form class="modulo-form">

@@ -2,216 +2,26 @@
   <div class="modal-overlay" (click)="cerrarModal()">
     <div class="modal-contenido" (click)="$event.stopPropagation()">
       
-      <!-- HEADER -->
-      <div class="modal-header">
-        <h2>{{ editando ? 'Editar Elemento' : 'Detalles del Elemento' }}</h2>
-        <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
-      </div>
-
-      <!-- BODY -->
-      <div class="modal-body">
-        
-        <!-- MENSAJE ALERTA -->
-        @if (mensaje) {
-          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            {{ mensaje }}
-          </div>
-        }
-
-        <!-- MODO LECTURA -->
-        @if (!editando) {
-          <div class="seccion-info">
-            <h3>Información del Elemento</h3>
-            <div class="grid-info">
-              <div class="campo-info"><label>ID:</label><span>{{ elemento.id_elemento }}</span></div>
-              <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre_elemento }}</span></div>
-              <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span></div>
-              <div class="campo-info"><label>Ubicación:</label><span>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</span></div>
-              <div class="campo-info"><label>Estado:</label>
-                <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
-                  {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
-                </span>
-              </div>
-              <div class="campo-info"><label>Serial:</label><span>{{ elemento.serial || 'N/A' }}</span></div>
-              <div class="campo-info"><label>Modelo:</label><span>{{ elemento.modelo || 'N/A' }}</span></div>
-              <div class="campo-info" style="grid-column: 1/-1;"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin descripción' }}</span></div>
-            </div>
-          </div>
-        } 
-        <!-- MODO EDICIÓN -->
-        @else {
-          <form class="modulo-form">
-            
-            <!-- FILA 1: ID y Nombre -->
-            <div class="fila-formulario">
-              <div class="grupo-campo">
-                <label>ID del Elemento</label>
-                <input type="text" [value]="formulario.id_elemento" disabled style="background-color: #e9ecef; color: #666; font-weight: bold; cursor: not-allowed;">
-              </div>
-              <div class="grupo-campo">
-                <label>Nombre del Elemento *</label>
-                <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
-              </div>
-            </div>
-
-            <!-- UBICACIÓN EN EDICIÓN -->
-            <div class="grupo-campo" style="grid-column: 1 / -1;">
-              <label>Ubicación *</label>
-              <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
-                <select 
-                  [(ngModel)]="formulario.cod_ubi_elemento" 
-                  name="ubicacion" 
-                  style="flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;">
-                  @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
-                    <option [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
-                  }
-                </select>
-                <button type="button" class="btn-secondary" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación" style="padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold;">+</button>
-                <button type="button" class="btn-icon btn-icon-danger" (click)="eliminarUbicacion(+formulario.cod_ubi_elemento)" title="Eliminar ubicación seleccionada" style="padding: 10px 14px; cursor: pointer; background: #dc3545; color: white; border: none; border-radius: 6px;">🗑️</button>
-              </div>
-            </div>
-
-            <!-- MODAL NUEVA UBICACIÓN -->
-            @if (mostrarModalUbicacion) {
-              <div class="modal-overlay" style="z-index: 1100;" (click)="cerrarModalUbicacion()">
-                <div class="modal-contenido" style="max-width: 400px;" (click)="$event.stopPropagation()">
-                  <div class="modal-header">
-                    <h2>Nueva Ubicación</h2>
-                    <button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="grupo-campo">
-                      <label for="nombre-ubi">Nombre de la Ubicación *</label>
-                      <input 
-                        id="nombre-ubi" 
-                        type="text" 
-                        [(ngModel)]="nuevaUbicacionNombre" 
-                        name="nuevaUbicacionNombre" 
-                        placeholder="Ej: Sala 4, Laboratorio de Redes..." 
-                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button>
-                    <button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button>
-                  </div>
-                </div>
-              </div>
-            }
-
-            <!-- FILA 3: Estado y Serial -->
-            <div class="fila-formulario">
-              <div class="grupo-campo">
-                <label>Estado *</label>
-                <select [(ngModel)]="formulario.cod_estado_elemento" name="estado">
-                  @for (estado of estados; track estado.cod_estado_elemento) {
-                    <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option>
-                  }
-                </select>
-              </div>
-              <div class="grupo-campo">
-                <label>Serial</label>
-                <input type="text" [(ngModel)]="formulario.serial" name="serial">
-              </div>
-            </div>
-
-            <!-- FILA 4: Modelo -->
-            <div class="fila-formulario">
-              <div class="grupo-campo">
-                <label>Modelo</label>
-                <input type="text" [(ngModel)]="formulario.modelo" name="modelo">
-              </div>
-            </div>
-
-            <!-- DESCRIPCIÓN -->
-            <div class="grupo-campo">
-              <label>Descripción</label>
-              <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
-            </div>
-            
-          </form>
-        }
-      </div>
-
-      <!-- FOOTER -->
-      <div class="modal-footer">
-        @if (editando) {
-          <button class="btn-modal-success" (click)="guardarCambios()" [disabled]="cargando">
-            @if (cargando) { <span>Guardando...</span> } @else { <span>Guardar Cambios</span> }
-          </button>
-          <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">Cancelar</button>
-        } @else {
-          <button class="btn-modal-primary" (click)="abrirEdicion()">Editar</button>
-          <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
-        }
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BLOQUE: HISTORIAL DE MANTENIMIENTOS DEL EQUIPO -->
-<div class="seccion-info historial-mantenimiento-box" style="margin-top: 20px;">
-  <h3>Historial de Mantenimientos del Equipo</h3>
-  
-  @if (elemento?.mantenimiento && elemento.mantenimiento.length > 0) {
-    <div class="modulo-tabla-wrapper" style="max-height: 250px; overflow-y: auto;">
-      <table class="modulo-tabla" style="font-size: 13px; min-width: 100%;">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Fecha</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>Falla Reportada</th>
-            <th>Solución / Observaciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (mant of elemento.mantenimiento; track mant.id_mantenimiento) {
-            <tr>
-              <td><strong>#{{ mant.id_mantenimiento }}</strong></td>
-              <td>{{ mant.fecha }}</td>
-              <td>{{ mant.tipo?.tipo || mant.cod_tipo_mantenimiento }}</td>
-              <td>
-                <span class="estado-badge" [ngClass]="{
-                  'estado-aprobada': mant.cod_estado_mantenimiento == 3, 
-                  'estado-pendiente': mant.cod_estado_mantenimiento == 1, 
-                  'estado-pausa': mant.cod_estado_mantenimiento == 2
-                }">
-                  {{ mant.cod_estado_mantenimiento == 3 ? 'Finalizado' : (mant.cod_estado_mantenimiento == 2 ? 'En pausa' : 'Pendiente') }}
-                </span>
-              </td>
-              <td title="{{ mant.descripcion }}">{{ mant.descripcion ? (mant.descripcion | slice:0:25) + '...' : '-' }}</td>
-              <td title="{{ mant.observaciones }}">{{ mant.observaciones ? (mant.observaciones | slice:0:25) + '...' : 'Sin resolver' }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>@if (mostrar && elemento) {
-  <div class="modal-overlay" (click)="cerrarModal()">
-    <div class="modal-contenido" (click)="$event.stopPropagation()">
-             
-      <!-- HEADER -->
       <div class="modal-header">
         <h2>{{ editando ? 'Editar Elemento' : 'Detalles del Elemento' }}</h2>
         <button class="btn-cerrar-modal" (click)="cerrarModal()">×</button>
       </div>
 
-      <!-- BODY -->
       <div class="modal-body">
-                 
         <!-- MENSAJE ALERTA -->
         @if (mensaje) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            {{ mensaje }}
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
           </div>
         }
 
-        <!-- MODO LECTURA -->
         @if (!editando) {
           <div class="seccion-info">
             <h3>Información del Elemento</h3>
             <div class="grid-info">
               <div class="campo-info"><label>ID:</label><span>{{ elemento.id_elemento }}</span></div>
+              <div class="campo-info"><label>Código Interno:</label><span>{{ elemento.cod_elemento || 'N/A' }}</span></div>
               <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre_elemento }}</span></div>
               <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span></div>
               <div class="campo-info"><label>Ubicación:</label><span>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</span></div>
@@ -222,79 +32,49 @@
               </div>
               <div class="campo-info"><label>Serial:</label><span>{{ elemento.serial || 'N/A' }}</span></div>
               <div class="campo-info"><label>Modelo:</label><span>{{ elemento.modelo || 'N/A' }}</span></div>
-              <div class="campo-info" style="grid-column: 1/-1;"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin descripción' }}</span></div>
+              <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin descripción' }}</span></div>
             </div>
           </div>
-
-          <!-- BLOQUE: HISTORIAL DE MANTENIMIENTOS DEL EQUIPO (DENTRO DEL MODAL) -->
-          <div class="seccion-info historial-mantenimiento-box" style="margin-top: 20px;">
-            <h3>Historial de Mantenimientos del Equipo</h3>
-            @if (elemento?.mantenimiento && elemento.mantenimiento.length > 0) {
-              <div class="modulo-tabla-wrapper" style="max-height: 200px; overflow-y: auto;">
-                <table class="modulo-tabla" style="font-size: 13px; min-width: 100%;">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Fecha</th>
-                      <th>Tipo</th>
-                      <th>Estado</th>
-                      <th>Falla Reportada</th>
-                      <th>Solución / Observaciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (mant of elemento.mantenimiento; track mant.id_mantenimiento) {
-                      <tr>
-                        <td><strong>#{{ mant.id_mantenimiento }}</strong></td>
-                        <td>{{ mant.fecha }}</td>
-                        <td>{{ mant.tipo?.tipo || mant.cod_tipo_mantenimiento }}</td>
-                        <td>
-                          <span class="estado-badge" [ngClass]="{
-                            'estado-aprobada': mant.cod_estado_mantenimiento == 3, 
-                            'estado-pendiente': mant.cod_estado_mantenimiento == 1, 
-                            'estado-pausa': mant.cod_estado_mantenimiento == 2
-                          }">
-                            {{ mant.cod_estado_mantenimiento == 3 ? 'Finalizado' : (mant.cod_estado_mantenimiento == 2 ? 'En pausa' : 'Pendiente') }}
-                          </span>
-                        </td>
-                        <td title="{{ mant.descripcion }}">{{ mant.descripcion ? (mant.descripcion | slice:0:20) + '...' : '-' }}</td>
-                        <td title="{{ mant.observaciones }}">{{ mant.observaciones ? (mant.observaciones | slice:0:20) + '...' : 'Pendiente...' }}</td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            } @else {
-              <p style="color: #666; font-size: 13px; font-style: italic; padding: 5px 0; margin: 0;">
-                Este equipo no registra historiales de mantenimiento previos.
-              </p>
-            }
-          </div>
-        }
-
-        <!-- MODO EDICIÓN -->
+        } 
         @else {
           <form class="modulo-form">
             <div class="fila-formulario">
               <div class="grupo-campo">
                 <label>ID del Elemento</label>
-                <input type="text" [value]="formulario.id_elemento" disabled style="background-color: #e9ecef; color: #666; font-weight: bold; cursor: not-allowed;">
-              </div>
-              <div class="grupo-campo">
-                <label>Nombre del Elemento *</label>
-                <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
+                <input type="text" [value]="formulario.id_elemento" disabled class="input-deshabilitado">
+              </div> 
+              <div class="fila-formulario">
+                <div class="grupo-campo">
+                  <label>Código Interno</label>
+                  <input type="text" [(ngModel)]="formulario.cod_elemento" name="cod_elemento">
+                </div>
+                <div class="grupo-campo">
+                  <label>Nombre del Elemento *</label>
+                  <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
+                </div>
               </div>
             </div>
-            
-            <div class="grupo-campo" style="grid-column: 1 / -1;">
-              <label>Ubicación *</label>
-              <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
-                <select [(ngModel)]="formulario.cod_ubi_elemento" name="ubicacion" style="flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;">
-                  @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
-                    <option [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
-                  }
+
+            <div class="grupo-campo campo-completo">
+              <label>Tipo de Elemento *</label>
+              <div class="grupo-input-flex">
+                <select [(ngModel)]="formulario.cod_tipo_elemento" name="tipo" class="select-flex">
+                  @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [ngValue]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option> }
                 </select>
-                <button type="button" class="btn-secondary" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación" style="padding: 10px 14px; cursor: pointer; border-radius: 6px; font-weight: bold;">+</button>
+                <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Crear nuevo tipo">+</button>
+                <button type="button" class="btn-accion btn-warning" (click)="abrirModalTipo(true)" title="Editar tipo">✎</button>
+                <button type="button" class="btn-accion btn-danger" (click)="eliminarTipo(+formulario.cod_tipo_elemento)" title="Borrar tipo">🗑</button>
+              </div>
+            </div>
+
+            <div class="grupo-campo campo-completo">
+              <label>Ubicación *</label>
+              <div class="grupo-input-flex">
+                <select [(ngModel)]="formulario.cod_ubi_elemento" name="ubicacion" class="select-flex">
+                  @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) { <option [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option> }
+                </select>
+                <button type="button" class="btn-accion btn-success" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación">+</button>
+                <button type="button" class="btn-accion btn-danger" (click)="eliminarUbicacion(+formulario.cod_ubi_elemento)" title="Eliminar ubicación">🗑</button>
               </div>
             </div>
 
@@ -302,22 +82,14 @@
               <div class="grupo-campo">
                 <label>Estado *</label>
                 <select [(ngModel)]="formulario.cod_estado_elemento" name="estado">
-                  @for (estado of estados; track estado.cod_estado_elemento) {
-                    <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option>
-                  }
+                  @for (estado of estados; track estado.cod_estado_elemento) { <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option> }
                 </select>
               </div>
-              <div class="grupo-campo">
-                <label>Serial</label>
-                <input type="text" [(ngModel)]="formulario.serial" name="serial">
-              </div>
+              <div class="grupo-campo"><label>Serial</label><input type="text" [(ngModel)]="formulario.serial" name="serial"></div>
             </div>
 
             <div class="fila-formulario">
-              <div class="grupo-campo">
-                <label>Modelo</label>
-                <input type="text" [(ngModel)]="formulario.modelo" name="modelo">
-              </div>
+              <div class="grupo-campo"><label>Modelo</label><input type="text" [(ngModel)]="formulario.modelo" name="modelo"></div>
             </div>
 
             <div class="grupo-campo">
@@ -326,30 +98,52 @@
             </div>
           </form>
         }
+      </div> 
 
-      </div>
-
-      <!-- FOOTER -->
       <div class="modal-footer">
         @if (editando) {
-          <button class="btn-modal-success" (click)="guardarCambios()" [disabled]="cargando">
-            @if (cargando) { <span>Guardando...</span> } @else { <span>Guardar Cambios</span> }
-          </button>
+          <button class="btn-modal-success" (click)="guardarCambios()" [disabled]="cargando">Guardar Cambios</button>
           <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">Cancelar</button>
         } @else {
           <button class="btn-modal-primary" (click)="abrirEdicion()">Editar</button>
+          <button class="btn-modal-info" (click)="abrirHistorial()">Ver Historial</button>
           <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
         }
-      </div>
-
+      </div> 
     </div>
   </div>
-}
+
+  <!-- MODALES SECUNDARIOS -->
+  @if (mostrarModalUbicacion) {
+    <div class="modal-overlay z-alto" (click)="cerrarModalUbicacion()">
+      <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+        <div class="modal-header"><h2>Nueva Ubicación</h2><button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">×</button></div>
+        <div class="modal-body">
+          <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevaUbicacionNombre" class="input-full"></div>
+        </div>
+        <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button><button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button></div>
+      </div>
     </div>
-  } @else {
-    <p style="color: #666; font-size: 13px; font-style: italic; padding: 10px 0;">
-      Este equipo no registra historiales de mantenimiento previos.
-    </p>
   }
-</div>
+
+  @if (mostrarModalTipo) {
+    <div class="modal-overlay z-alto" (click)="cerrarModalTipo()">
+      <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+        <div class="modal-header"><h2>{{ editandoTipo ? 'Editar Tipo' : 'Nuevo Tipo' }}</h2><button class="btn-cerrar-modal" (click)="cerrarModalTipo()">×</button></div>
+        <div class="modal-body">
+          <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevoTipoNombre" class="input-full"></div>
+        </div>
+        <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarTipo()">Guardar</button><button class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>
+      </div>
+    </div>
+  }
+
+  <!-- COMPONENTE EXTERNO HISTORIAL -->
+  @if (mostrarHistorial) {
+    <app-historial-mantenimiento
+      [mostrar]="mostrarHistorial"
+      [elemento]="elemento"
+      (cerrar)="cerrarHistorial()">
+    </app-historial-mantenimiento>
+  }
 }

@@ -88,11 +88,12 @@
   </div>
 
   <!-- MENSAJE ALERTA -->
-  @if (mensaje) {
-    <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-      {{ mensaje }}
-    </div>
-  }
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <span>{{ mensaje }}</span>
+          </div>
+        }
 
   <!-- TABLA -->
   @if (cargando) {
@@ -108,8 +109,8 @@
       <table class="modulo-tabla">
         <thead>
           <tr>
-            <th>#</th>
             <th>ID</th>
+            <th>Código</th>
             <th>Elemento</th>
             <th>Tipo</th>
             <th>Ubicación</th>
@@ -122,8 +123,8 @@
         <tbody>
           @for (elemento of elementos; track elemento.id_elemento; let i = $index) {
             <tr>
-              <td>{{ (paginaActual - 1) * perPage + i + 1 }}</td>
-              <td>{{ elemento.id_elemento }}</td>
+              <td><strong>{{ elemento.id_elemento }}</strong></td>
+              <td>{{ elemento.cod_elemento || 'N/A' }}</td>
               <td>{{ elemento.nombre_elemento }}</td>
               <td>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</td>
               <td>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</td>

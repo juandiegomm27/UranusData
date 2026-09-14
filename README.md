@@ -21,11 +21,11 @@ El proyecto está construido bajo una arquitectura separada:
 git clone <url-del-repositorio>
 cd sana-uranus-data
 
-# 1. Instalación de Ngx-Charts para las gráficas del dashboard (Gerente/Técnico)
-npm install @swimlane/ngx-charts --save
-
-# 2. Instalar dependencias del frontend
+# 1. Instalar dependencias del frontend
 npm install
+
+# 2. Instalación de Ngx-Charts para las gráficas del dashboard (Gerente/Técnico)
+npm install @swimlane/ngx-charts --save
 
 # 3. Configurar el backend Laravel
 cd laravel-backend

@@ -2,11 +2,12 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, inje
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
+import { HistorialMantenimientoComponent } from '../historial-mantenimiento/historial-mantenimiento';
 
 @Component({
   selector: 'app-detalle-elemento',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HistorialMantenimientoComponent],
   templateUrl: './detalle-elemento.html',
   styleUrls: ['./detalle-elemento.css']
 })
@@ -30,6 +31,12 @@ export class DetalleElementoComponent implements OnInit {
 
   mostrarModalUbicacion = false;
   nuevaUbicacionNombre = '';
+  mostrarModalTipo = false;
+  editandoTipo = false;
+  nuevoTipoNombre = '';
+  tipoIdAEditar: number | null = null;
+  
+  mostrarHistorial = false;
 
   ngOnInit(): void {}
 
@@ -50,140 +57,110 @@ export class DetalleElementoComponent implements OnInit {
       return;
     }
     this.cargando = true;
+    const seEnvioAMantenimiento = (this.formulario.cod_estado_elemento == 4 && this.elemento.cod_estado_elemento != 4);
+    
     this.inventarioService.actualizarElemento(this.elemento.id_elemento, this.formulario).subscribe({
       next: (response: any) => {
         if (response.success !== false) {
-          this.mensaje = 'Elemento actualizado exitosamente';
-          this.tipoMensaje = 'success';
-          this.actualizado.emit();
-          setTimeout(() => {
-            this.cerrarModal();
-          }, 1500);
+          if (seEnvioAMantenimiento) {
+            const datosAutomaticos = { cod_tipo_mantenimiento: 1, descripcion: 'Enviado a mantenimiento automáticamente por edición.' };
+            this.inventarioService.enviarMantenimiento(this.elemento.id_elemento, datosAutomaticos).subscribe({
+              next: () => this.finalizarGuardado('Elemento actualizado y enviado a mantenimiento.'),
+              error: () => this.finalizarGuardado('Elemento actualizado (Error al enviar a mantenimiento).')
+            });
+          } else {
+            this.finalizarGuardado('Elemento actualizado exitosamente');
+          }
         }
-        this.cargando = false;
-        this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Error al actualizar:', err);
+      error: () => {
         this.mensaje = 'Error al actualizar el elemento';
         this.tipoMensaje = 'error';
         this.cargando = false;
-        this.cdr.detectChanges();
       }
     });
   }
 
-  abrirModalUbicacion(): void {
-    this.nuevaUbicacionNombre = '';
-    this.mostrarModalUbicacion = true;
+  finalizarGuardado(mensajeExito: string): void {
+    this.mensaje = mensajeExito;
+    this.tipoMensaje = 'success';
+    this.actualizado.emit();
+    this.cargando = false;
+    setTimeout(() => this.cerrarModal(), 1500);
   }
 
-  cerrarModalUbicacion(): void {
-    this.mostrarModalUbicacion = false;
-    this.nuevaUbicacionNombre = '';
-    this.cdr.detectChanges();
-  }
-
+  abrirModalUbicacion(): void { this.nuevaUbicacionNombre = ''; this.mostrarModalUbicacion = true; }
+  cerrarModalUbicacion(): void { this.mostrarModalUbicacion = false; this.nuevaUbicacionNombre = ''; }
+  
   guardarNuevaUbicacion(): void {
-    if (!this.nuevaUbicacionNombre || !this.nuevaUbicacionNombre.trim()) {
-      this.mensaje = 'El nombre de la ubicación es requerido';
-      this.tipoMensaje = 'error';
-      this.cdr.detectChanges();
-      return;
-    }
-
+    if (!this.nuevaUbicacionNombre) return;
     this.inventarioService.crearUbicacion({ ubicacion: this.nuevaUbicacionNombre.trim() }).subscribe({
-      next: (response: any) => {
-        this.mensaje = 'Ubicación guardada exitosamente';
-        this.tipoMensaje = 'success';
-
-        this.inventarioService.obtenerOpciones().subscribe({
-          next: (res: any) => {
-            if (res) {
-              const data = res.success !== undefined ? res : res;
-              this.ubicaciones = data.ubicaciones || data;
-            }
-
-            const nuevoId = response?.ubicacion?.cod_ubi_elemento || response?.cod_ubi_elemento || response?.id;
-            if (nuevoId) {
-              this.formulario.cod_ubi_elemento = nuevoId;
-            }
-
-            this.cerrarModalUbicacion();
-            this.cdr.detectChanges();
-          }
-        });
-      },
-      error: (err: any) => {
-        console.error('Error al crear ubicación:', err);
-        this.mensaje = err.error?.mensaje || 'Error al guardar la ubicación en la base de datos';
-        this.tipoMensaje = 'error';
-        this.cdr.detectChanges();
+      next: (res: any) => {
+        this.formulario.cod_ubi_elemento = res?.ubicacion?.cod_ubi_elemento || res?.id;
+        this.cerrarModalUbicacion();
+        this.actualizado.emit(); 
       }
     });
   }
 
-  eliminarUbicacion(idUbicacion: number): void {
-    if (!idUbicacion) {
-      this.mensaje = 'Selecciona una ubicación para eliminar';
-      this.tipoMensaje = 'error';
-      return;
-    }
+  eliminarUbicacion(id: number): void {
+    if (!id || !confirm('¿Eliminar esta ubicación?')) return;
+    this.inventarioService.eliminarUbicacion(id).subscribe({
+      next: () => { this.formulario.cod_ubi_elemento = ''; this.actualizado.emit(); }
+    });
+  }
 
-    if (!confirm('¿Estás seguro de que deseas eliminar esta ubicación?')) {
-      return;
+  abrirModalTipo(editar = false): void {
+    this.editandoTipo = editar;
+    if (editar) {
+      this.tipoIdAEditar = this.formulario.cod_tipo_elemento;
+      const tipoObj = this.tipos.find(t => t.cod_tipo_elemento == this.tipoIdAEditar);
+      this.nuevoTipoNombre = tipoObj ? tipoObj.tipo : '';
+    } else {
+      this.tipoIdAEditar = null;
+      this.nuevoTipoNombre = '';
     }
+    this.mostrarModalTipo = true;
+  }
+  
+  cerrarModalTipo(): void { this.mostrarModalTipo = false; this.nuevoTipoNombre = ''; }
 
-    this.inventarioService.eliminarUbicacion(idUbicacion).subscribe({
-      next: (response: any) => {
-        this.mensaje = 'Ubicación eliminada exitosamente';
-        this.tipoMensaje = 'success';
-        this.formulario.cod_ubi_elemento = '';
-        this.inventarioService.obtenerOpciones().subscribe({
-          next: (res: any) => {
-            if (res) {
-              const data = res.success !== undefined ? res : res;
-              this.ubicaciones = data.ubicaciones || data;
-            }
-            this.cdr.detectChanges();
-          }
-        });
-      },
-      error: (err: any) => {
-        console.error('Error al eliminar ubicación:', err);
-        this.mensaje = err.error?.mensaje || 'No se puede eliminar la ubicación porque está en uso';
-        this.tipoMensaje = 'error';
-        this.cdr.detectChanges();
+  guardarTipo(): void {
+    if (!this.nuevoTipoNombre) return;
+    const peticion = this.editandoTipo
+      ? this.inventarioService.actualizarTipo(this.tipoIdAEditar!, { tipo: this.nuevoTipoNombre.trim() })
+      : this.inventarioService.crearTipo({ tipo: this.nuevoTipoNombre.trim() });
+    peticion.subscribe({
+      next: (res: any) => {
+        if (!this.editandoTipo) this.formulario.cod_tipo_elemento = res?.data?.cod_tipo_elemento || res?.id;
+        this.cerrarModalTipo();
+        this.actualizado.emit();
       }
     });
   }
 
-  obtenerNombreTipo(cod: any): string {
-    const tipo = this.tipos.find(t => t.cod_tipo_elemento == cod);
-    return tipo ? tipo.tipo : 'N/A';
+  eliminarTipo(id: number): void {
+    if (!id || !confirm('¿Eliminar este tipo?')) return;
+    this.inventarioService.eliminarTipo(id).subscribe({
+      next: () => { this.formulario.cod_tipo_elemento = ''; this.actualizado.emit(); }
+    });
   }
 
-  obtenerNombreEstado(cod: any): string {
-    const estado = this.estados.find(e => e.cod_estado_elemento == cod);
-    return estado ? estado.estado : 'N/A';
+  // AQUÍ ESTÁ EL AJUSTE IMPORTANTE:
+  abrirHistorial(): void { 
+    this.mostrarHistorial = true; 
+    this.cdr.detectChanges(); 
   }
+  
+  cerrarHistorial(): void { 
+    this.mostrarHistorial = false; 
+    this.cdr.detectChanges(); 
+  }
+  
+  cerrarModal(): void { this.cerrar.emit(); }
 
-  obtenerClaseEstado(cod: any): string {
-    const estadoMap: { [key: number]: string } = {
-      1: 'estado-activo',
-      2: 'estado-inactivo',
-      3: 'estado-danado',
-      4: 'estado-pendiente'
-    };
-    return estadoMap[cod] || 'estado-inactivo';
-  }
-
-  obtenerNombreUbicacion(cod: any): string {
-    const ubicacion = this.ubicaciones.find(u => u.cod_ubi_elemento == cod);
-    return ubicacion ? ubicacion.ubicacion : 'N/A';
-  }
-
-  cerrarModal(): void {
-    this.cerrar.emit();
-  }
+  obtenerNombreTipo(cod: any): string { return this.tipos.find(t => t.cod_tipo_elemento == cod)?.tipo || 'N/A'; }
+  obtenerNombreEstado(cod: any): string { return this.estados.find(e => e.cod_estado_elemento == cod)?.estado || 'N/A'; }
+  obtenerClaseEstado(cod: any): string { return ({ 1: 'estado-activo', 2: 'estado-inactivo', 3: 'estado-danado', 4: 'estado-pendiente' } as Record<number, string>)[cod] || 'estado-inactivo'; }
+  obtenerNombreUbicacion(cod: any): string { return this.ubicaciones.find(u => u.cod_ubi_elemento == cod)?.ubicacion || 'N/A'; }
 }

@@ -1,0 +1,81 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-tables.css';
+
+.modal-ancho {
+  max-width: 900px;
+}
+
+.filtros-historial {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  align-items: flex-end;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtro-item label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.input-filtro {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.btn-limpiar {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.sin-registros {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-size: 14px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* --- MODO OSCURO PARA HISTORIAL --- */
+:host-context(body.dark-mode) .filtros-historial {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+}
+
+:host-context(body.dark-mode) .filtro-item label {
+  color: #bbb;
+}
+
+:host-context(body.dark-mode) .input-filtro {
+  background-color: #333;
+  border: 1px solid #555;
+  color: #eee;
+  color-scheme: dark; 
+}
+
+:host-context(body.dark-mode) .sin-registros {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  color: #bbb;
+}
