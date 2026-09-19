@@ -11,29 +11,24 @@ export class MantenimientoService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener mantenimientos
   obtenerMantenimientos(pagina: number = 1): Observable<any> {
     const params = new HttpParams().set('page', pagina.toString());
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  // Obtener un mantenimiento
   obtenerMantenimiento(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  // Crear mantenimiento
   crearMantenimiento(mantenimiento: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, mantenimiento);
   }
 
-  // Actualizar mantenimiento
   actualizarMantenimiento(id: number, mantenimiento: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, mantenimiento);
   }
 
-  // Completar mantenimiento
-  completarMantenimiento(id: number, observaciones: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/completar`, { observaciones });
+  completarMantenimiento(id: number, datos: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/completar`, datos);
   }
 }

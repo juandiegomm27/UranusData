@@ -13,8 +13,7 @@ class CatalogosSeeder extends Seeder
         $estadosElemento = [
             ['cod_estado_elemento' => 1, 'estado' => 'Activo'],
             ['cod_estado_elemento' => 2, 'estado' => 'Inactivo'],
-            ['cod_estado_elemento' => 3, 'estado' => 'Dañado'],
-            ['cod_estado_elemento' => 4, 'estado' => 'Mantenimiento'],
+            ['cod_estado_elemento' => 3, 'estado' => 'Mantenimiento'],
         ];
         DB::table('estado_elemento')->insertOrIgnore($estadosElemento);
 

@@ -1,4 +1,8 @@
-# 🚀 Guía de Instalación - UranusData Backend
+![Logo de UranusData](../public/logo-largo-color.svg)
+
+ [Inicio General](README.md) || [Info Backend](./laravel-backend/README_BACKEND.md) || [Guía de Instalación](./laravel-backend/INSTALACION.md) || [Documentación API](./laravel-backend/API_DOCUMENTATION.md)
+ 
+ # 🚀 Guía de Instalación - UranusData Backend
 
 ## 📋 Requisitos Previos
 
@@ -11,32 +15,32 @@
 
 ## 🔧 Instalación Paso a Paso
 
-### 1️⃣ Clonar el repositorio
+### 1.  Clonar el repositorio
 
 ```bash
 git clone https://github.com/tu-usuario/uranusdata-backend.git
 cd uranusdata-backend
 ```
 
-### 2️⃣ Instalar dependencias
+### 2️. Instalar dependencias
 
 ```bash
 composer install
 ```
 
-### 3️⃣ Copiar archivo de configuración
+### 3️. Copiar archivo de configuración
 
 ```bash
 cp .env.example .env
 ```
 
-### 4️⃣ Generar clave de aplicación
+### 4️. Generar clave de aplicación
 
 ```bash
 php artisan key:generate
 ```
 
-### 5️⃣ Configurar base de datos
+### 5️. Configurar base de datos
 
 **Editar `.env`:**
 ```env
@@ -48,19 +52,19 @@ DB_USERNAME=root
 DB_PASSWORD=tu_password
 ```
 
-### 6️⃣ Ejecutar migraciones
+### 6️. Ejecutar migraciones
 
 ```bash
 php artisan migrate
 ```
 
-### 7️⃣ Ejecutar seeders (opcional, para datos de prueba)
+### 7️. Ejecutar seeders (opcional, para datos de prueba)
 
 ```bash
 php artisan db:seed
 ```
 
-### 8️⃣ Iniciar servidor de desarrollo
+### 8️. Iniciar servidor de desarrollo
 
 ```bash
 php artisan serve
@@ -114,7 +118,7 @@ MAIL_ENCRYPTION=tls
 
 ---
 
-## 🧪 Probar la API
+##  Probar la API
 
 ### 1. Registrarse
 ```bash
@@ -148,7 +152,7 @@ curl http://localhost:8000/api/perfil/1234567890 \
 
 ---
 
-## 🔐 Seguridad en Producción
+##  Seguridad en Producción
 
 1. Cambiar `APP_DEBUG=false` en `.env`
 2. Configurar `APP_ENV=production`
@@ -161,7 +165,7 @@ curl http://localhost:8000/api/perfil/1234567890 \
 
 ---
 
-## 📊 Estructura de Carpetas
+##  Estructura de Carpetas
 
 ```bash
     laravel-backend/
@@ -190,7 +194,7 @@ curl http://localhost:8000/api/perfil/1234567890 \
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### "Class not found"
 ```bash
@@ -216,4 +220,4 @@ Verificar que el frontend URL está en `config/cors.php`
 
 ---
 
-Documentación API: [Ver API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+Documentación API: [Ver DOCUMENTATION.md](./API_DOCUMENTATION.md)

@@ -1,5 +1,7 @@
 ![Logo de UranusData](public/logo-largo-color.svg)
 
+ [Inicio General](README.md) || [Info Backend](./laravel-backend/README_BACKEND.md) || [Guía de Instalación](./laravel-backend/INSTALACION.md) || [Documentación API](./laravel-backend/API_DOCUMENTATION.md)
+
 UranusData es una plataforma centralizada que permite digitalizar y automatizar los procesos de control de inventario. El sistema facilita la trazabilidad de los equipos registrados, gestionando su ciclo de vida a través de módulos especializados para reservas, préstamos y seguimiento de mantenimientos preventivos o correctivos. 
 
 El proyecto está construido bajo una arquitectura separada:

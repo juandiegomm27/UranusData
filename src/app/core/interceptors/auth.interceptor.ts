@@ -32,10 +32,10 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(request).pipe(
+return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (isApiRequest && error.status === 401) {
-          this.authService.logout();
+          this.authService.logoutRemoto();
           this.router.navigate(['/login']);
         }
 

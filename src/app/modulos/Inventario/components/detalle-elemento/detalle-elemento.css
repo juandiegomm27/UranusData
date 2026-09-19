@@ -53,10 +53,32 @@
   border: none;
 }
 
-.btn-success { background: #28a745; color: white; }
-.btn-warning { background: #ffc107; color: black; }
-.btn-danger { background: #dc3545; color: white; }
+.btn-success {
+  background: #28a745;
+  color: white;
+}
 
-.z-alto { z-index: 1100; }
-.modal-pequeno { max-width: 400px; }
-.input-full { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+.btn-warning {
+  background: #ffc107;
+  color: black;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.z-alto {
+  z-index: 1100;
+}
+
+.modal-pequeno {
+  max-width: 400px;
+}
+
+.input-full {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}

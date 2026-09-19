@@ -56,6 +56,18 @@ class DashboardController extends Controller
     public function estadisticas()
     {
         try {
+            // Unimos detalles de reserva con el inventario y accesorios para contar los reales
+            $masSolicitados = DB::table('reserva_detalles')
+                ->leftJoin('inventario', 'reserva_detalles.id_elemento', '=', 'inventario.id_elemento')
+                ->leftJoin('stock_accesorios', 'reserva_detalles.id_stock', '=', 'stock_accesorios.id_stock')
+                ->leftJoin('inventario_accesorios', 'stock_accesorios.id_accesorio', '=', 'inventario_accesorios.id_accesorio')
+                ->select(DB::raw('COALESCE(inventario.nombre_elemento, inventario_accesorios.nombre) as elemento'), DB::raw('COUNT(*) as veces_solicitado'))
+                ->whereNotNull(DB::raw('COALESCE(inventario.nombre_elemento, inventario_accesorios.nombre)'))
+                ->groupBy('elemento')
+                ->orderByDesc('veces_solicitado')
+                ->limit(10)
+                ->get();
+
             $estadisticas = [
                 'prestamos_por_rol' => DB::table('usuario')
                     ->join('prestamo', 'usuario.documento', '=', 'prestamo.documento')
@@ -63,16 +75,11 @@ class DashboardController extends Controller
                     ->groupBy('usuario.cod_rol')
                     ->get(),
 
-                'equipos_mas_solicitados' => DB::table('inventario')
-                    ->select('elemento', DB::raw('COUNT(*) as veces_solicitado'))
-                    ->groupBy('elemento')
-                    ->orderByDesc('veces_solicitado')
-                    ->limit(10)
-                    ->get(),
+                'equipos_mas_solicitados' => $masSolicitados,
 
                 'promedio_dias_prestamo' => DB::table('prestamo')
-                    ->selectRaw('AVG(DATEDIFF(fecha_entrega, fecha_inicio)) as promedio')
-                    ->whereNotNull('fecha_entrega')
+                    ->selectRaw('AVG(DATEDIFF(fecha_entrega_original, fecha_inicio)) as promedio')
+                    ->whereNotNull('fecha_entrega_original')
                     ->first(),
 
                 'usuarios_con_mayor_actividad' => \App\Models\Usuario::select('documento', 'nombre', 'apellido')

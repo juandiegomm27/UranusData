@@ -1,61 +1,103 @@
-<div class="metricas-grid">
-  <div class="metrica-card">
-    <span class="metrica-label">Mis reservas activas</span>
-    <span class="metrica-valor" [class.metrica-pendiente]="reservasActivas() === null">
-      {{ reservasActivas() ?? '—' }}
-    </span>
-    @if (reservasActivas() === null) {
-      <span class="metrica-nota">Próximamente</span>
-    } @else {
-      <span class="metrica-nota">Vigentes en sistema</span>
-    }
-  </div>
-
-  <div class="metrica-card">
-    <span class="metrica-label">Solicitudes pendientes</span>
-    <span class="metrica-valor" [class.metrica-pendiente]="solicitudesPendientes() === null">
-      {{ solicitudesPendientes() ?? '—' }}
-    </span>
-    @if (solicitudesPendientes() === null) {
-      <span class="metrica-nota">Próximamente</span>
-    } @else {
-      <span class="metrica-nota">Por aprobar</span>
-    }
-  </div>
-
-  <div class="metrica-card">
-    <span class="metrica-label">Préstamos actuales</span>
-    <span class="metrica-valor" [class.metrica-pendiente]="prestamosActuales() === null">
-      {{ prestamosActuales() ?? '—' }}
-    </span>
-    @if (prestamosActuales() === null) {
-      <span class="metrica-nota">Próximamente</span>
-    } @else {
-      <span class="metrica-nota">Elementos en poder</span>
-    }
-  </div>
-</div>
-
-<div class="acciones-grid" style="margin-top: 20px;">
-  <button class="accion-card" [routerLink]="['/reserva/crear']">
-    <img src="/icons/reserva.svg" alt="" class="accion-icono">
-    <div class="accion-texto">
-      <span class="accion-titulo">Nueva reserva</span>
-      <span class="accion-subtitulo">Reservar un elemento</span>
+<div class="docente-container">
+  <div class="docente-content">
+    
+    <!-- Saludo -->
+    <div class="dashboard-greeting">
+      <h1 class="greeting-nombre">Hola, {{ nombreUsuario() || 'de nuevo' }}</h1>
+      <span class="greeting-rol">{{ rolUsuario() }}</span>
     </div>
-  </button>
-  <button class="accion-card" [routerLink]="['/reserva/consultar']">
-    <img src="/icons/consultar.svg" alt="" class="accion-icono">
-    <div class="accion-texto">
-      <span class="accion-titulo">Consultar reserva</span>
-      <span class="accion-subtitulo">Ver mis reservas</span>
+
+    <!-- Panel Dividido -->
+    <div class="dashboard-layout">
+      
+      <!-- Panel Izquierdo: Métricas y Acciones -->
+      <div class="panel-izquierda">
+        <div class="metricas-grid">
+          <div class="metrica-card">
+            <span class="metrica-label">Mis reservas activas</span>
+            <span class="metrica-valor" [class.metrica-pendiente]="reservasActivas() === null">
+              {{ reservasActivas() ?? '0' }}
+            </span>
+            <span class="metrica-nota">{{ reservasActivas() === null ? 'Próximamente' : 'Vigentes en sistema' }}</span>
+          </div>
+          <div class="metrica-card">
+            <span class="metrica-label">Solicitudes pendientes</span>
+            <span class="metrica-valor" [class.metrica-pendiente]="solicitudesPendientes() === null">
+              {{ solicitudesPendientes() ?? '0' }}
+            </span>
+            <span class="metrica-nota">{{ solicitudesPendientes() === null ? 'Próximamente' : 'Por aprobar' }}</span>
+          </div>
+          <div class="metrica-card">
+            <span class="metrica-label">Préstamos actuales</span>
+            <span class="metrica-valor" [class.metrica-pendiente]="prestamosActuales() === null">
+              {{ prestamosActuales() ?? '0' }}
+            </span>
+            <span class="metrica-nota">{{ prestamosActuales() === null ? 'Próximamente' : 'Elementos en poder' }}</span>
+          </div>
+        </div>
+
+        <div class="acciones-grid mt-20">
+          <button class="accion-card" [routerLink]="['/reserva/crear']">
+            <img src="/icons/mas.svg" alt="" class="accion-icono">
+            <div class="accion-texto">
+              <span class="accion-titulo">Nueva reserva</span>
+              <span class="accion-subtitulo">Reservar un elemento</span>
+            </div>
+          </button>
+          <button class="accion-card" [routerLink]="['/reserva/consultar']">
+            <img src="/icons/consultar.svg" alt="" class="accion-icono">
+            <div class="accion-texto">
+              <span class="accion-titulo">Consultar reserva</span>
+              <span class="accion-subtitulo">Ver mis reservas</span>
+            </div>
+          </button>
+          <button class="accion-card accion-ancha" [routerLink]="['/reserva/editar']">
+            <img src="/icons/editar.svg" alt="" class="accion-icono">
+            <div class="accion-texto">
+              <span class="accion-titulo">Editar reserva</span>
+              <span class="accion-subtitulo">Modificar o cancelar</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Derecho: Calendario -->
+      <div class="dashboard-calendar">
+        <div class="calendar-header">
+          <h3 class="calendar-title">{{ textoMesAnio() }}</h3>
+          <div>
+            <button class="btn-cal-nav" (click)="mesAnterior()">←</button>
+            <button class="btn-cal-nav" (click)="mesSiguiente()">→</button>
+          </div>
+        </div>
+        <div class="calendar-grid">
+          <div class="day-name">Dom</div>
+          <div class="day-name">Lun</div>
+          <div class="day-name">Mar</div>
+          <div class="day-name">Mié</div>
+          <div class="day-name">Jue</div>
+          <div class="day-name">Vie</div>
+          <div class="day-name">Sab</div>
+          @for (celda of matrizDias(); track $index) {
+            @if (celda.numero !== null) {
+              <button class="day-number" [class.today]="celda.esHoy" (click)="seleccionarDia(celda.numero!)">
+                {{ celda.numero }}
+              </button>
+            } @else {
+              <div class="day-number empty"></div>
+            }
+          }
+        </div>
+      </div>
+
     </div>
-  </button>
-  <button class="accion-card accion-ancha" [routerLink]="['/reserva/editar']">
-    <img src="/icons/editar.svg" alt="" class="accion-icono">
-    <div class="accion-texto">
-      <span class="accion-titulo">Editar reserva</span>
-      <span class="accion-subtitulo">Modificar o cancelar</span>
+
+    <!-- Actividad Reciente -->
+    <div class="actividad-panel">
+      <h3 class="actividad-titulo">Actividad reciente</h3>
+      <p class="actividad-vacia">
+        Todavía no hay actividad registrada. Aparecerá aquí cuando el módulo de reservas esté completo.
+      </p>
     </div>
-  </button>
+  </div>
 </div>

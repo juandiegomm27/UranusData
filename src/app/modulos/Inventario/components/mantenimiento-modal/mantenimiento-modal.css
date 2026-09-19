@@ -102,7 +102,7 @@
   flex-shrink: 0;
 }
 
-.mensaje-alerta span {
+.mensaje-alerta {
   line-height: 1.4;
   letter-spacing: 0.2px;
 }

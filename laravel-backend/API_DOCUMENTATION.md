@@ -1,4 +1,8 @@
-# 📚 UranusData API - Documentación Completa
+![Logo de UranusData](../public/logo-largo-color.svg)
+
+ [Inicio General](README.md) || [Info Backend](./laravel-backend/README_BACKEND.md) || [Guía de Instalación](./laravel-backend/INSTALACION.md) || [Documentación API](./laravel-backend/API_DOCUMENTATION.md)
+ 
+ # UranusData API - Documentación Completa
 
 **Versión:** 1.0.0  
 **Base URL:** `http://localhost:8000/api`  
@@ -40,7 +44,7 @@ Content-Type: application/json
 
 ---
 
-## 📋 Endpoints
+##  Endpoints
 
 ### 🔑 AUTH - SIN AUTENTICACIÓN
 
@@ -130,7 +134,7 @@ curl -X POST http://localhost:8000/api/recuperar-contrasena/confirmar \
 
 ---
 
-### 👤 PERFIL - CON AUTENTICACIÓN
+###  PERFIL - CON AUTENTICACIÓN
 
 #### GET /perfil/{documento}
 Obtener perfil de usuario
@@ -156,7 +160,7 @@ curl -X PUT http://localhost:8000/api/perfil/1234567890 \
 
 ---
 
-### 👥 GESTIÓN DE USUARIOS (Gerente/Técnico)
+###  GESTIÓN DE USUARIOS (Gerente/Técnico)
 
 #### GET /gestion/usuarios
 Listar usuarios con paginación
@@ -233,7 +237,7 @@ curl http://localhost:8000/api/gestion/usuarios/roles/list \
 
 ---
 
-### 📦 PRÉSTAMOS ACTIVOS (Gerente/Técnico)
+###  PRÉSTAMOS ACTIVOS (Gerente/Técnico)
 
 #### GET /gestion/usuarios/prestamos-activos
 Listar préstamos activos
@@ -357,7 +361,7 @@ curl "http://localhost:8000/api/gestion/usuarios/prestamos-activos/exportar?form
 
 ---
 
-## 📱 Ejemplo de Integración (JavaScript/Angular)
+##  Ejemplo de Integración (JavaScript/Angular)
 
 ```typescript
 // 1. Login

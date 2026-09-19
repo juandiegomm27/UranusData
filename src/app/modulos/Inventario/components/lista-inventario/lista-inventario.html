@@ -1,60 +1,297 @@
 <!-- COMPONENTE CREAR ELEMENTO -->
 @if (mostrarCrear) {
   <app-crear-elemento 
-    [mostrar]="mostrarCrear"
-    (cerrar)="cerrarCrear()"
-    (guardado)="cargarElementos()">
+  [mostrar]="mostrarCrear" 
+  [tipoTab]="tipoTab" 
+  (cerrar)="cerrarCrear()" 
+  (guardado)="recargarDatos()">
   </app-crear-elemento>
 }
 
 <!-- COMPONENTE DETALLES -->
 @if (mostrarDetalles && elementoSeleccionado) {
   <app-detalle-elemento 
-    [mostrar]="mostrarDetalles"
-    [elemento]="elementoSeleccionado"
-    [tipos]="tipos"
-    [estados]="estados"
-    [ubicaciones]="ubicaciones"
-    (cerrar)="cerrarDetalles()"
-    (actualizado)="cargarElementos()">
+  [mostrar]="mostrarDetalles" 
+  [elemento]="elementoSeleccionado" 
+  [tipoTab]="tipoTab" 
+  [tipos]="tipos" 
+  [estados]="estados"
+  [ubicaciones]="ubicaciones" 
+  (cerrar)="cerrarDetalles()" 
+  (actualizado)="recargarDatos()">
   </app-detalle-elemento>
 }
 
 <!-- COMPONENTE MANTENIMIENTO -->
 @if (mostrarMantenimiento && elementoSeleccionado) {
   <app-mantenimiento-modal 
-    [mostrar]="mostrarMantenimiento"
-    [elemento]="elementoSeleccionado"
-    (cerrar)="cerrarMantenimiento()"
-    (enviado)="cargarElementos()">
+  [mostrar]="mostrarMantenimiento" 
+  [elemento]="elementoSeleccionado" 
+  (cerrar)="cerrarMantenimiento()" 
+  (enviado)="recargarDatos()">
   </app-mantenimiento-modal>
 }
 
-<!-- TABLA DE INVENTARIO -->
+<!-- MODAL GLOBAL DE BAJA DE ACCESORIOS -->
+@if (mostrarModalBajaAccesorio) {
+  <div class="modal-overlay" (click)="cerrarModalBajaAccesorio()">
+    <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+      <div class="modal-header header-baja">
+
+        <h2>Dar de Baja: {{ accesorioSeleccionadoBaja?.nombre }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModalBajaAccesorio()">
+          <img src="icons/x.svg" alt="Cerrar" class="icono-cerrar">
+        </button>
+
+      </div>
+      <div class="modal-body">
+
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
+            <span>{{ mensaje }}</span>
+          </div>
+        }
+
+        <div class="info-stock-baja">
+          <span>Ubicación: <strong>{{ stockSeleccionadoBaja?.ubicacion?.ubicacion }}</strong></span><br>
+          <span class="d-inline-block mt-2">Unidades Disponibles para Retirar: <strong>{{ stockSeleccionadoBaja?.cantidad_disponible }}</strong></span>
+        </div>
+
+        <div class="grupo-campo">
+          <label>Cantidad a dar de baja *</label>
+          <input type="number" min="1" [max]="stockSeleccionadoBaja?.cantidad_disponible" [(ngModel)]="cantidadBaja" class="input-full">
+        </div>
+
+        <div class="grupo-campo">
+          <label>Motivo de la baja *</label>
+          <textarea [(ngModel)]="motivoBajaAccesorio" class="input-full" placeholder="Especifique el motivo de la baja del accesorio..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+
+        <button class="btn-modal-danger" [disabled]="procesandoPeticion" (click)="procesarDarDeBajaAccesorio()">
+          {{ procesandoPeticion ? 'Procesando...' : 'Confirmar Baja' }}
+        </button>
+
+        <button class="btn-modal-secondary" (click)="cerrarModalBajaAccesorio()">
+          Cancelar
+        </button>
+
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL GLOBAL DE BAJA DE EQUIPOS / ACTIVOS -->
+@if (mostrarModalBajaEquipo) {
+  <div class="modal-overlay" (click)="cerrarModalBajaEquipo()">
+    <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+
+      <div class="modal-header header-baja">
+
+        <h2>Dar de Baja: {{ equipoSeleccionadoBaja?.nombre_elemento }}</h2>
+
+        <button class="btn-cerrar-modal" (click)="cerrarModalBajaEquipo()">
+          <img src="icons/x.svg" alt="Cerrar" class="icono-cerrar">
+        </button>
+
+      </div>
+
+      <div class="modal-body">
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
+            <span>{{ mensaje }}</span>
+          </div>
+        }
+        <div class="info-stock-baja">
+          <span>Código: <strong>{{ equipoSeleccionadoBaja?.cod_elemento || 'N/A' }}</strong></span>
+        </div>
+
+        <div class="grupo-campo">
+          <label>Motivo de la baja *</label>
+          <textarea [(ngModel)]="motivoBajaEquipo" class="input-full" placeholder="Especifique el motivo de la baja del equipo..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+
+        <button class="btn-modal-danger" [disabled]="procesandoPeticion" (click)="procesarDarDeBajaElemento()">
+          {{ procesandoPeticion ? 'Procesando...' : 'Confirmar Baja' }}
+        </button>
+
+        <button class="btn-modal-secondary" (click)="cerrarModalBajaEquipo()">Cancelar</button>
+
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL TRASLADO DE STOCK -->
+@if (mostrarModalTraslado) {
+  <div class="modal-overlay" (click)="cerrarModalTraslado()">
+    <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+      <div class="modal-header header-traslado">
+        <h2>Trasladar Stock: {{ accesorioSeleccionadoTraslado?.nombre }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModalTraslado()">
+          <img src="icons/x.svg" alt="Cerrar" class="icono-cerrar">
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (mensaje) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+            <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
+            <span>{{ mensaje }}</span>
+          </div>
+        }
+        <div class="info-stock-baja bg-success-light">
+          <span>Origen Actual: <strong>{{ stockSeleccionadoTraslado?.ubicacion?.ubicacion }}</strong></span><br>
+          <span class="d-inline-block mt-2">Disponible para Trasladar: <strong>{{ stockSeleccionadoTraslado?.cantidad_disponible }}</strong></span>
+        </div>
+        <div class="grupo-campo">
+          <label>Cantidad a trasladar *</label>
+          <input type="number" min="1" [max]="stockSeleccionadoTraslado?.cantidad_disponible" [(ngModel)]="cantidadTraslado" class="input-full">
+        </div>
+        <div class="grupo-campo">
+          <label>Ubicación de Destino *</label>
+          <select [(ngModel)]="ubicacionDestinoTraslado" class="input-full">
+            <option value="">Seleccionar destino...</option>
+            @for (ub of ubicaciones; track ub.cod_ubi_elemento) {
+              @if (ub.cod_ubi_elemento != stockSeleccionadoTraslado?.cod_ubi_elemento) {
+                <option [value]="ub.cod_ubi_elemento">{{ ub.ubicacion }}</option>
+              }
+            }
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-primary btn-modal-traslado" [disabled]="procesandoPeticion" (click)="procesarTraslado()">
+          {{ procesandoPeticion ? 'Procesando...' : 'Confirmar Traslado' }}
+        </button>
+        <button class="btn-modal-secondary" (click)="cerrarModalTraslado()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL GLOBAL DE HISTORIAL DE BAJAS -->
+@if (mostrarModalHistorialBajas) {
+  <div class="modal-overlay" (click)="cerrarModalBajasHistorial()">
+    <div class="modal-contenido modal-ancho-historial w-100" (click)="$event.stopPropagation()">
+      <div class="modal-header header-historial-bajas">
+        <h2>Historial de Bajas - {{ tipoTab === 'activos' ? 'Activos Fijos' : 'Accesorios' }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModalBajasHistorial()">
+          <img src="icons/x.svg" alt="Cerrar" class="icono-cerrar">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="seccion-bajas-resumen">
+          <div class="tarjeta-resumen-baja">
+            <span class="titulo-resumen">Total de Registros en Historial</span>
+            <span class="valor-resumen">{{ historialBajas.length }}</span>
+          </div>
+          <div class="tarjeta-resumen-baja">
+            <span class="titulo-resumen">Total Unidades Retiradas</span>
+            <span class="valor-resumen">{{ totalUnidadesBaja }}</span>
+          </div>
+        </div>
+        @if (historialBajas.length === 0) {
+          <div class="sin-datos">No hay registros de bajas para esta sección</div>
+        } @else {
+          <div class="modulo-tabla-wrapper">
+            <table class="modulo-tabla">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Elemento / Accesorio</th>
+                  <th>Código / Serial</th>
+                  <th>Modelo</th>
+                  <th>Descripción</th>
+                  <th>Cant.</th>
+                  <th>Ubicación</th>
+                  <th>Motivo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (baja of historialBajas; track baja.id_baja) {
+                  <tr>
+                    <td>{{ baja.fecha_baja ? (baja.fecha_baja | date:'yyyy-MM-dd HH:mm') : 'N/A' }}</td>
+                    <td>
+                      <span class="estado-badge" [ngClass]="baja.tipo_item === 'activo' ? 'estado-activo' : 'estado-pendiente'">
+                        {{ baja.tipo_item === 'activo' ? 'Equipo' : 'Accesorio' }}
+                      </span>
+                    </td>
+                    <td><strong>{{ baja.nombre }}</strong></td>
+                    <td>{{ baja.codigo_identificacion || '-' }}</td>
+                    <td>{{ baja.modelo || '-' }}</td>
+                    <td class="max-w-180 overflow-hidden-ellipsis" [title]="baja.descripcion || 'Sin descripción'">
+                      {{ baja.descripcion || '-' }}
+                    </td>
+                    <td><span class="badge-cantidad-baja fw-bold text-danger">-{{ baja.cantidad }}</span></td>
+                    <td>{{ baja.ubicacion || '-' }}</td>
+                    <td class="max-w-200 overflow-hidden-ellipsis" [title]="baja.motivo || 'Sin motivo'">
+                      {{ baja.motivo || 'Sin motivo' }}
+                    </td>
+                    <td>
+                      <button class="btn-icon btn-icon-ver" (click)="restaurarItem(baja)" title="Restaurar al inventario activo">
+                        <span>Restaurar</span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-secondary" (click)="cerrarModalBajasHistorial()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}
+
 <div class="modulo-container">
   <!-- HEADER -->
   <div class="modulo-header">
-    <h2>INVENTARIO</h2>
+    <h2>GESTIÓN DE INVENTARIO</h2>
     <div class="modulo-header-actions">
       <button class="btn-agregar" (click)="abrirCrear()">
-        Agregar Elemento
+        Agregar {{ tipoTab === 'activos' ? 'Activo Fijo' : 'Accesorio' }}
+      </button>
+      <button class="btn-agregar btn-historial-bajas" (click)="abrirModalBajasHistorial()">
+        Historial de Bajas
       </button>
     </div>
+  </div>
+
+  <!-- PESTAÑAS (TABS) -->
+  <div class="inventario-tabs">
+    <button class="btn-tab" [class.activo]="tipoTab === 'activos'" (click)="cambiarTab('activos')">
+      Activos Fijos (Equipos)
+    </button>
+    <button class="btn-tab" [class.activo]="tipoTab === 'accesorios'" (click)="cambiarTab('accesorios')">
+      Accesorios / Stock por Lotes
+    </button>
   </div>
 
   <!-- BÚSQUEDA Y FILTROS -->
   <div class="modulo-busqueda-filtros">
     <div class="grupo-busqueda">
-      <input 
-        type="text" 
-        class="input-busqueda" 
-        placeholder="Buscar por nombre, serial, modelo..."
+      <input
+        type="text"
+        class="input-busqueda"
+        [placeholder]="tipoTab === 'activos' ? 'Buscar por ID, nombre, serial, modelo...' : 'Buscar accesorio por ID, nombre o descripción...'"
         [(ngModel)]="busqueda"
         (keyup.enter)="buscar()">
       <button class="btn-primary" (click)="buscar()">Buscar</button>
       <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
     </div>
-    
+
     <div class="grupo-filtros">
       <select class="filtro-select" [(ngModel)]="filtroTipo" (change)="filtrar()">
         <option value="">Todos los Tipos</option>
@@ -62,14 +299,16 @@
           <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
         }
       </select>
-      
-      <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
-        <option value="">Todos los Estados</option>
-        @for (estado of estados; track estado.cod_estado_elemento) {
-          <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option>
-        }
-      </select>
-      
+
+      @if (tipoTab === 'activos') {
+        <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+          <option value="">Todos los Estados</option>
+          @for (estado of estados; track estado.cod_estado_elemento) {
+            <option [value]="estado.cod_estado_elemento">{{ estado.estado }}</option>
+          }
+        </select>
+      }
+
       <select class="filtro-select" [(ngModel)]="filtroUbicacion" (change)="filtrar()">
         <option value="">Todas las Ubicaciones</option>
         @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
@@ -77,104 +316,152 @@
         }
       </select>
 
-      <!-- NUEVO FILTRO: Cantidad de elementos mostrados por página (igual a Gestión de Usuarios) -->
       <select class="filtro-select" [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)">
         <option [value]="5">5 por página</option>
         <option [value]="10">10 por página</option>
         <option [value]="20">20 por página</option>
-        <option [value]="50">50 por página</option>
       </select>
     </div>
   </div>
 
   <!-- MENSAJE ALERTA -->
-        @if (mensaje) {
-          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
-            <span>{{ mensaje }}</span>
-          </div>
-        }
+  @if (mensaje) {
+    <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+      <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
+      <span>{{ mensaje }}</span>
+    </div>
+  }
 
-  <!-- TABLA -->
+  <!-- TABLAS -->
   @if (cargando) {
-    <div class="cargando">
-      Cargando elementos...
-    </div>
-  } @else if (elementos.length === 0) {
-    <div class="sin-datos">
-      No se encontraron elementos
-    </div>
+    <div class="cargando">Cargando elementos...</div>
   } @else {
-    <div class="modulo-tabla-wrapper">
-      <table class="modulo-tabla">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Código</th>
-            <th>Elemento</th>
-            <th>Tipo</th>
-            <th>Ubicación</th>
-            <th>Estado</th>
-            <th>Serial</th>
-            <th>Modelo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (elemento of elementos; track elemento.id_elemento; let i = $index) {
-            <tr>
-              <td><strong>{{ elemento.id_elemento }}</strong></td>
-              <td>{{ elemento.cod_elemento || 'N/A' }}</td>
-              <td>{{ elemento.nombre_elemento }}</td>
-              <td>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</td>
-              <td>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</td>
-              <td>
-                <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
-                  {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
-                </span>
-              </td>
-              <td>{{ elemento.serial || '-' }}</td>
-              <td>{{ elemento.modelo || '-' }}</td>
-              <td>
-                <div class="botones-accion-tabla">
-                  <button class="btn-icon btn-icon-ver" (click)="verDetalles(elemento)" title="Ver detalles">
-                    <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
-                    <span>Ver</span>
-                  </button>
-                  <button class="btn-icon btn-icon-mantenimiento" (click)="abrirMantenimiento(elemento)" title="Enviar a mantenimiento">
-                    <img src="icons/settings.svg" alt="Mantenimiento" class="icon-tabla">
-                    <span>Enviar a Mantenimiento</span>
-                  </button>
-                  <button class="btn-icon btn-icon-danger" (click)="eliminarElemento(elemento.id_elemento)" title="Eliminar">
-                    <img src="icons/papelera.svg" alt="Eliminar" class="icon-tabla">
-                    <span>Eliminar</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    @if (tipoTab === 'accesorios') {
+      @if (accesorios.length === 0) {
+        <div class="sin-datos">No se encontraron accesorios o stock registrado</div>
+      } @else {
+        <div class="modulo-tabla-wrapper">
+          <table class="modulo-tabla">
+            <thead>
+              <tr>
+                <th>Lote (ID)</th><th>Nombre del Accesorio</th><th>Descripción</th>
+                <th>Ubicación</th><th>Cant. Total</th><th>Cant. Disponible</th><th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (acc of accesorios; track acc.id_accesorio) {
+                @if (acc.stocks && acc.stocks.length > 0) {
+                  @for (stock of acc.stocks; track stock.id_stock) {
+                    <tr>
+                      <td>
+                        <strong>#{{ acc.id_accesorio }}</strong><br>
+                        <small class="text-muted">Stock Lote: {{ stock.id_stock }}</small>
+                      </td>
+                      <td>{{ acc.nombre }}</td>
+                      <td class="max-w-150 overflow-hidden-ellipsis">{{ acc.descripcion || '-' }}</td>
+                      <td>{{ stock.ubicacion?.ubicacion || 'N/A' }}</td>
+                      <td><span class="fw-bold text-primary">{{ stock.cantidad_total }}</span></td>
+                      <td>
+                        <span class="estado-badge" [ngClass]="stock.cantidad_disponible > 0 ? 'estado-activo' : 'estado-inactivo'">
+                          {{ stock.cantidad_disponible }} disp.
+                        </span>
+                      </td>
+                      <td>
+                        <div class="botones-accion-tabla">
+                          <button class="btn-icon btn-icon-ver" (click)="verDetalles(acc)" title="Ver detalles (Global)">
+                            <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                            <span>Ver</span>
+                          </button>
+                          <button class="btn-icon btn-icon-traslado" (click)="abrirModalTraslado(acc, stock)" title="Trasladar este lote">
+                            <img src="icons/trasladar.svg" alt="Trasladar" class="icon-tabla">
+                            <span>Trasladar</span>
+                          </button>
+                          <button class="btn-icon btn-icon-danger" (click)="abrirModalDarDeBajaAccesorio(acc, stock)" title="Dar de baja unidades">
+                            <img src="icons/papelera.svg" alt="Dar de baja" class="icon-tabla">
+                            <span>Dar de baja</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td><strong>#{{ acc.id_accesorio }}</strong></td>
+                    <td>{{ acc.nombre }}</td>
+                    <td>{{ acc.descripcion || '-' }}</td>
+                    <td colspan="4" class="text-center text-muted">Sin inventario físico (stock vacío)</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
 
-    <!-- PAGINACIÓN -->
+    @if (tipoTab === 'activos') {
+      @if (elementos.length === 0) {
+        <div class="sin-datos">No se encontraron activos fijos</div>
+      } @else {
+        <div class="modulo-tabla-wrapper">
+          <table class="modulo-tabla">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Elemento</th>
+                <th>Tipo</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+                <th>Serial</th>
+                <th>Modelo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (elemento of elementos; track elemento.id_elemento) {
+                <tr>
+                  <td><strong>{{ elemento.id_elemento }}</strong></td>
+                  <td>{{ elemento.cod_elemento || 'N/A' }}</td>
+                  <td>{{ elemento.nombre_elemento }}</td>
+                  <td>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</td>
+                  <td>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) }}</td>
+                  <td>
+                    <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
+                      {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
+                    </span>
+                  </td>
+                  <td>{{ elemento.serial || '-' }}</td>
+                  <td>{{ elemento.modelo || '-' }}</td>
+                  <td>
+                    <div class="botones-accion-tabla">
+                      <button class="btn-icon btn-icon-ver" (click)="verDetalles(elemento)" title="Ver detalles">
+                        <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                        <span>Ver</span>
+                      </button>
+                      <button class="btn-icon btn-icon-mantenimiento" (click)="abrirMantenimiento(elemento)" title="Mantenimiento">
+                        <img src="icons/mantenimiento.svg" alt="Mantenimiento" class="icon-tabla">
+                        <span>Mantenimiento</span>
+                      </button>
+                      <button class="btn-icon btn-icon-danger" (click)="abrirModalDarDeBajaElemento(elemento)" title="Dar de baja">
+                        <img src="icons/papelera.svg" alt="Dar de baja" class="icon-tabla">
+                        <span>Dar de baja</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
     @if (totalPaginas > 0) {
       <div class="paginacion">
-        <button 
-          class="btn-paginacion"
-          (click)="irPaginaAnterior()"
-          [disabled]="paginaActual === 1">
-          Anterior
-        </button>
-        <span class="indicador-pagina">
-          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} elementos)
-        </span>
-        <button 
-          class="btn-paginacion"
-          (click)="irPaginaSiguiente()"
-          [disabled]="paginaActual === totalPaginas">
-          Siguiente
-        </button>
+        <button class="btn-paginacion" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+        <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} registros)</span>
+        <button class="btn-paginacion" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
       </div>
     }
   }

@@ -35,8 +35,8 @@ function validarTokenEnBackground(authService: AuthService, router: Router): voi
       error: () => {
         // Token inválido, forzar logout
         console.warn('✗ Token inválido o expirado');
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('usuario');
         router.navigate(['/login']);
       }
     });

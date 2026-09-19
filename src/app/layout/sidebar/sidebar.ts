@@ -31,15 +31,15 @@ export class Sidebar {
     if (this.rol === 'Gerente') {
       base.push(
         { ruta: '/modulos/inventario', etiqueta: 'Inventario', icono: '/icons/inventario.svg' },
-        { ruta: '/prestamos/activos', etiqueta: 'Préstamos', icono: '/icons/prestamos.svg' },
         { ruta: '/modulos/gestion-usuarios', etiqueta: 'Usuarios', icono: '/icons/usuarios.svg' },
-        { ruta: '/modulos/mantenimiento', etiqueta: 'Mantenimiento', icono: '/icons/mantenimiento.svg' }
+        { ruta: '/modulos/mantenimiento', etiqueta: 'Mantenimiento', icono: '/icons/mantenimiento.svg' },
+        { ruta: '/prestamos/activos', etiqueta: 'Préstamos', icono: '/icons/prestamos.svg' },
       );
     } else if (this.rol === 'Tecnico') {
       base.push(
         { ruta: '/modulos/inventario', etiqueta: 'Inventario', icono: '/icons/inventario.svg' },
+        { ruta: '/modulos/mantenimiento', etiqueta: 'Mantenimiento', icono: '/icons/mantenimiento.svg' },
         { ruta: '/prestamos/activos', etiqueta: 'Préstamos', icono: '/icons/prestamos.svg' },
-        { ruta: '/modulos/mantenimiento', etiqueta: 'Mantenimiento', icono: '/icons/mantenimiento.svg' }
       );
     } else if (this.rol === 'Docente') {
       base.push(

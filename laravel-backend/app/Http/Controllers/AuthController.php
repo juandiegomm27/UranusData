@@ -48,8 +48,14 @@ class AuthController extends Controller
         if (!$usuario || !Hash::check($validated['password'], $usuario->password)) {
             $intentos++;
             Cache::put("login_intentos_{$documento}", $intentos, self::TIEMPO_BLOQUEO);
+            
             if ($intentos >= self::MAX_INTENTOS) {
                 Cache::put("login_bloqueado_{$documento}", time() + self::TIEMPO_BLOQUEO, self::TIEMPO_BLOQUEO);
+                
+                // Si se bloquea por intentos y el usuario existe, eliminar sus tokens activos
+                if ($usuario) {
+                    $usuario->tokens()->delete();
+                }
             }
             return response()->json([
                 'success' => false,

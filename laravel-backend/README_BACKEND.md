@@ -1,4 +1,8 @@
-# 🎓 UranusData Backend API
+![Logo de UranusData](../public/logo-largo-color.svg)
+
+ [Inicio General](README.md) || [Info Backend](./laravel-backend/README_BACKEND.md) || [Guía de Instalación](./laravel-backend/INSTALACION.md) || [Documentación API](./laravel-backend/API_DOCUMENTATION.md)
+ 
+ # 🎓 UranusData Backend API
 
 Sistema de gestión de equipos, préstamos y reservas para instituciones educativas.
 

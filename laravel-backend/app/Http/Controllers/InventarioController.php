@@ -15,7 +15,7 @@ class InventarioController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Inventario::query();
+        $query = Inventario::where('cod_estado_elemento', '!=', 2);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
@@ -25,23 +25,17 @@ class InventarioController extends Controller
                   ->orWhere('modelo', 'like', $searchTerm);
             });
         }
-
         if ($request->filled('tipo')) {
             $query->where('cod_tipo_elemento', $request->tipo);
         }
-
         if ($request->filled('estado')) {
             $query->where('cod_estado_elemento', $request->estado);
         }
-
         if ($request->filled('ubicacion')) {
             $query->where('cod_ubi_elemento', $request->ubicacion);
         }
-
-        // CAPTURAR EL TAMAÑO DE PÁGINA DEL FRONTEND (por defecto 10 si no viene)
-        $perPage = $request->input('per_page', 10);
         
-        // APLICAR LA PAGINACIÓN DINÁMICA
+        $perPage = $request->input('per_page', 10);
         $elementos = $query->paginate($perPage);
 
         return response()->json([
@@ -134,24 +128,22 @@ public function store(Request $request)
         ]);
     }
 
-    // ELIMINAR ELEMENTO
-    public function destroy($id)
+    public function darDeBaja($id)
     {
         $elemento = Inventario::find($id);
-
+    
         if (!$elemento) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Elemento no encontrado'
-            ], 404);
+            return response()->json(['mensaje' => 'Elemento no encontrado'], 404); 
         }
-
-        $elemento->delete();
-
+    
+        $elemento->cod_estado_elemento = 3; 
+        $elemento->save();
+    
         return response()->json([
             'success' => true,
-            'mensaje' => 'Elemento eliminado exitosamente'
-        ]);
+            'data' => $elemento,
+            'mensaje' => 'Elemento dado de baja exitosamente'
+        ], 200);
     }
 
     // OBTENER OPCIONES PARA FILTROS
@@ -178,7 +170,7 @@ public function enviarMantenimiento(Request $request, $id)
         }
 
         // VALIDACIÓN: Evitar enviar si ya está en mantenimiento (Estado 4)
-        if ($elemento->cod_estado_elemento == 4) {
+        if ($elemento->cod_estado_elemento == 3) {
             return response()->json([
                 'success' => false,
                 'mensaje' => 'Este elemento ya se encuentra en mantenimiento'
@@ -203,7 +195,7 @@ public function enviarMantenimiento(Request $request, $id)
             'cod_estado_mantenimiento' => 1 
         ]);
 
-        $elemento->update(['cod_estado_elemento' => 4]);
+        $elemento->update(['cod_estado_elemento' => 3]);
 
         return response()->json([
             'success' => true,
@@ -244,7 +236,17 @@ public function enviarMantenimiento(Request $request, $id)
             $callback = function () use ($elementos) {
                 $file = fopen('php://output', 'w');
                 fputs($file, "\xEF\xBB\xBF");
-                fputcsv($file, ['ID', 'Código', 'Nombre', 'Serial', 'Modelo', 'Tipo', 'Estado', 'Ubicación', 'Cantidad']);
+                fputcsv($file, [
+                    'ID', 
+                    'Código', 
+                    'Nombre', 
+                    'Serial', 
+                    'Modelo', 
+                    'Tipo', 
+                    'Estado', 
+                    'Ubicación', 
+                    'Cantidad'
+                    ]);
 
                 foreach ($elementos as $item) {
                     fputcsv($file, [

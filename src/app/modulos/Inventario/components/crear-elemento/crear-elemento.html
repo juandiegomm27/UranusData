@@ -1,113 +1,117 @@
 @if (mostrar) {
   <div class="modal-overlay" (click)="cerrarModal()">
     <div class="modal-contenido" (click)="$event.stopPropagation()">
-      
-      <!-- HEADER -->
       <div class="modal-header">
-        <h2>Nuevo Elemento</h2>
-        <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+        <h2>{{ tipoTab === 'activos' ? 'Nuevo Elemento' : (accesorioSeleccionado ? 'Añadir Stock a Accesorio Existente' : 'Nuevo Accesorio') }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()">
+          <img src="icons/x.svg" alt="Cerrar" class="icono-cerrar">
+        </button>
       </div>
-
-      <!-- BODY -->
       <div class="modal-body">
-        
-        <!-- MENSAJE ALERTA -->
         @if (mensaje) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
+            <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
             <span>{{ mensaje }}</span>
           </div>
         }
-
-        <!-- FORMULARIO -->
-<form class="modulo-form">
-          
-          <!-- FILA 1: Nombre y Código -->
+        <form class="modulo-form">
           <div class="fila-formulario">
-            <div class="grupo-campo">
-              <label for="nombre">Nombre del Elemento *</label>
-              <input id="nombre" type="text" [(ngModel)]="nombre_elemento" name="nombre" placeholder="Ej: Laptop Dell XPS">
+            <div class="grupo-campo autocomplete-container">
+              <label for="nombre">Nombre {{ tipoTab === 'activos' ? 'del Elemento' : 'del Accesorio' }} *</label>
+              <input id="nombre" type="text" [(ngModel)]="nombre_elemento" name="nombre" (input)="buscarSugerenciasAccesorios()" [placeholder]="tipoTab === 'activos' ? 'Ej: Laptop Dell XPS' : 'Escribe para buscar o crear...'" autocomplete="off">
+              @if (tipoTab === 'accesorios' && sugerenciasAccesorios.length > 0) {
+                <div class="autocomplete-dropdown">
+                  @for (acc of sugerenciasAccesorios; track acc.id_accesorio) {
+                    <div class="autocomplete-item" (click)="seleccionarAccesorio(acc)">
+                      <div class="acc-nombre"><strong>{{ acc.nombre }}</strong></div>
+                      <div class="acc-info">Stock actual: {{ acc.cantidad_total }} disp.</div>
+                    </div>
+                  }
+                </div>
+              }
+              @if (accesorioSeleccionado) {
+                <small class="text-success fw-bold d-block mt-2">
+                    Accesorio existente seleccionado. Se sumará stock al inventario.
+                </small>
+              }
             </div>
-            <div class="grupo-campo">
-              <label for="codigo">Código (Placa)</label>
-              <input id="codigo" type="text" [(ngModel)]="cod_elemento" name="cod_elemento" placeholder="Dejar en blanco para autogenerar">
-            </div>
+            
+            @if (tipoTab === 'activos') {
+              <div class="grupo-campo"><label for="codigo">Código (Placa)</label><input id="codigo" type="text" [(ngModel)]="cod_elemento" name="cod_elemento" placeholder="Dejar en blanco para autogenerar"></div>
+            } @else {
+              <div class="grupo-campo"><label for="cantidad">Cantidad a Añadir *</label><input id="cantidad" type="number" min="1" [(ngModel)]="cantidad_total" name="cantidad_total" class="input-full"></div>
+            }
           </div>
 
-          <!-- TIPO DE ELEMENTO (Fila completa) -->
           <div class="grupo-campo">
-            <label for="tipo">Tipo de Elemento *</label>
+            <label for="tipo">Tipo de {{ tipoTab === 'activos' ? 'Elemento' : 'Accesorio' }} *</label>
             <div class="grupo-input-flex">
               <select id="tipo" [(ngModel)]="cod_tipo_elemento" name="tipo" class="select-flex">
                 <option value="">Seleccionar tipo...</option>
-                @for (tipo of tipos; track tipo.cod_tipo_elemento) {
-                  <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
-                }
+                @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option> }
               </select>
-              <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Agregar nuevo tipo">+</button>
+              <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Agregar nuevo tipo">
+                <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+              </button>
               <button type="button" class="btn-accion btn-danger" (click)="eliminarTipo(+cod_tipo_elemento)" title="Eliminar tipo seleccionado">
-                 <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+                <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
               </button>
             </div>
           </div>
 
-          <!-- UBICACIÓN (Fila completa) -->
           <div class="grupo-campo">
             <label for="ubicacion">Ubicación *</label>
             <div class="grupo-input-flex">
               <select id="ubicacion" [(ngModel)]="cod_ubi_elemento" name="ubicacion" class="select-flex">
                 <option value="">Seleccionar ubicación...</option>
-                @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) {
-                  <option [value]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option>
-                }
+                @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) { <option [value]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option> }
               </select>
-              <button type="button" class="btn-accion btn-success" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación">+</button>
+              <button type="button" class="btn-accion btn-success" (click)="abrirModalUbicacion()" title="Agregar nueva ubicación">
+                <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+              </button>
               <button type="button" class="btn-accion btn-danger" (click)="eliminarUbicacion(+cod_ubi_elemento)" title="Eliminar ubicación seleccionada">
-                 <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+                <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
               </button>
             </div>
           </div>
 
-          <!-- FILA 3: Serial y Modelo -->
-          <div class="fila-formulario">
-            <div class="grupo-campo">
-              <label for="serial">Serial/Número de Serie</label>
-              <input id="serial" type="text" [(ngModel)]="serial" name="serial" placeholder="Ej: ABC123456">
+          @if (tipoTab === 'activos') {
+            <div class="fila-formulario">
+              <div class="grupo-campo"><label for="serial">Serial/Número de Serie</label><input id="serial" type="text" [(ngModel)]="serial" name="serial" placeholder="Ej: ABC123456"></div>
+              <div class="grupo-campo"><label for="modelo">Modelo</label><input id="modelo" type="text" [(ngModel)]="modelo" name="modelo" placeholder="Ej: XPS 15"></div>
             </div>
-            <div class="grupo-campo">
-              <label for="modelo">Modelo</label>
-              <input id="modelo" type="text" [(ngModel)]="modelo" name="modelo" placeholder="Ej: XPS 15">
-            </div>
-          </div>
-
-          <!-- DESCRIPCIÓN -->
+          }
           <div class="grupo-campo">
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" placeholder="Notas adicionales sobre el elemento..."></textarea>
+            <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" placeholder="Notas adicionales..."></textarea>
           </div>
         </form>
-
       </div>
-
-      <!-- FOOTER -->
       <div class="modal-footer">
-        <button 
-          class="btn-modal-primary"
-          (click)="guardar()"
-          [disabled]="cargando">
-          @if (cargando) {
-            <span>Guardando...</span>
-          } @else {
-            <span>✓ Guardar</span>
-          }
+        <button class="btn-modal-primary" (click)="guardar()" [disabled]="cargando">
+          @if (cargando) { <span>Guardando...</span> } @else { <span>Guardar</span> }
         </button>
-        <button 
-          class="btn-modal-secondary"
-          (click)="cerrarModal()"
-          [disabled]="cargando">
-          Cancelar
-        </button>
+        <button class="btn-modal-secondary" (click)="cerrarModal()" [disabled]="cargando">Cancelar</button>
       </div>
     </div>
   </div>
+
+  @if (mostrarModalUbicacion) {
+    <div class="modal-overlay z-alto" (click)="cerrarModalUbicacion()">
+      <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+        <div class="modal-header"><h2>Nueva Ubicación</h2><button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()"><img src="icons/x.svg" alt="Cerrar" class="icono-cerrar"></button></div>
+        <div class="modal-body"><div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevaUbicacionNombre" class="input-full" placeholder="Ej: Bodega Central"></div></div>
+        <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button><button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button></div>
+      </div>
+    </div>
+  }
+  @if (mostrarModalTipo) {
+    <div class="modal-overlay z-alto" (click)="cerrarModalTipo()">
+      <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+        <div class="modal-header"><h2>Nuevo Tipo</h2><button class="btn-cerrar-modal" (click)="cerrarModalTipo()"><img src="icons/x.svg" alt="Cerrar" class="icono-cerrar"></button></div>
+        <div class="modal-body"><div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevoTipoNombre" class="input-full" placeholder="Ej: Cable de red"></div></div>
+        <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarNuevoTipo()">Guardar</button><button class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>
+      </div>
+    </div>
+  }
 }

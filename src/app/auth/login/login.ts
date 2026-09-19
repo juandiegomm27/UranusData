@@ -97,8 +97,8 @@ export class LoginComponent implements OnInit {
         }
 
         this.intentosFallidos = 0;
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('usuario', JSON.stringify(response.usuario));
+        sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('usuario', JSON.stringify(response.usuario));
         this.router.navigate(['/home', response.usuario.rol]);
       },
       error: (err: any) => {

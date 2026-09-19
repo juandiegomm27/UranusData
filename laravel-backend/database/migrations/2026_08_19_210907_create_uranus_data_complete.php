@@ -43,7 +43,7 @@ return new class extends Migration
         Schema::create('correo', function (Blueprint $table) {
             $table->string('correo', 100)->primary();
             $table->string('documento', 20)->nullable();
-            $table->foreign('documento')->references('documento')->on('usuario');
+            $table->foreign('documento')->references('documento')->on('usuario')->onDelete('cascade');
             $table->index('documento');
         });
 
@@ -51,7 +51,7 @@ return new class extends Migration
         Schema::create('telefono', function (Blueprint $table) {
             $table->string('telefono', 20)->primary();
             $table->string('documento', 20)->nullable();
-            $table->foreign('documento')->references('documento')->on('usuario');
+            $table->foreign('documento')->references('documento')->on('usuario')->onDelete('cascade');
             $table->index('documento');
         });
 
@@ -73,16 +73,14 @@ return new class extends Migration
             $table->string('ubicacion', 45)->nullable();
         });
 
-        // Tabla: inventario
+        // Tabla: inventario (SOLO PARA ACTIVOS FIJOS / ÚNICOS)
         Schema::create('inventario', function (Blueprint $table) {
             $table->increments('id_elemento');
             $table->string('cod_elemento', 45)->nullable();
-            
             $table->string('nombre_elemento', 100)->nullable(); 
             $table->string('serial', 100)->nullable();          
             $table->string('modelo', 100)->nullable();          
             $table->text('descripcion')->nullable();            
-            
             $table->unsignedInteger('cod_tipo_elemento')->nullable();
             $table->unsignedInteger('cod_estado_elemento')->nullable();
             $table->unsignedInteger('cod_ubi_elemento')->nullable();
@@ -91,6 +89,41 @@ return new class extends Migration
             $table->foreign('cod_ubi_elemento')->references('cod_ubi_elemento')->on('ubi_elemento');
             $table->index('cod_tipo_elemento');
             $table->index('cod_estado_elemento');
+            $table->index('cod_ubi_elemento');
+        });
+
+        // NUEVA Tabla: inventario_accesorios (CATÁLOGO GLOBAL)
+        Schema::create('inventario_accesorios', function (Blueprint $table) {
+            $table->increments('id_accesorio');
+            $table->string('nombre', 100);
+            $table->string('modelo', 100)->nullable(); // <--- AÑADIDO: Modelo
+            $table->text('descripcion')->nullable();
+            $table->unsignedInteger('cod_tipo_elemento')->nullable();
+            
+            // Totales Globales del accesorio (Sumatoria de todas las ubicaciones)
+            $table->integer('cantidad_total')->default(0); 
+            $table->integer('cantidad_disponible')->default(0);
+            
+            $table->foreign('cod_tipo_elemento')->references('cod_tipo_elemento')->on('tipo_elemento');
+            $table->index('cod_tipo_elemento');
+        });
+
+        // NUEVA Tabla: stock_accesorios (CANTIDADES POR UBICACIÓN)
+        Schema::create('stock_accesorios', function (Blueprint $table) {
+            $table->increments('id_stock');
+            $table->unsignedInteger('id_accesorio');
+            $table->unsignedInteger('cod_ubi_elemento');
+            
+            // Cantidades específicas en ESTA ubicación
+            $table->integer('cantidad_total')->default(0);
+            $table->integer('cantidad_disponible')->default(0);
+
+            $table->foreign('id_accesorio')->references('id_accesorio')->on('inventario_accesorios')->onDelete('cascade');
+            $table->foreign('cod_ubi_elemento')->references('cod_ubi_elemento')->on('ubi_elemento');
+            
+            // Un accesorio no puede tener dos registros separados en la misma sala (se suman)
+            $table->unique(['id_accesorio', 'cod_ubi_elemento']);
+            $table->index('id_accesorio');
             $table->index('cod_ubi_elemento');
         });
 
@@ -106,7 +139,7 @@ return new class extends Migration
             $table->string('estado', 50); 
         });
 
-// Tabla: mantenimiento
+        // Tabla: mantenimiento
         Schema::create('mantenimiento', function (Blueprint $table) {
             $table->increments('id_mantenimiento');
             $table->date('fecha')->nullable();
@@ -119,7 +152,6 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
             $table->unsignedInteger('cod_estado_mantenimiento')->default(1);
 
-            // Relaciones
             $table->foreign('id_elemento')->references('id_elemento')->on('inventario');
             $table->foreign('cod_estado_mantenimiento')->references('cod_estado_mantenimiento')->on('estado_mantenimiento');
             $table->foreign('cod_tipo_mantenimiento')->references('cod_tipo_mantenimiento')->on('tipo_mantenimiento');
@@ -132,19 +164,36 @@ return new class extends Migration
             $table->string('estado', 45)->nullable();
         });
 
-        // Tabla: Reserva
+        // Tabla: Reserva 
         Schema::create('Reserva', function (Blueprint $table) {
             $table->increments('id_Reserva');
             $table->unsignedInteger('Num_estado')->nullable();
             $table->string('documento', 20)->nullable();
             $table->date('fecha')->nullable();
             $table->date('plazo')->nullable();
-            $table->integer('cantidad')->nullable();
-            $table->string('elemento', 100)->nullable();
+            
             $table->foreign('Num_estado')->references('Num_estado')->on('estado_reserva');
             $table->foreign('documento')->references('documento')->on('usuario');
             $table->index('Num_estado');
             $table->index('documento');
+        });
+
+        // Tabla: reserva_detalles 
+        Schema::create('reserva_detalles', function (Blueprint $table) {
+            $table->increments('id_detalle');
+            $table->unsignedInteger('id_Reserva');
+            $table->unsignedInteger('id_elemento')->nullable();
+            $table->unsignedInteger('id_stock')->nullable();
+            $table->integer('cantidad_solicitada')->default(1);
+            $table->integer('cantidad_entregada')->default(0);
+            $table->integer('cantidad_devuelta')->default(0);
+            
+            $table->foreign('id_Reserva')->references('id_Reserva')->on('Reserva')->onDelete('cascade');
+            $table->foreign('id_elemento')->references('id_elemento')->on('inventario');
+            $table->foreign('id_stock')->references('id_stock')->on('stock_accesorios'); 
+            $table->index('id_Reserva');
+            $table->index('id_elemento');
+            $table->index('id_stock');
         });
 
         // Tabla: estado_prestamo
@@ -153,32 +202,37 @@ return new class extends Migration
             $table->string('estado', 45)->nullable();
         });
 
-        // Tabla: prestamo
+        // Tabla: prestamo 
         Schema::create('prestamo', function (Blueprint $table) {
             $table->unsignedInteger('id_Reserva')->primary();
             $table->unsignedInteger('cod_estado_prestamo')->nullable();
             $table->date('fecha_inicio')->nullable();
-            $table->date('fecha_entrega')->nullable();
-            $table->integer('cantidad')->nullable();
-            $table->foreign('id_Reserva')->references('id_Reserva')->on('Reserva');
+            $table->date('fecha_entrega_original')->nullable();
+            $table->date('fecha_limite_actual')->nullable();
+            $table->boolean('extension_aprobada')->default(false);
+            
+            $table->foreign('id_Reserva')->references('id_Reserva')->on('Reserva')->onDelete('cascade');
             $table->foreign('cod_estado_prestamo')->references('cod_estado_prestamo')->on('estado_prestamo');
             $table->index('cod_estado_prestamo');
         });
 
-        // Tabla: cantidad
-        Schema::create('cantidad', function (Blueprint $table) {
-            $table->increments('id_cantidad');
-            $table->unsignedInteger('id_Reserva')->nullable();
-            $table->unsignedInteger('id_elemento')->nullable();
-            $table->string('codigo', 45)->nullable();
-            $table->foreign('id_Reserva')->references('id_Reserva')->on('Reserva');
-            $table->foreign('id_elemento')->references('id_elemento')->on('inventario');
-            $table->index('id_Reserva');
-            $table->index('id_elemento');
+        Schema::create('historial_bajas_general', function (Blueprint $table) {
+            $table->increments('id_baja');
+            $table->enum('tipo_item', ['activo', 'accesorio']);
+            $table->unsignedInteger('id_original'); 
+            $table->string('nombre', 100);
+            $table->string('codigo_identificacion', 100)->nullable();
+            $table->string('modelo', 100)->nullable();
+            $table->text('descripcion')->nullable();
+            $table->integer('cantidad')->default(1);
+            $table->unsignedInteger('cod_tipo_elemento')->nullable();
+            $table->unsignedInteger('cod_ubi_elemento')->nullable();
+            $table->string('ubicacion', 100)->nullable();
+            $table->string('motivo', 255)->nullable();
+            $table->timestamp('fecha_baja')->useCurrent();
         });
 
-        //  VIEWs 
-        
+        // VIEWs
         DB::statement('DROP VIEW IF EXISTS v_historial_reservas');
         DB::statement('DROP VIEW IF EXISTS v_historial_prestamos');
         DB::statement('DROP VIEW IF EXISTS v_usuarios_completos');
@@ -187,12 +241,7 @@ return new class extends Migration
         DB::statement('
             CREATE VIEW v_ingreso_login AS
             SELECT 
-                u.documento,
-                u.password,
-                u.cod_rol,
-                r.cargo AS rol,
-                u.cod_estado_usuario,
-                eu.estado AS estado_usuario
+                u.documento, u.password, u.cod_rol, r.cargo AS rol, u.cod_estado_usuario, eu.estado AS estado_usuario
             FROM usuario u
             LEFT JOIN rol r ON u.cod_rol = r.cod_rol
             LEFT JOIN estado_usuario eu ON u.cod_estado_usuario = eu.cod_estado_usuario
@@ -201,15 +250,8 @@ return new class extends Migration
         DB::statement('
             CREATE VIEW v_usuarios_completos AS
             SELECT 
-                u.documento,
-                u.nombre,
-                u.apellido,
-                u.cod_rol,
-                r.cargo AS rol,
-                u.cod_estado_usuario,
-                eu.estado AS estado_usuario,
-                c.correo,
-                t.telefono
+                u.documento, u.nombre, u.apellido, u.cod_rol, r.cargo AS rol, 
+                u.cod_estado_usuario, eu.estado AS estado_usuario, c.correo, t.telefono
             FROM usuario u
             LEFT JOIN rol r ON u.cod_rol = r.cod_rol
             LEFT JOIN estado_usuario eu ON u.cod_estado_usuario = eu.cod_estado_usuario
@@ -217,16 +259,29 @@ return new class extends Migration
             LEFT JOIN telefono t ON u.documento = t.documento
         ');
 
-        DB::statement('
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $concatSql = 'group_concat(COALESCE(i.nombre_elemento, a.nombre), ", ")';
+        } else {
+            $concatSql = 'GROUP_CONCAT(COALESCE(i.nombre_elemento, a.nombre) SEPARATOR ", ")';
+        }
+
+        DB::statement("
             CREATE VIEW v_historial_prestamos AS
             SELECT 
                 p.id_Reserva,
                 p.cod_estado_prestamo,
                 ep.estado AS estado_prestamo,
                 p.fecha_inicio,
-                p.fecha_entrega,
-                r.elemento,
-                r.cantidad,
+                p.fecha_limite_actual AS fecha_entrega,
+                (SELECT {$concatSql} 
+                 FROM reserva_detalles rd 
+                 LEFT JOIN inventario i ON rd.id_elemento = i.id_elemento
+                 LEFT JOIN stock_accesorios sa ON rd.id_stock = sa.id_stock
+                 LEFT JOIN inventario_accesorios a ON sa.id_accesorio = a.id_accesorio
+                 WHERE rd.id_Reserva = r.id_Reserva) AS elemento,
+                (SELECT SUM(cantidad_solicitada) FROM reserva_detalles WHERE id_Reserva = r.id_Reserva) AS cantidad,
                 u.documento,
                 u.nombre,
                 u.apellido
@@ -234,9 +289,9 @@ return new class extends Migration
             LEFT JOIN estado_prestamo ep ON p.cod_estado_prestamo = ep.cod_estado_prestamo
             LEFT JOIN Reserva r ON p.id_Reserva = r.id_Reserva
             LEFT JOIN usuario u ON r.documento = u.documento
-        ');
+        ");
 
-        DB::statement('
+        DB::statement("
             CREATE VIEW v_historial_reservas AS
             SELECT 
                 r.id_Reserva,
@@ -244,69 +299,20 @@ return new class extends Migration
                 er.estado AS estado_reserva,
                 r.fecha,
                 r.plazo,
-                r.elemento,
-                r.cantidad,
+                (SELECT {$concatSql} 
+                 FROM reserva_detalles rd 
+                 LEFT JOIN inventario i ON rd.id_elemento = i.id_elemento
+                 LEFT JOIN stock_accesorios sa ON rd.id_stock = sa.id_stock
+                 LEFT JOIN inventario_accesorios a ON sa.id_accesorio = a.id_accesorio
+                 WHERE rd.id_Reserva = r.id_Reserva) AS elemento,
+                (SELECT SUM(cantidad_solicitada) FROM reserva_detalles WHERE id_Reserva = r.id_Reserva) AS cantidad,
                 u.documento,
                 u.nombre,
                 u.apellido
             FROM Reserva r
             LEFT JOIN estado_reserva er ON r.Num_estado = er.Num_estado
             LEFT JOIN usuario u ON r.documento = u.documento
-        ');
-
-        //  STORED PROCEDURES 
-
-        DB::statement('DROP PROCEDURE IF EXISTS sp_generar_usuarios');
-        DB::unprepared('
-            CREATE PROCEDURE IF NOT EXISTS sp_generar_usuarios()
-            BEGIN
-              DELETE FROM correo WHERE documento >= 1000000001;
-              DELETE FROM telefono WHERE documento >= 1000000001;
-                            DELETE FROM usuario WHERE documento >= 1000000001;
-
-              INSERT INTO usuario (documento, nombre, apellido, cod_rol, cod_estado_usuario, password) VALUES
-              (1000000001, "Carlos", "López", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000002, "María", "González", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000003, "Pedro", "Martínez", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000004, "Ana", "Sánchez", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000005, "Jorge", "Ramírez", 1, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000006, "Laura", "Jiménez", 1, 2, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000007, "Francisco", "Hernández", 2, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000008, "Elena", "Vargas", 2, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000009, "David", "Flores", 2, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000010, "Sofía", "Gómez", 2, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000011, "Miguel", "Fuentes", 3, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa"),
-              (1000000012, "Gabriela", "Medina", 3, 1, "$2y$12$e4kesmkREXzavpxFafr7re4JRcLoMy6HF/n3YZdxv3SW55VrT0wFa");
-
-              INSERT INTO correo (correo, documento) VALUES
-              ("carlos.lopez@gmail.com", 1000000001),
-              ("maria.gonzalez@gmail.com", 1000000002),
-              ("pedro.martinez@gmail.com", 1000000003),
-              ("ana.sanchez@gmail.com", 1000000004),
-              ("jorge.ramirez@gmail.com", 1000000005),
-              ("laura.jimenez@gmail.com", 1000000006),
-              ("francisco.hernandez@gmail.com", 1000000007),
-              ("elena.vargas@gmail.com", 1000000008),
-              ("david.flores@gmail.com", 1000000009),
-              ("sofia.gomez@gmail.com", 1000000010),
-              ("miguel.fuentes@gmail.com", 1000000011),
-              ("gabriela.medina@gmail.com", 1000000012);
-
-              INSERT INTO telefono (telefono, documento) VALUES
-              ("3105551001", 1000000001),
-              ("3105551002", 1000000002),
-              ("3105551003", 1000000003),
-              ("3105551004", 1000000004),
-              ("3105551005", 1000000005),
-              ("3105551006", 1000000006),
-              ("3115551007", 1000000007),
-              ("3115551008", 1000000008),
-              ("3115551009", 1000000009),
-              ("3115551010", 1000000010),
-              ("3125551011", 1000000011),
-              ("3125551012", 1000000012);
-            END
-        ');
+        ");
     }
 
     public function down(): void
@@ -315,15 +321,17 @@ return new class extends Migration
         DB::statement('DROP VIEW IF EXISTS v_historial_prestamos');
         DB::statement('DROP VIEW IF EXISTS v_usuarios_completos');
         DB::statement('DROP VIEW IF EXISTS v_ingreso_login');
-        DB::statement('DROP PROCEDURE IF EXISTS sp_generar_usuarios');
         
-        Schema::dropIfExists('cantidad');
+        Schema::dropIfExists('reserva_detalles');
         Schema::dropIfExists('prestamo');
         Schema::dropIfExists('estado_prestamo');
         Schema::dropIfExists('Reserva');
         Schema::dropIfExists('estado_reserva');
         Schema::dropIfExists('mantenimiento');
+        Schema::dropIfExists('estado_mantenimiento');
         Schema::dropIfExists('tipo_mantenimiento');
+        Schema::dropIfExists('stock_accesorios'); 
+        Schema::dropIfExists('inventario_accesorios');
         Schema::dropIfExists('inventario');
         Schema::dropIfExists('ubi_elemento');
         Schema::dropIfExists('tipo_elemento');
@@ -333,5 +341,6 @@ return new class extends Migration
         Schema::dropIfExists('usuario');
         Schema::dropIfExists('estado_usuario');
         Schema::dropIfExists('rol');
+        Schema::dropIfExists('historial_bajas_general');
     }
 };

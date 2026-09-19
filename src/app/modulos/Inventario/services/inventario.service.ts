@@ -8,71 +8,94 @@ import { environment } from '../../../../environments/environment';
 })
 export class InventarioService {
   private apiUrl = `${environment.apiUrl}/inventario`;
+  private apiAccesoriosUrl = `${environment.apiUrl}/inventario-accesorios`;
 
   constructor(private http: HttpClient) {}
 
-// Obtener elementos con filtros
-  obtenerElementos(
-    pagina: number = 1,
-    perPage: number = 10,
-    search: string = '',
-    tipo: string = '',
-    estado: string = '',
-    ubicacion: string = ''
-  ): Observable<any> {
-    let params = new HttpParams()
-      .set('page', pagina.toString())
-      .set('per_page', perPage.toString());
-
+  // --- ACTIVOS FIJOS ---
+  obtenerElementos(pagina: number = 1, perPage: number = 10, search: string = '', tipo: string = '', estado: string = '', ubicacion: string = ''): Observable<any> {
+    let params = new HttpParams().set('page', pagina.toString()).set('per_page', perPage.toString());
     if (search) params = params.set('search', search);
     if (tipo) params = params.set('tipo', tipo);
     if (estado) params = params.set('estado', estado);
     if (ubicacion) params = params.set('ubicacion', ubicacion);
-
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  // Obtener un elemento por ID
   obtenerElemento(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  // Obtener historial de mantenimiento de un elemento específico
-  obtenerHistorialMantenimiento(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}/historial`);
-  }
-
-  // Crear elemento
   crearElemento(elemento: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, elemento);
   }
 
-  // Actualizar elemento
   actualizarElemento(id: number, elemento: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, elemento);
   }
 
-  // Eliminar elemento
-  eliminarElemento(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  darDeBajaElemento(id: number, payload: { motivo: string }) {
+    return this.http.patch(`${this.apiUrl}/activos/${id}/dar-de-baja`, payload);
   }
 
-  // Obtener opciones para filtros
-  obtenerOpciones(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/opciones`);
+  restaurarBaja(idBaja: number): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/inventario/historial-bajas-general/${idBaja}/restaurar`, {});
   }
 
-  // Enviar a mantenimiento
+  obtenerHistorialMantenimiento(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/historial`);
+  }
+
   enviarMantenimiento(id: number, datos: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${id}/mantenimiento`, datos);
   }
 
-  // Crear nueva ubicación
+  // --- ACCESORIOS / STOCK POR LOTES ---
+  obtenerAccesorios(pagina: number = 1, perPage: number = 10, search: string = '', tipo: string = '', ubicacion: string = ''): Observable<any> {
+    let params = new HttpParams().set('page', pagina.toString()).set('per_page', perPage.toString());
+    if (search) params = params.set('search', search);
+    if (tipo) params = params.set('tipo', tipo);
+    if (ubicacion) params = params.set('ubicacion', ubicacion);
+    return this.http.get<any>(this.apiAccesoriosUrl, { params });
+  }
+
+  // ACTUALIZADO: Ahora indicamos explícitamente que recibe el id_stock de la ubicación
+  darDeBajaAccesorio(id_stock: number, datos: { cantidad: number; motivo?: string }): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/inventario/accesorios/${id_stock}/dar-de-baja`, datos);
+  }
+
+  // NUEVO: Método para trasladar stock entre salones o bodegas
+  trasladarStock(datos: { id_stock_origen: number; cod_ubi_destino: number; cantidad: number }): Observable<any> {
+    return this.http.post<any>(`${this.apiAccesoriosUrl}/trasladar`, datos);
+  }
+
+  obtenerHistorialBajasGeneral(tipo?: string): Observable<any> {
+    let params = new HttpParams();
+    if (tipo) params = params.set('tipo', tipo);
+    return this.http.get<any>(`${environment.apiUrl}/inventario/historial-bajas-general`, { params });
+  }
+
+  crearAccesorio(accesorio: any): Observable<any> {
+    return this.http.post<any>(this.apiAccesoriosUrl, accesorio);
+  }
+
+  actualizarAccesorio(id: number, accesorio: any): Observable<any> {
+    return this.http.put<any>(`${this.apiAccesoriosUrl}/${id}`, accesorio);
+  }
+
+  eliminarAccesorio(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiAccesoriosUrl}/${id}`);
+  }
+
+  // --- OPCIONES GENERALES Y CATÁLOGOS ---
+  obtenerOpciones(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/opciones`);
+  }
+
   crearUbicacion(datos: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/ubicaciones`, datos);
   }
 
-  // Crear nuevo tipo de elemento
   crearTipo(datos: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/tipos-elemento`, datos);
   }
@@ -85,7 +108,6 @@ export class InventarioService {
     return this.http.delete<any>(`${environment.apiUrl}/tipos-elemento/${id}`);
   }
 
-  // Eliminar ubicación
   eliminarUbicacion(id: number): Observable<any> {
     return this.http.delete<any>(`${environment.apiUrl}/ubicaciones/${id}`);
   }

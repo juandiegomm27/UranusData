@@ -1,7 +1,69 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-forms.css';
 
-/* Estilos para inputs agrupados y botones de acción */
+/* Estilos para el contenedor del autocompletado */
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ced4da;
+  border-radius: 0 0 6px 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 1050;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.autocomplete-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f5;
+  transition: background-color 0.15s ease;
+}
+
+.autocomplete-item:hover {
+  background-color: #f8f9fa;
+}
+
+.autocomplete-item .acc-nombre {
+  font-size: 13px;
+  color: #212529;
+}
+
+.autocomplete-item .acc-info {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+/* Modo oscuro para el autocompletado */
+:host-context(body.dark-mode) .autocomplete-dropdown {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+:host-context(body.dark-mode) .autocomplete-item {
+  border-bottom-color: #333;
+}
+
+:host-context(body.dark-mode) .autocomplete-item:hover {
+  background-color: #333;
+}
+
+:host-context(body.dark-mode) .autocomplete-item .acc-nombre {
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .autocomplete-item .acc-info {
+  color: #aaa;
+}
+
+/* Resto de estilos originales intactos */
 .grupo-input-flex {
   display: flex;
   gap: 8px;
@@ -65,7 +127,6 @@
   box-sizing: border-box;
 }
 
-/* Modo oscuro para los nuevos elementos */
 :host-context(body.dark-mode) .select-flex,
 :host-context(body.dark-mode) .input-full {
   background: #333;

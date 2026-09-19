@@ -131,17 +131,17 @@ class UsuarioGestorController extends Controller
      * PUT /gestion/usuario/{documento}
      * Actualizar datos del usuario (como el estado)
      */
-    public function update(Request $request, $documento)
+public function update(Request $request, $documento)
     {
-        // 1. Buscamos al usuario por su documento
+        // Buscamos al usuario por su documento
         $usuario = Usuario::where('documento', $documento)->first();
 
-        // 2. Si no existe, devolvemos un error 404
+        // Si no existe, devolvemos un error 404
         if (!$usuario) {
             return $this->notFoundResponse('Usuario');
         }
 
-        // 3. Validamos que el estado enviado sea correcto (opcional pero recomendado)
+        // Validamos que el estado enviado sea correcto
         $validator = Validator::make($request->all(), [
             'cod_estado_usuario' => 'sometimes|required|integer'
         ]);
@@ -151,9 +151,14 @@ class UsuarioGestorController extends Controller
         }
 
         try {
-            // 4. Actualizamos el estado si viene en la petición
+            // Actualizamos el estado si viene en la petición
             if ($request->has('cod_estado_usuario')) {
                 $usuario->cod_estado_usuario = $request->cod_estado_usuario;
+                
+                // NUEVO: Si el estado cambia a 2 (inactivo) o 3 (bloqueado), revocar tokens
+                if (in_array($request->cod_estado_usuario, [2, 3])) {
+                    $usuario->tokens()->delete(); 
+                }
             }
 
             // Guardamos los cambios en la base de datos

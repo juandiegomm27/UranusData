@@ -75,7 +75,7 @@ class MantenimientoController extends Controller
             'cod_estado_mantenimiento' => 1 
         ]);
 
-        $elemento->update(['cod_estado_elemento' => 4]);
+        $elemento->update(['cod_estado_elemento' => 3]);
 
         return response()->json(['success' => true, 'mensaje' => 'Enviado a mantenimiento', 'data' => $mantenimiento]);
     }
@@ -106,7 +106,7 @@ class MantenimientoController extends Controller
                 if ($nuevoEstado == 3) { 
                     $elementoInventario->update(['cod_estado_elemento' => 1]); 
                 } else if ($nuevoEstado == 2) { 
-                    $elementoInventario->update(['cod_estado_elemento' => 4]); 
+                    $elementoInventario->update(['cod_estado_elemento' => 3]); 
                 }
             }
         }

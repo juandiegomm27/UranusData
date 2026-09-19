@@ -47,14 +47,14 @@ export class AuthService {
   logoutRemoto() {
     this.logout().subscribe({
       next: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('usuario');
         this.limpiarDatos();
         this.router.navigate(['/login']);
       },
       error: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('usuario');
         this.limpiarDatos();
         this.router.navigate(['/login']);
       }
@@ -103,17 +103,17 @@ export class AuthService {
   }
 
   isAutenticado(): boolean {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return !!token;
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   }
 
-  // Método privado que actualiza los signals desde localStorage
+  // Método privado que actualiza los signals desde sessionStorage
   private actualizarDatosUsuario(): void {
-    const usuario = localStorage.getItem('usuario');
+    const usuario = sessionStorage.getItem('usuario');
     if (usuario) {
       try {
         const parsed = JSON.parse(usuario);
@@ -158,7 +158,7 @@ export class AuthService {
   }
 
   getDocumento(): string {
-    const usuario = localStorage.getItem('usuario');
+    const usuario = sessionStorage.getItem('usuario');
     if (usuario) {
       try {
         const parsed = JSON.parse(usuario);
@@ -181,13 +181,13 @@ export class AuthService {
   }
 
   setNombreApellido(nombre: string, apellido: string) {
-    const usuario = localStorage.getItem('usuario');
+    const usuario = sessionStorage.getItem('usuario');
     if (usuario) {
       try {
         const parsed = JSON.parse(usuario);
         parsed.nombre = nombre;
         parsed.apellido = apellido;
-        localStorage.setItem('usuario', JSON.stringify(parsed));
+        sessionStorage.setItem('usuario', JSON.stringify(parsed));
         this.actualizarDatosUsuario();
       } catch {
         console.error('Error al actualizar usuario');
@@ -196,7 +196,7 @@ export class AuthService {
   }
 
   irAlInicio(router: Router) {
-    const usuario = localStorage.getItem('usuario');
+    const usuario = sessionStorage.getItem('usuario');
     if (usuario) {
       try {
         const parsed = JSON.parse(usuario);

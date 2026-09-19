@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use App\Models\VHistorialPrestamos;
 use App\Models\VHistorialReservas;
+use Illuminate\Support\Facades\DB;
 
 class ReservaUsuarioController extends Controller
 {
@@ -97,34 +98,72 @@ class ReservaUsuarioController extends Controller
     public function crearReserva(Request $request)
     {
         $documento = $request->user()?->documento;
+        
         $validated = $request->validate([
             'fecha' => 'required|date',
             'plazo' => 'nullable|date',
-            'cantidad' => 'nullable|integer|min:1',
-            'elemento' => 'required|string|max:100'
+            'detalles' => 'required|array|min:1',
+            'detalles.*.id_elemento' => 'nullable|exists:inventario,id_elemento',
+            'detalles.*.id_stock' => 'nullable|exists:stock_accesorios,id_stock',
+            'detalles.*.cantidad' => 'required|integer|min:1'
         ]);
 
-        $reserva = Reserva::create([
-            'documento' => $documento,
-            'Num_estado' => 1,
-            'fecha' => $validated['fecha'],
-            'plazo' => $validated['plazo'] ?? null,
-            'cantidad' => $validated['cantidad'] ?? 1,
-            'elemento' => $validated['elemento']
-        ]);
+        try {
+            $reserva = DB::transaction(function () use ($documento, $validated) {
+                // 1. Crear la cabecera
+                $reserva = Reserva::create([
+                    'documento' => $documento,
+                    'Num_estado' => 1, // Pendiente
+                    'fecha' => $validated['fecha'],
+                    'plazo' => $validated['plazo'] ?? null,
+                ]);
 
-        return response()->json([
-            'status' => 'success',
-            'mensaje' => 'Reserva creada exitosamente',
-            'data' => $reserva
-        ], 201);
+                // 2. Crear los detalles y descontar stock
+                foreach ($validated['detalles'] as $item) {
+                    \App\Models\ReservaDetalle::create([
+                        'id_Reserva' => $reserva->id_Reserva,
+                        'id_elemento' => $item['id_elemento'] ?? null,
+                        'id_stock' => $item['id_stock'] ?? null,
+                        'cantidad_solicitada' => $item['cantidad'],
+                        'cantidad_entregada' => 0,
+                        'cantidad_devuelta' => 0
+                    ]);
+
+                    // Descontar la cantidad_disponible física del stock si es un accesorio
+                    if (!empty($item['id_stock'])) {
+                        $stock = \App\Models\StockAccesorio::find($item['id_stock']);
+                        if ($stock) {
+                            $stock->decrement('cantidad_disponible', $item['cantidad']);
+                            // Descontar también del catálogo global
+                            \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                                ->decrement('cantidad_disponible', $item['cantidad']);
+                        }
+                    }
+                }
+
+                return $reserva;
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'mensaje' => 'Reserva creada exitosamente',
+                'data' => $reserva->load('detalles')
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'mensaje' => 'Error al crear la reserva: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function actualizarReserva(Request $request, $id)
     {
         $documento = $request->user()?->documento;
-        $reserva = Reserva::where('id_Reserva', $id)->where('documento', $documento)->first();
-
+        // Cargamos los detalles para poder devolver el stock antes de actualizar
+        $reserva = Reserva::with('detalles')->where('id_Reserva', $id)->where('documento', $documento)->first();
+        
         if (!$reserva) {
             return response()->json(['status' => 'error', 'mensaje' => 'Reserva no encontrada'], 404);
         }
@@ -132,33 +171,108 @@ class ReservaUsuarioController extends Controller
         $validated = $request->validate([
             'fecha' => 'sometimes|date',
             'plazo' => 'nullable|date',
-            'cantidad' => 'nullable|integer|min:1',
-            'elemento' => 'sometimes|string|max:100'
+            'detalles' => 'sometimes|array|min:1',
+            'detalles.*.id_elemento' => 'nullable|exists:inventario,id_elemento',
+            'detalles.*.id_stock' => 'nullable|exists:stock_accesorios,id_stock',
+            'detalles.*.cantidad' => 'required_with:detalles|integer|min:1'
         ]);
 
-        $reserva->update($validated);
+        try {
+            DB::transaction(function () use ($reserva, $validated, $request) {
+                // Actualizar cabecera
+                $reserva->update($request->only(['fecha', 'plazo']));
 
-        return response()->json([
-            'status' => 'success',
-            'mensaje' => 'Reserva actualizada exitosamente',
-            'data' => $reserva
-        ]);
+                // Si envían detalles, hay que devolver los viejos y descontar los nuevos
+                if (isset($validated['detalles'])) {
+                    
+                    // 1. Devolver el stock de los detalles viejos
+                    foreach ($reserva->detalles as $viejoDetalle) {
+                        if ($viejoDetalle->id_stock) {
+                            $stock = \App\Models\StockAccesorio::find($viejoDetalle->id_stock);
+                            if ($stock) {
+                                $stock->increment('cantidad_disponible', $viejoDetalle->cantidad_solicitada);
+                                \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                                    ->increment('cantidad_disponible', $viejoDetalle->cantidad_solicitada);
+                            }
+                        }
+                    }
+
+                    // 2. Eliminar los detalles viejos
+                    $reserva->detalles()->delete();
+
+                    // 3. Crear los nuevos detalles y descontar el nuevo stock
+                    foreach ($validated['detalles'] as $item) {
+                        \App\Models\ReservaDetalle::create([
+                            'id_Reserva' => $reserva->id_Reserva,
+                            'id_elemento' => $item['id_elemento'] ?? null,
+                            'id_stock' => $item['id_stock'] ?? null,
+                            'cantidad_solicitada' => $item['cantidad'],
+                            'cantidad_entregada' => 0,
+                            'cantidad_devuelta' => 0
+                        ]);
+
+                        if (!empty($item['id_stock'])) {
+                            $stock = \App\Models\StockAccesorio::find($item['id_stock']);
+                            if ($stock) {
+                                $stock->decrement('cantidad_disponible', $item['cantidad']);
+                                \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                                    ->decrement('cantidad_disponible', $item['cantidad']);
+                            }
+                        }
+                    }
+                }
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'mensaje' => 'Reserva actualizada exitosamente',
+                'data' => $reserva->load('detalles')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'mensaje' => 'Error al actualizar la reserva: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function cancelarReserva(Request $request, $id)
     {
         $documento = $request->user()?->documento;
-        $reserva = Reserva::where('id_Reserva', $id)->where('documento', $documento)->first();
+        // Cargamos los detalles para saber qué accesorios devolver a la repisa
+        $reserva = Reserva::with('detalles')->where('id_Reserva', $id)->where('documento', $documento)->first();
 
         if (!$reserva) {
             return response()->json(['status' => 'error', 'mensaje' => 'Reserva no encontrada'], 404);
         }
 
-        $reserva->delete();
+        try {
+            DB::transaction(function () use ($reserva) {
+                // Devolver todo el stock a su respectiva ubicación
+                foreach ($reserva->detalles as $detalle) {
+                    if ($detalle->id_stock) {
+                        $stock = \App\Models\StockAccesorio::find($detalle->id_stock);
+                        if ($stock) {
+                            $stock->increment('cantidad_disponible', $detalle->cantidad_solicitada);
+                            \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                                ->increment('cantidad_disponible', $detalle->cantidad_solicitada);
+                        }
+                    }
+                }
 
-        return response()->json([
-            'status' => 'success',
-            'mensaje' => 'Reserva cancelada exitosamente'
-        ]);
+                // Finalmente, borrar la reserva
+                $reserva->delete();
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'mensaje' => 'Reserva cancelada exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'mensaje' => 'Error al cancelar la reserva: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

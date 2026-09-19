@@ -55,6 +55,11 @@ export class DashboardResumen implements OnInit {
   totalSolicitudesAbiertas = signal(0);
   prestamosRecientes = signal<PrestamoActivo[]>([]);
 
+  // Diccionarios dinámicos para almacenar la configuración de la Base de Datos
+  estadosDB: Record<number, string> = {};
+  tiposDB: Record<number, string> = {};
+  ubicacionesDB: Record<number, string> = {};
+
   colorScheme: Color = {
     name: 'esquemaUranus',
     selectable: true,
@@ -66,8 +71,31 @@ export class DashboardResumen implements OnInit {
   posicionLeyenda: LegendPosition = LegendPosition.Right;
 
   ngOnInit(): void {
-    this.cargarInventario();
+    this.cargarOpcionesBD(); 
     this.cargarPrestamos();
+  }
+
+  private cargarOpcionesBD(): void {
+    this.inventarioService.obtenerOpciones().subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          response.estados?.forEach((e: any) => {
+            this.estadosDB[e.cod_estado_elemento] = e.estado;
+          });
+          response.tipos?.forEach((t: any) => {
+            this.tiposDB[t.cod_tipo_elemento] = t.tipo;
+          });
+          response.ubicaciones?.forEach((u: any) => {
+            this.ubicacionesDB[u.cod_ubi_elemento] = u.ubicacion;
+          });
+        }
+        this.cargarInventario();
+      },
+      error: (err) => {
+        console.error('Error cargando opciones de la BD:', err);
+        this.cargarInventario(); 
+      }
+    });
   }
 
   obtenerNombreTipoItem(item: any): string {
@@ -77,17 +105,7 @@ export class DashboardResumen implements OnInit {
     if (item.tipo_elemento) return item.tipo_elemento;
 
     const idTipo = item.cod_tipo_elemento || (typeof item.tipo === 'number' ? item.tipo : null);
-    const mapTipo: Record<number, string> = {
-      1: 'Computador',
-      2: 'Monitor',
-      3: 'Proyector',
-      4: 'Accesorio',
-      5: 'Impresora',
-      6: 'Router',
-      7: 'Servidor',
-      8: 'Webcam'
-    };
-    return mapTipo[Number(idTipo)] || 'Computador';
+    return this.tiposDB[Number(idTipo)] || 'Desconocido';
   }
 
   obtenerNombreUbicacionItem(item: any): string {
@@ -97,12 +115,7 @@ export class DashboardResumen implements OnInit {
     if (item.nombre_ubicacion) return item.nombre_ubicacion;
 
     const idUbi = item.cod_ubi_elemento || (typeof item.ubicacion === 'number' ? item.ubicacion : null);
-    const mapUbi: Record<number, string> = {
-      1: 'Sala 1',
-      2: 'Sala 2',
-      3: 'Almacén Central'
-    };
-    return mapUbi[Number(idUbi)] || (idUbi ? `Ubicación ${idUbi}` : 'Sala 1');
+    return this.ubicacionesDB[Number(idUbi)] || 'Desconocida';
   }
 
   obtenerNombreEstadoItem(item: any): string {
@@ -112,13 +125,7 @@ export class DashboardResumen implements OnInit {
     if (item.nombre_estado) return item.nombre_estado;
 
     const idEstado = item.cod_estado_elemento || (typeof item.estado === 'number' ? item.estado : null);
-    const mapEstado: Record<number, string> = {
-      1: 'Activo',
-      2: 'Mantenimiento',
-      3: 'Inactivo',
-      4: 'Dañado'
-    };
-    return mapEstado[Number(idEstado)] || 'Activo';
+    return this.estadosDB[Number(idEstado)] || 'Desconocido';
   }
 
   private cargarInventario(): void {
@@ -190,13 +197,14 @@ export class DashboardResumen implements OnInit {
   }
 
   obtenerClaseEstadoElemento(estado: string): string {
-    const map: Record<string, string> = {
-      'activo': 'estado-activo',
-      'inactivo': 'estado-inactivo',
-      'dañado': 'estado-danado',
-      'danado': 'estado-danado',
-      'mantenimiento': 'estado-pendiente'
-    };
-    return map[(estado || '').toLowerCase()] || 'estado-inactivo';
+    const estadoNorm = (estado || '').toLowerCase();
+    
+    // Buscar palabras clave independientemente de variaciones en la BD
+    if (estadoNorm.includes('activo') && !estadoNorm.includes('inactivo')) return 'estado-activo';
+    if (estadoNorm.includes('inactivo')) return 'estado-inactivo';
+    if (estadoNorm.includes('baja') || estadoNorm.includes('dañado') || estadoNorm.includes('danado')) return 'estado-danado';
+    if (estadoNorm.includes('mantenimiento') || estadoNorm.includes('pendiente')) return 'estado-pendiente';
+    
+    return 'estado-inactivo'; 
   }
 }

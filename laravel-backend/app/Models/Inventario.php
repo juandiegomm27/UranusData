@@ -8,13 +8,13 @@ class Inventario extends Model {
     public $timestamps = false;
     
     protected $fillable = [
-        'cod_elemento', 
-        'nombre_elemento', 
-        'serial', 
-        'modelo', 
-        'descripcion', 
-        'cod_tipo_elemento', 
-        'cod_estado_elemento', 
+        'cod_elemento',
+        'nombre_elemento',
+        'serial',
+        'modelo',
+        'descripcion',
+        'cod_tipo_elemento',
+        'cod_estado_elemento',
         'cod_ubi_elemento'
     ];
 
@@ -29,9 +29,6 @@ class Inventario extends Model {
     }
     public function mantenimiento() {
         return $this->hasMany(Mantenimiento::class, 'id_elemento', 'id_elemento');
-    }
-    public function cantidades() {
-        return $this->hasMany(Cantidad::class, 'id_elemento', 'id_elemento');
     }
     public function elementoInventario()
     {
