@@ -11,48 +11,60 @@ El proyecto está construido bajo una arquitectura separada:
 ## 🚀 Instalación
 
 ### Requisitos previos
-- [Node.js 26.8.1](https://nodejs.org/es/download/current)
-- [Composer 2.10.2](https://getcomposer.org/download/)
-- [PHP 8.2.12](https://www.php.net/downloads.php)
-- [XAMPP ](https://www.apachefriends.org/es/index.html)
+- [Node.js LTS](https://nodejs.org/es/download/) y npm
+- [PHP 8.2 o superior](https://www.php.net/downloads.php), con las extensiones requeridas por Laravel (XAMPP incluye PHP)
+- [Composer 2](https://getcomposer.org/download/)
+- MySQL 8 o MariaDB; puedes usar MySQL desde [XAMPP](https://www.apachefriends.org/es/index.html)
 
 ### Pasos
 
-```bash
-# 0. Clonar el repositorio
-git clone <url-del-repositorio>
-cd sana-uranus-data
+1. Clona el repositorio y entra en su carpeta:
 
-# 1. Instalar dependencias del frontend
-npm install
+   ```powershell
+   git clone <url-del-repositorio>
+   cd UranusData
+   ```
 
-# 2. Instalación de Ngx-Charts para las gráficas del dashboard (Gerente/Técnico)
-npm install @swimlane/ngx-charts --save
+2. Inicia MySQL desde XAMPP. En phpMyAdmin (`http://localhost/phpmyadmin`) crea una base de datos vacía llamada `UranusData` con cotejamiento `utf8mb4_unicode_ci`.
 
-# 3. Configurar el backend Laravel
-cd laravel-backend
-composer install
-# En Windows PowerShell usa: Copy-Item .env.example .env
-cp .env.example .env
-php artisan key:generate
+3. Instala y configura Laravel desde PowerShell:
 
-# 4. Configurar base de datos en .env
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=UranusData
-DB_USERNAME=root
-DB_PASSWORD=
+   ```powershell
+   cd laravel-backend
+   composer install
+   Copy-Item .env.example .env
+   php artisan key:generate
+   ```
 
-# 5. Crear tablas y cargar datos iniciales (tener encendido XAMPP con Apache y Mysql)
-php artisan migrate
-php artisan db:seed
+   Abre `laravel-backend/.env` y confirma estos datos para la instalación predeterminada de XAMPP:
 
-# 6. Crear el enlace de almacenamiento público
-php artisan storage:link
+   ```dotenv
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=UranusData
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-# 7. Volver a la raíz del proyecto
-cd ..
-```
+4. Crea las tablas y los datos de demostración:
+
+   ```powershell
+   php artisan migrate --seed
+   php artisan storage:link
+   cd ..
+   ```
+
+5. Instala las dependencias de Angular y ejecuta ambos servidores:
+
+   ```powershell
+   npm ci
+   npm start
+   ```
+
+   `npm ci` instala exactamente las dependencias fijadas en `package-lock.json`, incluida ngx-charts; no hace falta instalar paquetes adicionales manualmente. `npm start` inicia Angular y Laravel en paralelo.
+
+La primera instalación necesita que cada computadora configure su propia base de datos y genere su propio `APP_KEY`. No compartas el archivo local `laravel-backend/.env`; el repositorio incluye `.env.example` para que cada persona genere el suyo.
 
 
 ### Configurar correos (opcional)
@@ -113,9 +125,9 @@ npm run start:backend
 
 | Documento | Nombre | Rol | Contraseña |
 | --- | --- | --- | --- |
-| 1234567890 | Juan Diego Medina | Docente | 123456 |
-| 1234567893 | Juan Camilo Aguirre | Técnico | 123456 |
-| 1234567895 | Maria Garcia | Gerente | 123456 |
+| 1234567890 | Juan Diego Medina Mahecha | Docente | 1234567890 |
+| 1234567891 | Juan Diego Medina Mahecha | Técnico | 1234567890 |
+| 1234567892 | Juan Diego Medina Mahecha | Gerente | 1234567890 |
 
 ## 📧 Características
 
@@ -144,5 +156,3 @@ npm run start:backend
 ## 📄 Licencia
 
 Proyecto académico para SENA - Sistema Integrado de Gestión
-
-  
