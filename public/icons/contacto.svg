@@ -1,13 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 606 613" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(1,0,0,1,-3130.750743,-2619.23477)">
-        <g transform="matrix(1,0,0,1,4773.388682,270.786986)">
-            <g transform="matrix(1,0,0,1,-1345.582821,2862.982245)">
-                <g transform="matrix(853.25229,0,0,853.25229,426.626145,0)">
-                </g>
-                <text x="-426.626px" y="0px" style="font-family:'Webdings', serif;font-size:853.252px;fill:white;">V</text>
-            </g>
-        </g>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2" viewBox="0 0 606 613">
+  <text x="-426.6" style="font-family:&quot;Webdings&quot;,serif;font-size:853.252px;fill:#fff" transform="translate(297 515)">V</text>
 </svg>

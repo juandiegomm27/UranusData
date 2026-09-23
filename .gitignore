@@ -20,14 +20,14 @@ laravel-backend/storage/*.key
 laravel-backend/storage/app/*
 !laravel-backend/storage/app/.gitignore
 laravel-backend/storage/framework/cache/*
-!laravel-backend/storage/framework/cache/.gitignore
+!laravel-backend/storage/framework/cache/.gitkeep
 laravel-backend/storage/framework/sessions/*
 !laravel-backend/storage/framework/sessions/.gitignore
 laravel-backend/storage/framework/views/*
 !laravel-backend/storage/framework/views/.gitignore
 laravel-backend/storage/logs/*
 !laravel-backend/storage/logs/.gitignore
-laravel-backend/bootstrap/cache/
+laravel-backend/bootstrap/cache/*
 laravel-backend/public/build/
 laravel-backend/public/hot
 laravel-backend/.phpunit.result.cache
