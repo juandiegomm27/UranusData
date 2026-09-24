@@ -31,7 +31,7 @@ class ProfileController extends Controller
         );
     }
 
-///PUT /perfil/{documento}
+    ///PUT /perfil/{documento}
     public function actualizarPerfil(Request $request, $documento)
     {
         $usuario = Usuario::where('documento', $documento)->first();
@@ -104,13 +104,30 @@ class ProfileController extends Controller
                 }
             });
 
+            $usuario->load(['correos', 'telefonos', 'rol']);
+            $correoDestino = $usuario->correos->first()?->correo;
+            
+            if ($correoDestino) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\ProfileUpdateMail(
+                        $usuario->nombre,
+                        $usuario->apellido,
+                        $correoDestino,
+                        $usuario->telefonos->first()?->telefono ?? 'No registrado',
+                        $usuario->rol?->cargo ?? 'Sin rol'
+                    ));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Error enviando email de actualización de perfil: ' . $e->getMessage());
+                }
+            }
+
             return $this->successResponse(
-                $usuario->load(['correos', 'telefonos']),
+                $usuario,
                 'Perfil actualizado correctamente'
             );
         } catch (\Exception $e) {
             Schema::enableForeignKeyConstraints();
-            Log::error('Error al actualizar perfil: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Error al actualizar perfil: ' . $e->getMessage());
             return $this->errorResponse('Error interno al actualizar el perfil', 500);
         }
     }

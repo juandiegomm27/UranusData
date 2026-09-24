@@ -1,0 +1,74 @@
+@if (mostrar) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-contenido modal-ancho-historial w-100" (click)="$event.stopPropagation()">
+      <div class="modal-header header-historial-bajas">
+        <h2>Historial de Bajas - {{ tipoItem === 'activo' ? 'Equipos' : 'Accesorios' }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        @if (mensajeModal) {
+          <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensajeModal">
+            <span>{{ mensajeModal }}</span>
+          </div>
+        }
+        
+        <div class="seccion-bajas-resumen">
+          <div class="tarjeta-resumen-baja">
+            <span class="titulo-resumen">Registros en Historial</span>
+            <span class="valor-resumen">{{ historialBajas.length }}</span>
+          </div>
+          <div class="tarjeta-resumen-baja">
+            <span class="titulo-resumen">Unidades Retiradas</span>
+            <span class="valor-resumen">{{ totalUnidadesBaja }}</span>
+          </div>
+        </div>
+        
+        @if (cargando) {
+          <div class="cargando">Cargando historial...</div>
+        } @else if (historialBajas.length === 0) {
+          <div class="sin-datos">No hay registros de bajas para esta categoría</div>
+        } @else {
+          <div class="modulo-tabla-wrapper">
+            <table class="modulo-tabla">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Elemento</th>
+                  <th>Código/Lote</th>
+                  <th>Cant.</th>
+                  <th>Ubicación</th>
+                  <th>Motivo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (baja of historialBajas; track baja.id_baja) {
+                  <tr>
+                    <td>{{ baja.fecha_baja ? (baja.fecha_baja | date:'yyyy-MM-dd') : 'N/A' }}</td>
+                    <td><strong>{{ baja.nombre }}</strong></td>
+                    <td>{{ baja.codigo_identificacion || '-' }}</td>
+                    <td><span class="badge-cantidad-baja fw-bold text-danger">-{{ baja.cantidad }}</span></td>
+                    <td>{{ baja.ubicacion || '-' }}</td>
+                    <td class="max-w-200 overflow-hidden-ellipsis" [title]="baja.motivo || 'Sin motivo'">
+                      {{ baja.motivo || 'Sin motivo' }}
+                    </td>
+                    <td>
+                      <button class="btn-icon btn-icon-ver" (click)="restaurarItem(baja)" title="Restaurar al inventario">
+                        <span>Restaurar</span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

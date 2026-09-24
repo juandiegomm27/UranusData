@@ -1,6 +1,6 @@
 <!-- MODAL: CREAR NUEVO MANTENIMIENTO -->
 @if (mostrarCrear) {
-  <div class="modal-overlay" style="z-index: 1050;" (click)="cerrarCrear()">
+  <div class="modal-overlay" (click)="cerrarCrear()">
     <div class="modal-contenido" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>Nuevo Reporte de Mantenimiento</h2>
@@ -9,7 +9,6 @@
       <div class="modal-body">
         @if (mensajeModal) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensajeModal">
-            <!--<img src="/icons/alerta.svg" alt="Alerta" class="icono-alerta">-->
             <span>{{ mensajeModal }}</span>
           </div>
         }
@@ -59,7 +58,7 @@
 
 <!-- COMPONENTE DETALLES -->
 @if (mostrarDetalles && mantenimientoSeleccionado) {
-  <app-detalle-mantenimiento 
+  <app-detalle-mantenimiento
     [mostrar]="mostrarDetalles"
     [mantenimiento]="mantenimientoSeleccionado"
     [estadosMantenimiento]="estadosMantenimiento"
@@ -68,38 +67,44 @@
   </app-detalle-mantenimiento>
 }
 
+<!-- COMPONENTE HISTORIAL DE BAJAS -->
+<app-historial-bajas
+  [mostrar]="mostrarModalHistorialBajas"
+  [tipoItem]="'activo'"
+  (cerrar)="cerrarModalBajasHistorial()"
+  (recargar)="cargarDatos()">
+</app-historial-bajas>
+
 <div class="modulo-container">
   <div class="modulo-header">
     <h2>MANTENIMIENTO DE EQUIPOS</h2>
     <div class="modulo-header-actions">
-      <button class="btn-agregar" (click)="abrirCrear()">+ Agregar Mantenimiento</button>
+      <button class="btn-agregar" (click)="abrirCrear()">Agregar Mantenimiento</button>
+      <button class="btn-agregar" style="margin-left: 10px;" (click)="abrirModalBajasHistorial()">Historial de Bajas</button>
     </div>
   </div>
 
   <div class="modulo-busqueda-filtros">
     <div class="grupo-busqueda">
-      <input type="text" class="input-busqueda" placeholder="Buscar por equipo, documento..." [(ngModel)]="busqueda" (keyup.enter)="buscar()">
-      <button class="btn-primary" (click)="buscar()">Buscar</button>
-      <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+      <input type="text" class="input-busqueda" placeholder="Buscar por equipo, documento..." [(ngModel)]="terminoBusqueda" (keyup.enter)="aplicarFiltrosBase()">
+      <button class="btn-primary" (click)="aplicarFiltrosBase()">Buscar</button>
+      <button class="btn-secondary" (click)="limpiarFiltrosLocal()">Limpiar</button>
     </div>
 
     <div class="grupo-filtros">
-      <select class="filtro-select" [(ngModel)]="filtroTipo" (change)="filtrar()">
+      <select class="filtro-select" [(ngModel)]="filtroTipo" (change)="aplicarFiltrosBase()">
         <option value="">Todos los Tipos</option>
         @for (tipo of tiposMantenimiento; track tipo.cod_tipo_mantenimiento) {
           <option [value]="tipo.cod_tipo_mantenimiento">{{ tipo.tipo_mantenimiento || tipo.tipo || tipo.nombre }}</option>
         }
       </select>
-
-      <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+      <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="aplicarFiltrosBase()">
         <option value="">Todos los Estados</option>
         @for (estado of estadosMantenimiento; track estado.cod_estado_mantenimiento) {
           <option [value]="estado.cod_estado_mantenimiento">{{ estado.estado }}</option>
         }
       </select>
-
-      <input type="date" class="filtro-select" [(ngModel)]="filtroFecha" (change)="filtrar()" title="Filtrar por fecha">
-
+      <input type="date" class="filtro-select" [(ngModel)]="filtroFecha" (change)="aplicarFiltrosBase()" title="Filtrar por fecha">
       <select class="filtro-select" [(ngModel)]="perPage" (change)="cambiarPerPage(perPage)">
         <option [value]="5">5 por página</option>
         <option [value]="10">10 por página</option>
@@ -138,30 +143,31 @@
               <td>#{{ mant.id_elemento || mant.elementoInventario?.id_elemento || 'N/A' }} / {{ mant.serial || mant.elementoInventario?.serial || 'Sin serial' }}</td>
               <td>{{ obtenerNombreTipo(mant.cod_tipo_mantenimiento) }}</td>
               <td>
-                <span class="estado-badge" [ngClass]="{'estado-aprobada': mant.cod_estado_mantenimiento == 3, 'estado-pendiente': mant.cod_estado_mantenimiento == 1, 'estado-pausa': mant.cod_estado_mantenimiento == 2}">
-                  {{ mant.cod_estado_mantenimiento == 1 ? 'Pendiente' : mant.cod_estado_mantenimiento == 2 ? 'En pausa' : mant.cod_estado_mantenimiento == 3 ? 'Aprobada' : 'Desconocido' }}
+                <span class="estado-badge" [ngClass]="{
+                    'estado-aprobada': mant.cod_estado_mantenimiento == 3, 
+                    'estado-pendiente': mant.cod_estado_mantenimiento == 1, 
+                    'estado-pausa': mant.cod_estado_mantenimiento == 2,
+                    'estado-baja': mant.cod_estado_mantenimiento == 4
+                  }">
+                  {{ mant.cod_estado_mantenimiento == 1 ? 'Pendiente' : mant.cod_estado_mantenimiento == 2 ? 'En pausa' : mant.cod_estado_mantenimiento == 3 ? 'Finalizado' : mant.cod_estado_mantenimiento == 4 ? 'Dado de Baja' : 'Desconocido' }}
                 </span>
               </td>
               <td title="{{ mant.descripcion }}">{{ mant.descripcion ? (mant.descripcion | slice:0:20) + '...' : '-' }}</td>
               <td title="{{ mant.observaciones }}">{{ mant.observaciones ? (mant.observaciones | slice:0:20) + '...' : 'Pendiente...' }}</td>
               <td>
                 <div class="botones-accion-tabla">
-                  <td>
-                    <div class="botones-accion-tabla">
-                      <button class="btn-icon btn-icon-ver" (click)="verDetalles(mant)" title="Ver detalles">
-                        <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
-                        <span>Ver</span>
-                      </button>
-                      @if (mant.cod_estado_mantenimiento != 3) {
-                        <button class="btn-icon btn-icon-success" (click)="abrirYCompletar(mant)" title="Marcar como Reparado">
-                          <svg class="icon-tabla" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                          </svg>
-                          <span>Reparar</span>
-                        </button>
-                      }
-                    </div>
-                  </td>
+                  <button class="btn-icon btn-icon-ver" (click)="verDetalles(mant)" title="Ver detalles">
+                    <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                    <span>Ver</span>
+                  </button>
+                  @if (mant.cod_estado_mantenimiento == 1 || mant.cod_estado_mantenimiento == 2) {
+                    <button class="btn-icon btn-icon-mantenimiento" (click)="abrirYCompletar(mant)" title="Marcar como Reparado">
+                      <svg class="icon-tabla" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Reparar</span>
+                    </button>
+                  }
                 </div>
               </td>
             </tr>
@@ -172,9 +178,9 @@
 
     @if (totalPaginas > 0) {
       <div class="paginacion">
-        <button class="btn-paginacion" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+        <button class="btn-paginacion" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
         <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} reportes)</span>
-        <button class="btn-paginacion" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+        <button class="btn-paginacion" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
       </div>
     }
   }

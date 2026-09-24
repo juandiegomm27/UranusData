@@ -1,34 +1,34 @@
 <div class="lista-usuarios-container">
 
   <!-- Título -->
-<div class="lista-usuarios-header">
-  <h2>Gestión de usuario</h2>
-  <button class="btn-crear" (click)="abrirCrearUsuario()">
-    Crear Usuario
-  </button>
-</div>
+  <div class="lista-usuarios-header">
+    <h2>Gestión de usuario</h2>
+    <button class="btn-crear" (click)="abrirCrearUsuario()">
+      Nuevo Usuario
+    </button>
+  </div>
 
   <!-- Búsqueda y Filtros -->
-  <div class="busqueda-filtros">
+  <div class="modulo-busqueda-filtros">
     <div class="grupo-busqueda">
       <input 
-        type="text" 
-        placeholder="Buscar por documento"
-        [(ngModel)]="documentoBusqueda"
+         type="text" 
+         placeholder="Buscar por documento"
+        [(ngModel)]="terminoBusqueda"
         class="input-busqueda">
-      <button class="btn-buscar" (click)="aplicarFiltros()">Buscar</button>
-      <button class="btn-limpiar-busqueda" (click)="limpiarFiltros()">Limpiar</button>
+      <button class="btn-primary" (click)="aplicarFiltrosBase()">Buscar</button>
+      <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
     </div>
 
     <div class="grupo-filtros">
-      <select [(ngModel)]="filtroRol" (change)="aplicarFiltros()" class="filtro-select">
-        <option value="">Todos los rol</option>
-        @for (rol of rol; track rol.cod_rol) {
-          <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
-        }
-      </select>
+        <select [(ngModel)]="filtroRol" (change)="aplicarFiltrosBase()" class="filtro-select">
+          <option value="">Todos los rol</option>
+          @for (rol of rol; track rol.cod_rol) {
+            <option [value]="rol.cod_rol">{{ rol.cargo }}</option>
+          }
+        </select>
 
-      <select [(ngModel)]="filtroEstado" (change)="aplicarFiltros()" class="filtro-select">
+      <select [(ngModel)]="filtroEstado" (change)="aplicarFiltrosBase()" class="filtro-select">
         <option value="">Todos los estados</option>
         @for (estado of estados; track estado.cod_estado_usuario) {
           <option [value]="estado.cod_estado_usuario">{{ estado.estado }}</option>
@@ -48,8 +48,8 @@
   @if (cargando) {
     <p class="cargando">Cargando usuario...</p>
   } @else if (usuario.length > 0) {
-    <div class="tabla-usuario-wrapper">
-      <table class="tabla-usuario">
+    <div class="modulo-tabla-wrapper">
+      <table class="modulo-tabla">
         <thead>
           <tr>
             <th>#</th>
@@ -105,7 +105,7 @@
         </button>
 
         <span class="indicador-pagina">
-          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalUsuarios }} usuario)
+          Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} usuario)
         </span>
 
         <button 
@@ -144,7 +144,7 @@
   <!-- Modal Crear Usuario -->
   @if (mostrarCrearUsuario) {
     <div #crearUsuarioPanel class="crear-usuario-panel">
-      <app-crear-usuario (cerrar)="cerrarModalCrearYRecargar()"></app-crear-usuario>
+      <app-crear-usuario (cerrar)="cerrarModalCrearYRecargar()">x</app-crear-usuario>
     </div>
   }
 

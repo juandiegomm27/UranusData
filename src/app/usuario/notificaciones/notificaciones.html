@@ -1,69 +1,44 @@
 <main class="auth-section">
-  <div class="auth-card" style="
-    max-width: 900px; 
-    text-align: left;
-    ">
-    
-    <div class="brand-badge" style="
-    text-align: center;
-    margin-top: 25px;
-    ">
+  <div class="auth-card" style="max-width: 900px; text-align: left;">
+         
+    <div class="brand-badge" style="text-align: center; margin-top: 25px;">
       <img src="logo-nada.svg" alt="Logo" class="badge-img">
     </div>
-
-    <h1 class="auth-title" style="
-    text-align: center; 
-    margin-bottom: 25px;
-    ">
-    Buzón de Notificaciones
-  </h1>
+    
+    <h1 class="auth-title" style="text-align: center; margin-bottom: 5px;">
+      Buzón de Notificaciones
+    </h1>
+    <p style="text-align: center; margin-bottom: 25px; opacity: 0.7;">
+      Tienes {{ noLeidas() }} notificaciones sin leer
+    </p>
 
     <div class="auth-form">
-      
       @if (alertas().length > 0) {
-        @for (alerta of alertas(); track alerta.id) {
-          <div style="
-            width: 100%; 
-            padding: 15px; 
-            background: rgba(255, 255, 255, 0.1); 
-            border-left: 4px solid #1C74A0; 
-            border-radius: 4px; 
-            margin-bottom: 15px;
-            ">
-            <small style="
-            display: block; 
-            opacity: 0.6; 
-            margin-bottom: 4px;
-            ">
-            {{ alerta.fecha }}
-          </small>
-            <p style="
-            font-size: 14px; 
-            line-height: 1.4;
-            ">
-            {{ alerta.mensaje }}
-          </p>
+        @for (alerta of alertas(); track alerta.id_notificacion) {
+          <div 
+            (click)="marcarComoLeida(alerta)"
+            [style.opacity]="alerta.leida ? '0.6' : '1'"
+            [style.cursor]="alerta.leida ? 'default' : 'pointer'"
+            style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.1); border-left: 4px solid #1C74A0; border-radius: 4px; margin-bottom: 15px; transition: opacity 0.3s;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="font-size: 15px; color: #1C74A0;">{{ alerta.titulo }}</strong>
+              <small style="opacity: 0.8;">{{ alerta.fecha_creacion | date:'short' }}</small>
+            </div>
+            
+            <p style="font-size: 14px; line-height: 1.4; margin: 0;">
+              {{ alerta.mensaje }}
+            </p>
           </div>
         }
       } @else {
-        <p style="
-          text-align: center; 
-          opacity: 0.7;
-          ">
-          No tienes notificaciones pendientes.
-        </p>
+        <p style="text-align: center; opacity: 0.7;">No tienes notificaciones en tu historial.</p>
       }
-
-    </div>
-
-    <div class="auth-footer-links" style="
-    text-align: center; 
-    margin-top: 25px;
-    ">
-      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">
-        Regresar
-      </a>
     </div>
     
+    <div class="auth-footer-links" style="text-align: center; margin-top: 25px;">
+      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">Regresar</a>
+    </div>
+       
   </div>
 </main>

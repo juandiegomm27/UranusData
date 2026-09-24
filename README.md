@@ -1,6 +1,5 @@
 ![Logo de UranusData](public/logo-largo-color.svg)
 
- [Inicio General](README.md) || [Info Backend](./laravel-backend/README_BACKEND.md) || [Guía de Instalación](./laravel-backend/INSTALACION.md) || [Documentación API](./laravel-backend/API_DOCUMENTATION.md)
 
 UranusData es una plataforma centralizada que permite digitalizar y automatizar los procesos de control de inventario. El sistema facilita la trazabilidad de los equipos registrados, gestionando su ciclo de vida a través de módulos especializados para reservas, préstamos y seguimiento de mantenimientos preventivos o correctivos. 
 
@@ -12,59 +11,60 @@ El proyecto está construido bajo una arquitectura separada:
 
 ### Requisitos previos
 - [Node.js LTS](https://nodejs.org/es/download/) y npm
-- [PHP 8.2 o superior](https://www.php.net/downloads.php), con las extensiones requeridas por Laravel (XAMPP incluye PHP)
+- [PHP 8.2 o superior](https://www.php.net/downloads.php) (XAMPP incluye PHP)
 - [Composer 2](https://getcomposer.org/download/)
-- MySQL 8 o MariaDB; puedes usar MySQL desde [XAMPP](https://www.apachefriends.org/es/index.html)
+- [XAMPP](https://www.apachefriends.org/es/index.html)
 
 ### Pasos
 
-1. Clona el repositorio y entra en su carpeta:
+```bash
+# 0. Clonar el repositorio
+git clone https://github.com/juandiegomm27/UranusData.git
+cd UranusData
 
-   ```powershell
-   git clone <url-del-repositorio>
-   cd UranusData
-   ```
+# 1. Inicia Apache y MySQL desde XAMPP.
 
-2. Inicia MySQL desde XAMPP. En phpMyAdmin (`http://localhost/phpmyadmin`) crea una base de datos vacía llamada `UranusData` con cotejamiento `utf8mb4_unicode_ci`.
+# 2. Instalar dependencias automatica
+npm run setup
 
-3. Instala y configura Laravel desde PowerShell:
+# 2. Instalar dependencias del frontend
+npm ci
 
-   ```powershell
-   cd laravel-backend
-   composer install
-   Copy-Item .env.example .env
-   php artisan key:generate
-   ```
+# 3. Instalación de Ngx-Charts para las gráficas del dashboard
+npm install @swimlane/ngx-charts --save
 
-   Abre `laravel-backend/.env` y confirma estos datos para la instalación predeterminada de XAMPP:
+# 4. Configurar el backend Laravel
+cd laravel-backend
 
-   ```dotenv
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=UranusData
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
+# Crear carpeta cache si no existe
+php -r "is_dir('bootstrap/cache') || mkdir('bootstrap/cache', 0755, true);"
 
-4. Crea las tablas y los datos de demostración:
+composer install
 
-   ```powershell
-   php artisan migrate --seed
-   php artisan storage:link
-   cd ..
-   ```
+Copy-Item .env.example .env
+php artisan key:generate
 
-5. Instala las dependencias de Angular y ejecuta ambos servidores:
+# 5. Configurar base de datos en .env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=UranusData
+DB_USERNAME=root
+DB_PASSWORD=
 
-   ```powershell
-   npm ci
-   npm start
-   ```
+# 6. Crear tablas y cargar datos iniciales (tener encendido XAMPP con Apache y Mysql)
+php artisan migrate:fresh --seed 
 
-   `npm ci` instala exactamente las dependencias fijadas en `package-lock.json`, incluida ngx-charts; no hace falta instalar paquetes adicionales manualmente. `npm start` inicia Angular y Laravel en paralelo.
+php artisan config:clear 
+php artisan route:clear   
 
-La primera instalación necesita que cada computadora configure su propia base de datos y genere su propio `APP_KEY`. No compartas el archivo local `laravel-backend/.env`; el repositorio incluye `.env.example` para que cada persona genere el suyo.
+# 7. Crear el enlace de almacenamiento público
+php artisan storage:link
+
+# 8. Volver a la raíz del proyecto
+cd ..
+```
+
+La primera instalación necesita que cada computadora configure su propia base de datos y genere su propio APP_KEY. No compartas el archivo local laravel-backend/.env; el repositorio incluye .env.example para que cada persona genere el suyo.
 
 
 ### Configurar correos (opcional)
@@ -86,7 +86,7 @@ cd .\laravel-backend\
 
 php artisan config:clear
 
-Mail::raw('Prueba exitosa', function($m) { $m->to('correo_destino@gmail.com')->subject('Prueba SMTP'); });
+php artisan tinker --execute="Mail::raw('Prueba exitosa', function(\$m) { \$m->to('correo_destino@gmail.com')->subject('Prueba SMTP'); });"
 ```
 
 ## ▶️ Ejecución
@@ -108,9 +108,19 @@ Para iniciarlos por separado:
 # Terminal 1, desde la raíz
 npm run start:frontend
 
-
 # Terminal 2, desde la raíz
 npm run start:backend
+```
+
+Una segunda forma para iniciarlos por separado:
+
+```bash
+# Terminal 1, desde la raíz
+ng serve
+
+# Terminal 2, desde la laravel-backend
+cd laravel-backend
+php artisan serve  
 ```
 
 ## 🔑 Roles y Funcionalidades

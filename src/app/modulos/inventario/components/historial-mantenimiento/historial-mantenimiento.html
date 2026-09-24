@@ -1,0 +1,81 @@
+@if (mostrar && elemento) {
+<div class="modal-overlay" style="z-index: 1200;" (click)="cerrarModal()">
+  <div class="modal-contenido modal-ancho" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>Historial de Mantenimiento: {{ elemento.nombre_elemento }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="filtros-historial">
+        <div class="filtro-item">
+          <label>Estado:</label>
+          <select [(ngModel)]="filtroEstadoMant" (change)="aplicarFiltros()" class="input-filtro">
+            <option value="">Todos los estados</option>
+            <option value="1">Pendiente</option>
+            <option value="2">En pausa</option>
+            <option value="3">Completado</option>
+          </select>
+        </div>
+        <div class="filtro-item">
+          <label>Tipo:</label>
+          <input type="text" placeholder="Buscar tipo..." [(ngModel)]="filtroTipoMant" (input)="aplicarFiltros()"
+            class="input-filtro">
+        </div>
+        <div class="filtro-item">
+          <label>Fecha:</label>
+          <input type="date" [(ngModel)]="filtroFechaMant" (change)="aplicarFiltros()" class="input-filtro">
+        </div>
+        <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+
+      @if (cargando) {
+      <div class="sin-registros">
+        Cargando historial de mantenimiento...
+      </div>
+      } @else if (historialMantenimientos.length === 0) {
+      <div class="sin-registros">
+        No hay registros de mantenimiento para este equipo
+      </div>
+      } @else {
+      <div class="modulo-tabla-wrapper">
+        <table class="modulo-tabla">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Falla</th>
+              <th>Obs.</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mant of historialMantenimientos; track mant.id_mantenimiento; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ mant.fecha }}</td>
+              <td>{{ mant.tipo }}</td>
+              <td>
+                <span class="estado-badge"
+                  [ngClass]="{'estado-aprobada': mant.cod_estado_mantenimiento == 3, 'estado-pendiente': mant.cod_estado_mantenimiento == 1}">
+                  {{ mant.estado }}
+                </span>
+              </td>
+              <td>{{ mant.descripcion || '-' }}</td>
+              <td>{{ mant.observaciones || '-' }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+}

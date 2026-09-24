@@ -1,16 +1,12 @@
 <div class="modal-overlay" (click)="cerrarModal()">
   <div class="modal-contenido" (click)="$event.stopPropagation()">
-    
-    <!-- Header -->
+
     <div class="modal-header">
       <h2>Información del Usuario</h2>
-      <button class="btn-cerrar" (click)="cerrarModal()">✕</button>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
     </div>
 
-    <!-- Cuerpo -->
     <div class="modal-body">
-      
-      <!-- Información del Usuario -->
       <div class="seccion-info">
         <h3>Datos Personales</h3>
         <div class="grid-info">
@@ -43,50 +39,39 @@
         </div>
       </div>
 
-      <!-- Edición de Estado -->
       @if (editando) {
-        <div class="seccion-edicion">
-          <h3>Cambiar Estado</h3>
-          <div class="campo-edicion">
-            <label for="estado">Nuevo Estado:</label>
-            <select id="estado" [(ngModel)]="estadoSeleccionado" class="select-estado">
-              @for (estado of estados; track estado.cod_estado_usuario) {
-                <option [value]="estado.cod_estado_usuario">{{ estado.estado }}</option>
-              }
-            </select>
-          </div>
-          <p class="aviso">⚠️ Cambiar el estado afectará el acceso del usuario al sistema.</p>
+      <div class="seccion-edicion">
+        <h3>Cambiar Estado</h3>
+        <div class="campo-edicion">
+          <label for="estado">Nuevo Estado:</label>
+          <select id="estado" [(ngModel)]="estadoSeleccionado" class="select-estado">
+            @for (estado of estados; track estado.cod_estado_usuario) {
+            <option [value]="estado.cod_estado_usuario">{{ estado.estado }}</option>
+            }
+          </select>
         </div>
+        <p class="aviso">⚠️ Cambiar el estado afectará el acceso del usuario al sistema.</p>
+      </div>
       }
-
     </div>
 
-    <!-- Footer -->
     <div class="modal-footer">
       @if (editando) {
-        <button class="btn-guardar" (click)="guardarEstado()" [disabled]="cargando">
-          @if (cargando) {
-            <span>Guardando...</span>
-          } @else {
-            <span>✓ Guardar Cambios</span>
-          }
-        </button>
-        <button class="btn-cancelar" (click)="cancelarEdicion()" [disabled]="cargando">
-          ✕ Cancelar
-        </button>
+      <button class="btn-modal-success" (click)="guardarEstado()" [disabled]="cargando">
+        @if (cargando) {
+        <span>Guardando...</span>
+        } @else {
+        <span>✓ Guardar Cambios</span>
+        }
+      </button>
+      <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">
+        Cancelar
+      </button>
       } @else {
-        <button class="btn-editar" (click)="abrirEdicion()">
-          ✏️ Editar Estado
-        </button>
-        <button class="btn-bloquear" (click)="estadoSeleccionado = 3; guardarEstado()">
-          🚫 Bloquear Usuario
-        </button>
-        <button class="btn-reserva" (click)="irAlHistorialReservas()">
-          📅 Ver reserva
-        </button>
-        <button class="btn-cerrar-modal" (click)="cerrarModal()">
-          Cerrar
-        </button>
+      <button class="btn-modal-primary" (click)="abrirEdicion()">Editar Estado</button>
+      <button class="btn-modal-danger" (click)="estadoSeleccionado = 3; guardarEstado()">Bloquear Usuario</button>
+      <button class="btn-modal-secondary" (click)="irAlHistorialReservas()">Ver reserva</button>
+      <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
       }
     </div>
 

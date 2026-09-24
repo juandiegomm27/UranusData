@@ -35,6 +35,8 @@ export class DetalleMantenimientoComponent {
   }
   
   obtenerNombreEstado(cod: any): string {
+    if (cod == 4) return 'Dado de Baja'; 
+    if (cod == 3) return 'Finalizado';
     const estado = this.estadosMantenimiento.find(e => e.cod_estado_mantenimiento == cod);
     return estado ? estado.estado : 'Desconocido';
   }

@@ -69,7 +69,7 @@ export const routes: Routes = [
 
   {
     path: 'modulos/inventario',
-    loadComponent: () => import('./modulos/Inventario/pages/inventario-page').then(m => m.InventarioPageComponent),
+    loadComponent: () => import('./modulos/inventario/pages/inventario-page').then(m => m.InventarioPageComponent),
     canActivate: [authGuard, rolesGuard],
     data: { rolPermitidos: ['Gerente', 'Tecnico'] } 
   },
@@ -115,13 +115,13 @@ export const routes: Routes = [
   { 
     path: 'inventario/reportes', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Inventario' },
+    data: { nombreModulo: 'inventario' },
     canActivate: [authGuard]
   },
   { 
     path: 'inventario/ver', 
     component: EnConstruccion,
-    data: { nombreModulo: 'Inventario' },
+    data: { nombreModulo: 'inventario' },
     canActivate: [authGuard]
   },
   { 

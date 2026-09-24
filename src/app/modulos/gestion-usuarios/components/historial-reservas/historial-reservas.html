@@ -1,14 +1,12 @@
 <div class="modal-overlay" (click)="onCerrar()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+  <div class="modal-contenido" (click)="$event.stopPropagation()">
     
     <div class="modal-header">
       <h2>Historial de reserva</h2>
-      <button class="btn-cerrar" (click)="onCerrar()">✕</button>
+      <button class="btn-cerrar-modal" (click)="onCerrar()">✕</button>
     </div>
 
     <div class="modal-body">
-
-      <!-- Filtros de reserva -->
       <div class="filtros-reserva">
         
         <div class="filtro-reserva-item">
@@ -46,7 +44,6 @@
 
       </div>
 
-      <!-- Tabla de reserva -->
       @if (cargando) {
         <p class="cargando">Cargando reserva...</p>
       } @else if (reservasUsuario.length > 0) {
@@ -81,7 +78,6 @@
           </table>
         </div>
 
-        <!-- Paginación de reserva -->
         @if (totalPaginasReservas > 0) {
           <div class="paginacion-reserva">
             <button 
@@ -103,15 +99,13 @@
             </button>
           </div>
         }
-
       } @else {
         <p class="sin-reserva">No hay reserva para este usuario</p>
       }
-
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cerrar-modal" (click)="onCerrar()">Cerrar</button>
+      <button class="btn-cerrar-modal-footer" (click)="onCerrar()">Cerrar</button>
     </div>
 
   </div>

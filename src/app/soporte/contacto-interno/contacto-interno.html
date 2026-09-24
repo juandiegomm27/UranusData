@@ -1,22 +1,47 @@
-<div class="contacto-interno-container">
+<div class="contacto-dashboard-container">
   <div class="contacto-header">
     <h1 class="contacto-titulo">Soporte y Contacto</h1>
-    <p class="contacto-subtitulo">¿Necesitas ayuda con el sistema, inventario o reservas? Envíanos tu consulta.</p>
+    <p class="contacto-subtitulo">¿Necesitas ayuda con el sistema, inventario o reservas? Envíanos tu consulta y nuestro equipo técnico lo revisará.</p>
   </div>
 
   <div class="contacto-card">
+    @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+        <span class="icono-alerta">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+        <span>{{ mensaje }}</span>
+      </div>
+    }
+
     <form class="contacto-form">
-      <div class="form-group">
-        <label class="form-label">Asunto del reporte</label>
-        <input type="text" class="form-input" placeholder="Ej. Problema con una reserva o equipo dañado">
+      <div class="grupo-campo">
+        <label class="form-label" for="asunto">Asunto del reporte</label>
+        <input
+          type="text"
+          id="asunto"
+          class="form-input"
+          placeholder="Ej. Problema con una reserva o equipo dañado"
+          [(ngModel)]="asunto"
+          name="asunto"
+          [disabled]="enviando">
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Descripción detallada</label>
-        <textarea rows="5" class="form-input" placeholder="Describe tu problema aquí..."></textarea>
+      <div class="grupo-campo">
+        <label class="form-label" for="descripcion">Descripción detallada</label>
+        <textarea
+          id="descripcion"
+          rows="6"
+          class="form-input"
+          placeholder="Describe tu problema con el mayor detalle posible..."
+          [(ngModel)]="descripcion"
+          name="descripcion"
+          [disabled]="enviando"></textarea>
       </div>
 
-      <button type="button" class="btn-enviar">Enviar mensaje</button>
+      <div class="form-actions">
+        <button type="button" class="btn-enviar" (click)="enviarMensaje()" [disabled]="enviando">
+          {{ enviando ? 'Enviando...' : 'Enviar mensaje' }}
+        </button>
+      </div>
     </form>
   </div>
 </div>

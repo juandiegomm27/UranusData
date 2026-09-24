@@ -1,0 +1,115 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-forms.css';
+
+/* Nuevas clases extraídas del HTML */
+.btn-modal-info {
+  background-color: #17a2b8;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+:host-context(body.dark-mode) .btn-modal-info {
+  background-color: #138496;
+  border: 1px solid #117a8b;
+}
+
+.input-deshabilitado {
+  background-color: #e9ecef;
+  color: #666;
+  font-weight: bold;
+  cursor: not-allowed;
+}
+
+/* CORRECCIÓN: Input deshabilitado en modo oscuro */
+:host-context(body.dark-mode) .input-deshabilitado {
+  background-color: #2a2a2a;
+  color: #888;
+  border: 1px solid #444;
+}
+
+.campo-completo {
+  grid-column: 1 / -1;
+}
+
+.grupo-input-flex {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+}
+
+/* CORRECCIÓN: Se eliminan colores estáticos para que herede del CSS global los estilos oscuros/claros */
+.select-flex {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+/* CORRECCIÓN: Alineación flex para centrar los íconos de forma perfecta */
+.btn-accion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+/* CORRECCIÓN: Tamaño del ícono e inversión de color a blanco */
+.icono-btn {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+.z-alto {
+  z-index: 1100;
+}
+
+.modal-pequeno {
+  max-width: 400px;
+}
+
+.input-full {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* CORRECCIÓN: Estilo de input-full para los sub-modales en modo oscuro */
+:host-context(body.dark-mode) .input-full {
+  background-color: #1a1a1a;
+  border-color: #444;
+  color: #fff;
+}

@@ -1,52 +1,49 @@
-/* HEADER PRINCIPAL */
 .main-header {
   background-color: #1C74A0;
   color: #ffffff;
   padding: 12px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 :host-context(body.dark-mode) .main-header {
   background-color: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* CONTENEDOR */
 .header-container {
   max-width: 1500px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 30px;
 }
 
-/* LOGO */
 .logo {
   display: flex;
   align-items: center;
   text-decoration: none;
   flex-shrink: 0;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .logo:hover {
-  opacity: 0.9;
+  transform: scale(1.02);
 }
 
 .logo-img {
-  height: 40px;
+  height: 42px;
   width: auto;
   object-fit: contain;
 }
 
-/* HAMBURGUESA (OCULTA EN DESKTOP) */
 .menu-hamburger {
   display: none;
   background: none;
@@ -54,20 +51,19 @@
   cursor: pointer;
   padding: 8px;
   z-index: 998;
-  position: relative;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
 .menu-hamburger:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .hamburger-icon {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
-/* NAVBAR */
 .navbar {
   flex-grow: 1;
   display: flex;
@@ -76,37 +72,35 @@
 .navbar ul {
   display: flex;
   list-style: none;
-  gap: 40px;
+  gap: 35px;
   margin: 0;
   padding: 0;
 }
 
 .nav-link {
   text-decoration: none;
-  color: inherit;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
-  font-size: 0.95rem;
-  text-transform: capitalize;
-  opacity: 0.9;
+  font-size: 15px;
   padding: 8px 0;
   position: relative;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .nav-link:hover {
-  opacity: 1;
+  color: #ffffff;
 }
 
-/* Línea animada bajo link */
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -4px;
   left: 0;
   width: 0;
   height: 2px;
   background-color: #ffffff;
+  border-radius: 2px;
   transition: width 0.3s ease;
 }
 
@@ -114,20 +108,26 @@
   width: 100%;
 }
 
-/* ACCIONES DERECHA */
+:host-context(body.dark-mode) .nav-link:hover::after {
+  background-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .nav-link:hover {
+  color: #FF9F13;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   flex-shrink: 0;
 }
 
-/* INFORMACIÓN DEL USUARIO */
 .user-info-header {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding-right: 15px;
+  padding-right: 20px;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -137,17 +137,15 @@
 
 .user-name {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #ffffff;
 }
 
 .user-role {
-  font-size: 0.8rem;
-  opacity: 0.85;
-  color: #ffffff;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* SWITCH MODO OSCURO */
 .switch-modo {
   display: flex;
   align-items: center;
@@ -161,15 +159,15 @@
 
 .switch-slider {
   position: relative;
-  width: 48px;
-  height: 26px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 13px;
+  width: 50px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
   transition: background-color 0.3s ease;
 }
 
 .switch-modo input:checked + .switch-slider {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 159, 19, 0.3);
 }
 
 .switch-slider::before {
@@ -179,38 +177,36 @@
   height: 22px;
   border-radius: 50%;
   background-color: #ffffff;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .switch-modo input:checked + .switch-slider::before {
   transform: translateX(22px);
+  background-color: #FF9F13;
 }
 
 .header-spacer {
   flex-grow: 1;
 }
 
-/* RESPONSIVE - MÓVIL */
 @media (max-width: 768px) {
   .header-container {
-    gap: 12px;
-    padding: 0 12px;
+    gap: 16px;
+    padding: 0 16px;
   }
 
-  /* Mostrar hamburguesa en móvil */
   .menu-hamburger {
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  /* Navbar en móvil */
-.navbar {
+  .navbar {
     position: absolute;
-    top: 60px;
+    top: 66px;
     left: 0;
     right: 0;
     background-color: #1C74A0;
@@ -219,6 +215,7 @@
     overflow: hidden;
     transition: max-height 0.3s ease;
     z-index: 999;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
   }
 
   :host-context(body.dark-mode) .navbar {
@@ -227,87 +224,30 @@
 
   .navbar.open {
     max-height: 300px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .navbar ul {
     flex-direction: column;
     gap: 0;
-    padding: 15px 0;
+    padding: 10px 0;
   }
 
   .nav-link {
-    padding: 12px 20px;
-    font-size: 0.9rem;
+    padding: 14px 24px;
+    font-size: 15px;
+    display: block;
   }
 
   .nav-link::after {
     display: none;
   }
 
-  /* Acciones en móvil */
   .header-actions {
-    gap: 12px;
+    gap: 16px;
   }
 
   .user-info-header {
-    display: flex;
-    border-right: none;
-    padding-right: 0;
-    padding-left: 0;
-    font-size: 0.8rem;
-  }
-
-  .user-name {
-    font-size: 0.75rem;
-  }
-
-  .user-role {
-    font-size: 0.7rem;
-  }
-
-  .switch-slider {
-    width: 42px;
-    height: 24px;
-  }
-
-  .switch-slider::before {
-    width: 20px;
-    height: 20px;
-  }
-
-  .switch-modo input:checked + .switch-slider::before {
-    transform: translateX(18px);
-  }
-
-  /* Mostrar usuario info en móvil también */
-  .user-info-header {
-    display: flex;
-    border-right: none;
-    padding-right: 0;
-    padding-left: 0;
-    font-size: 0.8rem;
-  }
-
-  .user-name {
-    font-size: 0.75rem;
-  }
-
-  .user-role {
-    font-size: 0.7rem;
-  }
-
-  .switch-slider {
-    width: 42px;
-    height: 24px;
-  }
-
-  .switch-slider::before {
-    width: 20px;
-    height: 20px;
-  }
-
-  .switch-modo input:checked + .switch-slider::before {
-    transform: translateX(18px);
+    display: none; 
   }
 }

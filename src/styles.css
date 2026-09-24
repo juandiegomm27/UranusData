@@ -1,16 +1,8 @@
+/* styles.css */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-color: #f4f6f9;
 }
 
 :root {
@@ -20,18 +12,40 @@ html, body {
   --surface-color: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
+  --border-color: #e2e8f0;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
-  font-family: 'Inter', system-ui, sans-serif;
+  --scrollbar-thumb: rgba(28, 116, 160, 0.5);
+  --scrollbar-thumb-hover: rgba(28, 116, 160, 0.8);
 }
 
-body {
-  margin: 0;
+/* MODO OSCURO */
+body.dark-mode {
+  --primary-color: #ff9f13;
+  --primary-hover: #ff9900;
+  --bg-color: #232323;
+  --surface-color: #1e1e1e;
+  --text-main: #eeeeee;
+  --text-muted: #a0a0a0;
+  --border-color: #444444;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --scrollbar-thumb: rgba(255, 161, 19, 0.907);
+  --scrollbar-thumb-hover: rgb(255, 161, 19);
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
   background-color: var(--bg-color);
   color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
 app-root {
@@ -41,8 +55,7 @@ app-root {
   min-height: 100vh;
 }
 
-/*   DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL    */
-
+/* DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL*/
 ::-webkit-scrollbar {
   width: 10px; 
   height: 10px;
@@ -53,38 +66,10 @@ app-root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(28, 116, 160, 0.5);
+  background-color: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(28, 116, 160, 0.8);
-}
-
-/* MODO OSCURO */
-body.dark-mode ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 159, 19, 0.5);
-} 
-
-body.dark-mode ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 159, 19, 0.8);
-}
-
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-body.dark-mode {
-  --bg-page: #232323;
-  --bg-tarjeta: #1e1e1e;
-  --text-main: #eeeeee;
-  --input-border: #444444;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --sombra: rgba(0, 0, 0, 0.4);
-  --texto-principal: #eeeeee;
-  --borde-tarjeta: #444444;
-  --color-primario: #ff9f13;
-  --color-primario-hover: #e08b0f;
+  background-color: var(--scrollbar-thumb-hover);
 }

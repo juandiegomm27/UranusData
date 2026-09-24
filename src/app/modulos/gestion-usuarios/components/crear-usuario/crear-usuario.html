@@ -1,43 +1,29 @@
-<div class="crear-usuario-container">
-  <div class="crear-usuario-card">
+<div class="modulo-form-container">
+  <div class="modulo-form-card">
     
-    <div class="crear-usuario-header">
-      <h2>Crear Nuevo Usuario</h2>
-      <button class="btn-cerrar" (click)="volver()">✕</button>
+    <div class="modulo-form-header">
+      <h2>Nuevo Usuario</h2>
+      <button class="btn-cerrar" (click)="volver()" title="Cerrar">✕</button>
     </div>
 
     <!-- Mensaje de retroalimentación -->
     @if (mensaje) {
       <div class="mensaje-alerta" [ngClass]="tipoMensaje === 'success' ? 'mensaje-success' : 'mensaje-error'">
-        <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
         <span>{{ mensaje }}</span>
       </div>
     }
 
-    <form class="formulario-usuario" (ngSubmit)="crearUsuario()">
+    <form class="modulo-form" (ngSubmit)="crearUsuario()">
       
       <!-- Fila 1: Documento y Nombre -->
       <div class="fila-formulario">
         <div class="grupo-campo">
           <label for="documento">Documento *</label>
-          <input 
-            type="text" 
-            id="documento"
-            [(ngModel)]="documento"
-            name="documento"
-            placeholder="Ej: 1234567890"
-            required>
+          <input type="text" id="documento" [(ngModel)]="documento" name="documento" placeholder="Ej: 1234567890" required>
         </div>
-
         <div class="grupo-campo">
           <label for="nombre">Nombre *</label>
-          <input 
-            type="text" 
-            id="nombre"
-            [(ngModel)]="nombre"
-            name="nombre"
-            placeholder="Ej: Juan"
-            required>
+          <input type="text" id="nombre" [(ngModel)]="nombre" name="nombre" placeholder="Ej: Juan" required>
         </div>
       </div>
 
@@ -45,24 +31,11 @@
       <div class="fila-formulario">
         <div class="grupo-campo">
           <label for="apellido">Apellido *</label>
-          <input 
-            type="text" 
-            id="apellido"
-            [(ngModel)]="apellido"
-            name="apellido"
-            placeholder="Ej: López"
-            required>
+          <input type="text" id="apellido" [(ngModel)]="apellido" name="apellido" placeholder="Ej: López" required>
         </div>
-
         <div class="grupo-campo">
           <label for="telefono">Teléfono *</label>
-          <input 
-            type="tel" 
-            id="telefono"
-            [(ngModel)]="telefono"
-            name="telefono"
-            placeholder="Ej: 3105551234"
-            required>
+          <input type="tel" id="telefono" [(ngModel)]="telefono" name="telefono" placeholder="Ej: 3105551234" required>
         </div>
       </div>
 
@@ -70,47 +43,35 @@
       <div class="fila-formulario">
         <div class="grupo-campo">
           <label for="correo">Correo *</label>
-          <input 
-            type="email" 
-            id="correo"
-            [(ngModel)]="correo"
-            name="correo"
-            placeholder="Ej: usuario@example.com"
-            required>
+          <input type="email" id="correo" [(ngModel)]="correo" name="correo" placeholder="Ej: usuario@example.com" required>
         </div>
-
-<div class="grupo-campo">
-  <label for="rol">Rol *</label>
-  <select 
-    id="rol"
-    [(ngModel)]="cod_rol"
-    name="cod_rol"
-    required>
-    @for (item of rol; track item.cod_rol) {
-      <option [value]="item.cod_rol">{{ item.cargo }}</option>
-    }
-  </select>
-</div>
+        <div class="grupo-campo">
+          <label for="rol">Rol *</label>
+          <select id="rol" [(ngModel)]="cod_rol" name="cod_rol" required>
+            @for (item of rol; track item.cod_rol) {
+              <option [value]="item.cod_rol">{{ item.cargo }}</option>
+            }
+          </select>
+        </div>
       </div>
 
-      <!-- Botones de acción -->
-      <div class="botones-accion">
-        <button type="submit" class="btn-guardar" [disabled]="cargando" style="background-color: #28a745;">
-          @if (cargando) {
-            <span>Creando...</span>
-          } @else {
-            <span>Crear Usuario</span>
-          }
-        </button>
+      <!-- Botones de acción alineados a la derecha -->
+      <div class="modulo-botones-accion">
         <button type="button" class="btn-limpiar" (click)="limpiarFormulario()" [disabled]="cargando">
           Limpiar
         </button>
         <button type="button" class="btn-cancelar" (click)="volver()" [disabled]="cargando">
           Cancelar
         </button>
+        <button type="submit" class="btn-guardar" [disabled]="cargando">
+          @if (cargando) {
+            <span>Creando...</span>
+          } @else {
+            <span>✓ Crear Usuario</span>
+          }
+        </button>
       </div>
 
     </form>
-
   </div>
 </div>

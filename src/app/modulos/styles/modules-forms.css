@@ -6,15 +6,15 @@
 
 .modulo-form-card {
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   padding: 30px;
   animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(20px);
+    transform: translateY(15px);
     opacity: 0;
   }
   to {
@@ -24,7 +24,6 @@
 }
 
 /* HEADER */
-
 .modulo-form-header {
   display: flex;
   justify-content: space-between;
@@ -44,8 +43,8 @@
 .btn-cerrar {
   background: none;
   border: none;
-  color: #999;
-  font-size: 24px;
+  color: #888;
+  font-size: 22px;
   cursor: pointer;
   padding: 0;
   width: 32px;
@@ -54,16 +53,15 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .btn-cerrar:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f1f3f5;
+  color: #212529;
 }
 
 /* FORMULARIO */
-
 .modulo-form {
   display: flex;
   flex-direction: column;
@@ -85,34 +83,36 @@
 .grupo-campo label {
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: #444;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.grupo-campo input,
-.grupo-campo select,
+.grupo-campo input, 
+.grupo-campo select, 
 .grupo-campo textarea {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  background: #fafafa;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
   font-family: inherit;
 }
 
-.grupo-campo input:focus,
-.grupo-campo select:focus,
+.grupo-campo input:focus, 
+.grupo-campo select:focus, 
 .grupo-campo textarea:focus {
   outline: none;
   border-color: #1C74A0;
-  box-shadow: 0 0 8px rgba(28, 116, 160, 0.2);
   background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(28, 116, 160, 0.1);
 }
 
 .grupo-campo input::placeholder {
-  color: #999;
+  color: #adb5bd;
 }
 
 .grupo-campo select {
@@ -124,30 +124,27 @@
   min-height: 100px;
 }
 
-/* BOTONES */
-
+/* BOTONES MODERNIZADOS */
 .modulo-botones-accion {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #e9ecef;
   flex-wrap: wrap;
 }
 
 .btn-guardar,
 .btn-limpiar,
 .btn-cancelar {
-  padding: 11px 20px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
   min-width: 120px;
 }
 
@@ -160,13 +157,13 @@
 
 .btn-guardar:hover:not(:disabled) {
   background-color: #155b7f;
-  box-shadow: 0 4px 8px rgba(28, 116, 160, 0.3);
+  box-shadow: 0 4px 12px rgba(28, 116, 160, 0.25);
 }
 
 .btn-guardar:disabled {
-  background-color: #ccc;
+  background-color: #e9ecef;
+  color: #adb5bd;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .btn-limpiar {
@@ -180,11 +177,6 @@
   background-color: #5a6268;
 }
 
-.btn-limpiar:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .btn-cancelar {
   background-color: #dc3545;
   color: #ffffff;
@@ -196,13 +188,7 @@
   background-color: #c82333;
 }
 
-.btn-cancelar:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* MODO OSCURO */
-
 :host-context(body.dark-mode) .modulo-form-card {
   background: #1e1e1e;
 }
@@ -215,17 +201,8 @@
   color: #FF9F13;
 }
 
-:host-context(body.dark-mode) .btn-cerrar {
-  color: #999;
-}
-
-:host-context(body.dark-mode) .btn-cerrar:hover {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-}
-
 :host-context(body.dark-mode) .grupo-campo label {
-  color: #e0e0e0;
+  color: #ced4da;
 }
 
 :host-context(body.dark-mode) .grupo-campo input,
@@ -240,12 +217,8 @@
 :host-context(body.dark-mode) .grupo-campo select:focus,
 :host-context(body.dark-mode) .grupo-campo textarea:focus {
   border-color: #FF9F13;
-  box-shadow: 0 0 8px rgba(255, 159, 19, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 159, 19, 0.2);
   background: #333;
-}
-
-:host-context(body.dark-mode) .grupo-campo input::placeholder {
-  color: #666;
 }
 
 :host-context(body.dark-mode) .modulo-botones-accion {
@@ -254,48 +227,27 @@
 
 :host-context(body.dark-mode) .btn-guardar {
   background-color: #FF9F13;
-  color: #000;
+  color: #121212;
 }
 
 :host-context(body.dark-mode) .btn-guardar:hover:not(:disabled) {
   background-color: #e08b0f;
 }
 
-:host-context(body.dark-mode) .btn-limpiar {
-  background-color: #555;
-}
-
-:host-context(body.dark-mode) .btn-limpiar:hover:not(:disabled) {
-  background-color: #666;
-}
-
-:host-context(body.dark-mode) .btn-cancelar {
-  background-color: #cc0000;
-}
-
-:host-context(body.dark-mode) .btn-cancelar:hover:not(:disabled) {
-  background-color: #990000;
-}
-
 /* RESPONSIVE */
-
 @media (max-width: 768px) {
   .modulo-form-container {
     padding: 10px;
   }
-
   .modulo-form-card {
     padding: 20px;
   }
-
   .fila-formulario {
     grid-template-columns: 1fr;
   }
-
   .modulo-botones-accion {
     flex-direction: column;
   }
-
   .btn-guardar,
   .btn-limpiar,
   .btn-cancelar {

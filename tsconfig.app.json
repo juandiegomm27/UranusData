@@ -7,7 +7,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/app/modulos/gestion-usuarios/components/modal-detalles-prestamo"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

@@ -14,6 +14,10 @@ use App\Http\Controllers\RecuperarContrasenadController;
 use App\Http\Controllers\TipoElementoController;
 use App\Http\Controllers\InventarioAccesorioController;
 use App\Http\Controllers\HistorialBajasController;
+use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ConfiguracionUsuarioController;
 
 // AUTH 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
@@ -35,6 +39,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // PERFIL  
     Route::get('/perfil/{documento}', [ProfileController::class, 'obtenerPerfil']);
     Route::put('/perfil/{documento}', [ProfileController::class, 'actualizarPerfil']);
+
+    // SOPORTE / CONTACTO
+    Route::post('/contacto/enviar', [ContactoController::class, 'enviarMensaje']);
 
     // GESTIÓN DE USUARIO (Gerente y Técnico)  
     Route::middleware(['auth:sanctum', 'role:Gerente,Tecnico'])->group(function () {
@@ -68,7 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('inventario-accesorios', InventarioAccesorioController::class);
     });
 
-// INVENTARIO (Gerente/Técnico)  
+    // INVENTARIO (Gerente/Técnico)  
     Route::middleware(['role:Gerente,Tecnico'])->group(function () {
         Route::get('/inventario/opciones', [InventarioController::class, 'getOpciones']);
         Route::get('/inventario/elementos-tipo/{tipo}', [InventarioController::class, 'obtenerElementosPorTipo']);
@@ -101,5 +108,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
         
         Route::apiResource('mantenimiento', MantenimientoController::class);
     });
+
+    // DASHBOARD
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/resumen', [DashboardController::class, 'resumen']);
+        Route::get('/estadisticas', [DashboardController::class, 'estadisticas']);
+        Route::get('/alertas', [DashboardController::class, 'alertas']);
+    });
+
+    // BÚSQUEDA GLOBAL
+    Route::get('/buscar', [SearchController::class, 'global']);
+
+    // CONFIGURACIÓN (AJUSTES Y NOTIFICACIONES)
+    Route::get('/ajustes', [ConfiguracionUsuarioController::class, 'obtenerAjustes']);
+    Route::put('/ajustes', [ConfiguracionUsuarioController::class, 'actualizarAjustes']);
+    Route::get('/notificaciones', [ConfiguracionUsuarioController::class, 'obtenerNotificaciones']);
+    Route::put('/notificaciones/{id}/leer', [ConfiguracionUsuarioController::class, 'marcarNotificacionLeida']);
 
 });

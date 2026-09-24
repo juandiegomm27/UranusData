@@ -1,55 +1,64 @@
 .app-sidebar {
-  width: 230px;
+  width: 250px; /* Un poco más ancho para respirar mejor */
   flex-shrink: 0;
   background: #1C74A0;
-  border-right: 1px solid #1C74A0;
-  padding: 24px 16px;
+  border-right: 1px solid #155b7d;
+  padding: 28px 16px;
   height: 100%;
   box-sizing: border-box;
 }
 
 .sidebar-seccion {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: #999;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin: 0 0 12px 8px;
+  letter-spacing: 0.8px;
+  margin: 0 0 16px 12px;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
   text-decoration: none;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s, color 0.2s;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .sidebar-icono {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   opacity: 0.75;
+  transition: opacity 0.2s ease;
 }
 
 .sidebar-link:hover {
-  background-color: #56b0dd;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
+.sidebar-link:hover .sidebar-icono {
+  opacity: 1;
+}
+
+/* CORRECCIÓN DE CONTRASTE AQUÍ */
 .sidebar-link.activo {
-  background-color: #005a87;
-  color: #1C74A0;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 #ffffff;
 }
 
 .sidebar-link.activo .sidebar-icono {
@@ -58,35 +67,36 @@
 
 :host-context(body.dark-mode) .app-sidebar {
   background: #1e1e1e;
-  border-right-color: #333;
+  border-right-color: #333333;
 }
 
 :host-context(body.dark-mode) .sidebar-link {
-  color: #ccc;
+  color: #a3a3a3;
 }
 
 :host-context(body.dark-mode) .sidebar-link:hover {
-  background-color: #2a2a2a;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #eeeeee;
 }
 
 :host-context(body.dark-mode) .sidebar-link.activo {
   background-color: rgba(255, 159, 19, 0.15);
   color: #FF9F13;
+  box-shadow: inset 3px 0 0 #FF9F13;
 }
 
 .sidebar-overlay {
   display: none;
 }
 
-/* MÓVIL: sidebar se convierte en cajón deslizante */
 @media (max-width: 850px) {
   .app-sidebar {
     position: fixed;
     top: 0;
-    left: -260px;
+    left: -270px;
     z-index: 1200;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
-    transition: left 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .app-sidebar.open {
@@ -97,7 +107,8 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
     z-index: 1150;
   }
 }

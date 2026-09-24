@@ -1,79 +1,58 @@
-<main class="auth-section">
-  <div class="auth-card" style="
-    max-width: 900px; 
-    text-align: left;
-    ">
+<main class="soporte-wrapper">
+  <div class="auth-card">
     
-    <h1 class="auth-title" style="
-    text-align: center; 
-    margin-bottom: 20px;
-    ">
-    Centro de Soporte
-  </h1>
-
-    <div class="info-section" style="
-    margin-bottom: 25px; 
-    line-height: 1.6;
-    ">
-      <h3 style="
-      margin-bottom: 8px;
-      ">
-      Preguntas Frecuentes
-    </h3>
-      <p>
-        <strong>1. ¿Cómo realizo una reserva de espacio?</strong><br>
-        Ingresa con tu rol de Docente, selecciona un espacio disponible en la cuadrícula del 
-        calendario izquierdo y presiona el botón 'Reserva'.
-      </p>
-      <p style="
-      margin-top: 10px;
-      ">
-        <strong>2. ¿Qué hago si un equipo médico requiere mantenimiento?</strong><br>
-        Si eres Técnico, dirígete a tu panel principal, haz clic en 'Mantenimiento' y digita el código 
-        serial del equipo dañado en la base de datos.
-      </p>
+    <div class="card-header">
+      <h1 class="auth-title">Centro de Soporte</h1>
+      <p class="auth-subtitle">Respuestas rápidas e información sobre nuestro equipo.</p>
     </div>
 
-    <div class="info-section" style="
-    margin-bottom: 25px; 
-    line-height: 1.6;
-    ">
-      <h3 style="
-      margin-bottom: 8px;
-      ">
-      Sobre Nosotros
-    </h3>
-      <p>
+    <div class="info-section">
+      <h3 class="section-title">Preguntas Frecuentes</h3>
+      <div class="faq-item">
+        <strong>1. ¿Cómo realizo una reserva de espacio?</strong>
+        <p>Ingresa con tu rol de Docente, selecciona un espacio disponible en la cuadrícula del calendario izquierdo y presiona el botón <span>'Reserva'</span>.</p>
+      </div>
+      <div class="faq-item">
+        <strong>2. ¿Qué hago si un equipo requiere mantenimiento?</strong>
+        <p>Si eres Técnico, dirígete a tu panel principal, haz clic en <span>'Mantenimiento'</span> y digita el código serial del equipo dañado en la base de datos.</p>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3 class="section-title">Sobre Nosotros</h3>
+      <p class="text-muted">
         Somos un grupo de jóvenes desarrolladores en etapa de formación avalados por el SENA. 
         Nos une la pasión por la tecnología, el compromiso con el aprendizaje práctico 
         y el firme deseo de aportar soluciones reales a los desafíos actuales. 
       </p>
     </div>
 
-    <div class="info-section" style="
-    margin-bottom: 25px; 
-    line-height: 1.6;
-    ">
-      <h3 style="
-      margin-bottom: 8px;
-      ">
-      Integrantes
-    </h3>
-      <p>
-        <strong>lider creativo:</strong> Juan David Bernal <br> 
-        <strong>programador:</strong> Juan Diego Medina Mahecha<br> 
-        <strong>programador:</strong> Juan Camilo Aguirre Rojas<br> 
-        <strong>programador:</strong> Laura Sofia Avila Martinez
-      </p>
+    <div class="info-section">
+      <h3 class="section-title">Integrantes</h3>
+      <div class="integrantes-grid">
+        <div class="integrante-item">
+          <span class="rol">Líder Creativo</span>
+          <span class="nombre">Juan David Bernal</span>
+        </div>
+        <div class="integrante-item">
+          <span class="rol">Programador</span>
+          <span class="nombre">Juan Diego Medina M.</span>
+        </div>
+        <div class="integrante-item">
+          <span class="rol">Programador</span>
+          <span class="nombre">Juan Camilo Aguirre</span>
+        </div>
+        <div class="integrante-item">
+          <span class="rol">Programadora</span>
+          <span class="nombre">Laura Sofia Avila</span>
+        </div>
+      </div>
     </div>
 
-    <div class="auth-footer-links" style="
-    text-align: center; 
-    margin-top: 20px;
-    ">
-      <a (click)="irAlInicio()" style="cursor: pointer;" class="footer-link">
-        Volver a la Página Principal
-      </a>
+    <div class="card-footer">
+      <button (click)="irAlInicio()" class="btn-primary">
+        Volver al Inicio
+      </button>
     </div>
 
   </div>

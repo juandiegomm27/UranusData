@@ -1,0 +1,216 @@
+@if (mostrar && elemento) {
+<div class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-contenido" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>{{ editando ? (tipoTab === 'activos' ? 'Editar Elemento' : 'Editar Accesorio') : (tipoTab === 'activos' ?
+        'Detalles del Elemento' : 'Detalles del Accesorio') }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+        <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
+        <span>{{ mensaje }}</span>
+      </div>
+      }
+
+      @if (!editando) {
+      <div class="seccion-info">
+        <h3>Información del {{ tipoTab === 'activos' ? 'Elemento' : 'Accesorio' }}</h3>
+        <div class="grid-info">
+          @if (tipoTab === 'activos') {
+          <div class="campo-info"><label>ID:</label><span>{{ elemento.id_elemento }}</span></div>
+          <div class="campo-info"><label>Código Interno:</label><span>{{ elemento.cod_elemento || 'N/A' }}</span></div>
+          <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre_elemento }}</span></div>
+          <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          </div>
+          <div class="campo-info"><label>Ubicación:</label><span>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento)
+              }}</span></div>
+          <div class="campo-info"><label>Estado:</label>
+            <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
+              {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
+            </span>
+          </div>
+          <div class="campo-info"><label>Serial:</label><span>{{ elemento.serial || 'N/A' }}</span></div>
+          <div class="campo-info"><label>Modelo:</label><span>{{ elemento.modelo || 'N/A' }}</span></div>
+          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
+              descripción' }}</span></div>
+          } @else {
+          <div class="campo-info"><label>ID:</label><span>{{ elemento.id_accesorio }}</span></div>
+          <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre }}</span></div>
+          <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          </div>
+          <div class="campo-info"><label>Cant. Global Total:</label><span>{{ elemento.cantidad_total }}</span></div>
+          <div class="campo-info"><label>Cant. Global Disp:</label><span class="fw-bold"
+              [ngClass]="elemento.cantidad_disponible > 0 ? 'text-success' : 'text-danger'">{{
+              elemento.cantidad_disponible }}</span></div>
+          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
+              descripción' }}</span></div>
+          }
+        </div>
+      </div>
+      } @else {
+      <form class="modulo-form" (submit)="$event.preventDefault()">
+        @if (tipoTab === 'activos') {
+
+        <!-- CORRECCIÓN: Fila plana sin anidamientos que rompan la rejilla -->
+        <div class="fila-formulario">
+          <div class="grupo-campo">
+            <label>ID del Elemento</label>
+            <input type="text" [value]="formulario.id_elemento" disabled class="input-deshabilitado">
+          </div>
+          <div class="grupo-campo">
+            <label>Código Interno</label>
+            <input type="text" [(ngModel)]="formulario.cod_elemento" name="cod_elemento">
+          </div>
+          <div class="grupo-campo">
+            <label>Nombre del Elemento *</label>
+            <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
+          </div>
+        </div>
+
+        <div class="grupo-campo campo-completo">
+          <label>Tipo de Elemento *</label>
+          <div class="grupo-input-flex">
+            <select [(ngModel)]="formulario.cod_tipo_elemento" name="tipo" class="select-flex">
+              @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [ngValue]="tipo.cod_tipo_elemento">{{
+                tipo.tipo }}</option> }
+            </select>
+            <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Crear nuevo tipo">
+              <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+            </button>
+            <button type="button" class="btn-accion btn-danger" (click)="eliminarTipo(+formulario.cod_tipo_elemento)"
+              title="Borrar tipo">
+              <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+            </button>
+          </div>
+        </div>
+        <div class="grupo-campo campo-completo">
+          <label>Ubicación *</label>
+          <div class="grupo-input-flex">
+            <select [(ngModel)]="formulario.cod_ubi_elemento" name="ubicacion" class="select-flex">
+              @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) { <option
+                [ngValue]="ubicacion.cod_ubi_elemento">{{ ubicacion.ubicacion }}</option> }
+            </select>
+            <button type="button" class="btn-accion btn-success" (click)="abrirModalUbicacion()"
+              title="Agregar nueva ubicación">
+              <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+            </button>
+            <button type="button" class="btn-accion btn-danger"
+              (click)="eliminarUbicacion(+formulario.cod_ubi_elemento)" title="Eliminar ubicación">
+              <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+            </button>
+          </div>
+        </div>
+        <div class="fila-formulario">
+          <div class="grupo-campo">
+            <label>Estado *</label>
+            <select [(ngModel)]="formulario.cod_estado_elemento" name="estado">
+              @for (estado of estados; track estado.cod_estado_elemento) { <option [value]="estado.cod_estado_elemento">
+                {{ estado.estado }}</option> }
+            </select>
+          </div>
+          <div class="grupo-campo"><label>Serial</label><input type="text" [(ngModel)]="formulario.serial"
+              name="serial"></div>
+        </div>
+        <div class="fila-formulario">
+          <div class="grupo-campo"><label>Modelo</label><input type="text" [(ngModel)]="formulario.modelo"
+              name="modelo"></div>
+        </div>
+
+        <!-- CORRECCIÓN: Agregado .grupo-campo para reparar el label y la alineación -->
+        <div class="grupo-campo campo-completo">
+          <label>Descripción</label>
+          <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
+        </div>
+
+        } @else {
+
+        <div class="fila-formulario">
+          <div class="grupo-campo"><label>ID del Accesorio</label><input type="text" [value]="formulario.id_accesorio"
+              disabled class="input-deshabilitado"></div>
+          <div class="grupo-campo"><label>Nombre del Accesorio *</label><input type="text"
+              [(ngModel)]="formulario.nombre" name="nombre"></div>
+        </div>
+        <div class="grupo-campo campo-completo">
+          <label>Tipo de Accesorio *</label>
+          <div class="grupo-input-flex">
+            <select [(ngModel)]="formulario.cod_tipo_elemento" name="tipo" class="select-flex">
+              <option value="">Seleccionar tipo...</option>
+              @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [ngValue]="tipo.cod_tipo_elemento">{{
+                tipo.tipo }}</option> }
+            </select>
+            <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Crear nuevo tipo">
+              <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+            </button>
+            <button type="button" class="btn-accion btn-danger" (click)="eliminarTipo(+formulario.cod_tipo_elemento)"
+              title="Eliminar tipo">
+              <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+            </button>
+          </div>
+        </div>
+
+        <!-- CORRECCIÓN: Agregado .grupo-campo -->
+        <div class="grupo-campo campo-completo">
+          <label>Descripción General</label>
+          <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
+        </div>
+
+        }
+      </form>
+      }
+    </div>
+    <div class="modal-footer">
+      @if (editando) {
+      <button class="btn-modal-success" (click)="guardarCambios()" [disabled]="cargando">Guardar Cambios</button>
+      <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">Cancelar</button>
+      } @else {
+      <button class="btn-modal-primary" (click)="abrirEdicion()">Editar</button>
+      @if (tipoTab === 'activos') { <button class="btn-modal-info" (click)="abrirHistorial()">Ver Historial</button> }
+      <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
+      }
+    </div>
+  </div>
+</div>
+
+@if (mostrarModalUbicacion) {
+<div class="modal-overlay z-alto" (click)="cerrarModalUbicacion()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nueva Ubicación</h2><button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevaUbicacionNombre"
+          class="input-full"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-modal-primary"
+        (click)="guardarNuevaUbicacion()">Guardar</button><button class="btn-modal-secondary"
+        (click)="cerrarModalUbicacion()">Cancelar</button></div>
+  </div>
+</div>
+}
+
+@if (mostrarModalTipo) {
+<div class="modal-overlay z-alto" (click)="cerrarModalTipo()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editandoTipo ? 'Editar Tipo' : 'Nuevo Tipo' }}</h2><button class="btn-cerrar-modal"
+        (click)="cerrarModalTipo()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevoTipoNombre"
+          class="input-full"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarTipo()">Guardar</button><button
+        class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>
+  </div>
+</div>
+}
+
+@if (mostrarHistorial && tipoTab === 'activos') {
+<app-historial-mantenimiento [mostrar]="mostrarHistorial" [elemento]="elemento"
+  (cerrar)="cerrarHistorial()"></app-historial-mantenimiento>
+}}

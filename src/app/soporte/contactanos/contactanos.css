@@ -1,0 +1,177 @@
+.soporte-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 80px); /* Ajustado para el header */
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  width: 100%;
+  max-width: 850px;
+  border: 1px solid #e9ecef;
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.auth-title {
+  color: #1C74A0;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.auth-subtitle {
+  color: #6c757d;
+  font-size: 15px;
+  margin: 0;
+}
+
+.info-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #1C74A0;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 15px 0;
+}
+
+.faq-item {
+  margin-bottom: 15px;
+}
+
+.faq-item strong {
+  display: block;
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.faq-item p {
+  color: #555;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.faq-item span {
+  font-weight: 600;
+  color: #1C74A0;
+}
+
+.text-muted {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.integrantes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.integrante-item {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.integrante-item .rol {
+  display: block;
+  font-size: 12px;
+  color: #1C74A0;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.integrante-item .nombre {
+  display: block;
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+.card-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-primary {
+  background-color: #1C74A0;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #155b7f;
+}
+
+/* MODO OSCURO (ALTO CONTRASTE)*/
+:host-context(body.dark-mode) .auth-card {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+:host-context(body.dark-mode) .card-header {
+  border-bottom-color: #333;
+}
+
+:host-context(body.dark-mode) .auth-title,
+:host-context(body.dark-mode) .section-title,
+:host-context(body.dark-mode) .faq-item span,
+:host-context(body.dark-mode) .integrante-item .rol {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .auth-subtitle,
+:host-context(body.dark-mode) .text-muted,
+:host-context(body.dark-mode) .faq-item p {
+  color: #adb5bd;
+}
+
+:host-context(body.dark-mode) .faq-item strong,
+:host-context(body.dark-mode) .integrante-item .nombre {
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .integrante-item {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+:host-context(body.dark-mode) .card-footer {
+  border-top-color: #333;
+}
+
+:host-context(body.dark-mode) .btn-primary {
+  background-color: #FF9F13;
+  color: #121212;
+}
+
+:host-context(body.dark-mode) .btn-primary:hover {
+  background-color: #e08b0f;
+}

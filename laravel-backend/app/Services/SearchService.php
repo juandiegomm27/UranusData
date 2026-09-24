@@ -3,22 +3,20 @@
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\Paginator;
+use App\Models\VUsuariosCompletos;
+use App\Models\Correo;
+use App\Models\Inventario;
 
 class SearchService
 {
-    /**
-     * Búsqueda avanzada con filtros dinámicos
-     */
     public static function buscarGlobal(string $termino, ?string $tipo = null, int $limit = 10)
     {
         $resultados = [];
-
-        // Búsqueda en usuario
         if (!$tipo || $tipo === 'usuario') {
-            $usuario = \App\Models\Usuario::where('documento', 'like', "%$termino%")
+            $usuario = VUsuariosCompletos::where('documento', 'like', "%$termino%")
                 ->orWhere('nombre', 'like', "%$termino%")
                 ->orWhere('apellido', 'like', "%$termino%")
+                ->orWhere('cargo', 'like', "%$termino%") 
                 ->limit($limit)
                 ->get();
 
@@ -27,7 +25,7 @@ class SearchService
 
         // Búsqueda en correos
         if (!$tipo || $tipo === 'correo') {
-            $correos = \App\Models\Correo::where('correo', 'like', "%$termino%")
+            $correos = Correo::where('correo', 'like', "%$termino%")
                 ->with('usuario')
                 ->limit($limit)
                 ->get();
@@ -37,7 +35,9 @@ class SearchService
 
         // Búsqueda en equipos
         if (!$tipo || $tipo === 'inventario') {
-            $equipos = \App\Models\Inventario::where('elemento', 'like', "%$termino%")
+            $equipos = Inventario::where('nombre_elemento', 'like', "%$termino%")
+                ->orWhere('serial', 'like', "%$termino%")
+                ->orWhere('cod_elemento', 'like', "%$termino%")
                 ->limit($limit)
                 ->get();
 
@@ -47,9 +47,6 @@ class SearchService
         return $resultados;
     }
 
-    /**
-     * Aplicar filtros dinámicamente
-     */
     public static function aplicarFiltros(Builder $query, array $filtros): Builder
     {
         foreach ($filtros as $campo => $valor) {

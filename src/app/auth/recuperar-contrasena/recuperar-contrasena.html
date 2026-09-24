@@ -15,7 +15,10 @@
 
     <!-- Token inválido o expirado -->
     @if (estado() === 'invalido') {
-      <p class="auth-info-text">Este enlace ya no es válido o expiró. Solicita uno nuevo.</p>
+      <div class="global-error-msg">
+        <img src="/icons/alerta.svg" alt="Alerta" class="error-icon">
+        <span>Este enlace ya no es válido o expiró. Solicita uno nuevo.</span>
+      </div>
       <div class="auth-footer-links">
         <a [routerLink]="['/recuperar-contrasena']" class="footer-link">Solicitar nuevo enlace</a>
       </div>
@@ -48,12 +51,13 @@
             }
           </div>
 
-          <!-- Mostrar mensaje de error si algo falla en Laravel -->
-    @if (error()) {
-      <div style="background-color: #fee2e2; color: #dc2626; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: 500;">
-        {{ error() }}
-      </div>
-    }
+          <!-- Mostrar mensaje de error con el estilo global -->
+          @if (error()) {
+            <div class="global-error-msg">
+              <img src="/icons/alerta.svg" alt="Alerta" class="error-icon">
+              <span>{{ error() }}</span>
+            </div>
+          }
     
           <button type="submit" class="btn-submit mt-15">Enviar Enlace</button>
         </form>
@@ -64,7 +68,7 @@
       }
     }
 
-    <!-- Paso 2: Nueva contraseña (solo si el token fue válido) -->
+    <!-- Paso 2: Nueva contraseña -->
     @if (estado() === 'formulario') {
       <form class="auth-form" [formGroup]="nuevaPasswordForm" (ngSubmit)="onConfirmar()">
         
@@ -107,7 +111,6 @@
       </form>
     }
 
-    <!-- Enlace inferior de retorno -->
     <div class="auth-footer-links">
       <a [routerLink]="['/login']" class="footer-link">Regresar al Iniciar Sesión</a>
     </div>

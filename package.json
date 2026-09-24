@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "ng serve",
-    "start:backend": "cd laravel-backend && php artisan serve --host=127.0.0.1 --port=8000"
+    "start:backend": "cd laravel-backend && php artisan serve --host=127.0.0.1 --port=8000",
+    "setup": "npm install && cd laravel-backend && php -r \"is_dir('bootstrap/cache') || mkdir('bootstrap/cache', 0755, true);\" && composer install && php -r \"file_exists('.env') || copy('.env.example', '.env');\" && php artisan key:generate && php artisan migrate:fresh --seed && php artisan config:clear && php artisan route:clear && php artisan storage:link && cd .."
   },
   "private": true,
   "packageManager": "npm@11.13.0",

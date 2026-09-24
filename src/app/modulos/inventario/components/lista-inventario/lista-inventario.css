@@ -1,0 +1,149 @@
+/* Eliminados estilos de alertas y grupo-filtros para heredar globales */
+@import '../../../styles/modules-forms.css';
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-layout.css';
+@import '../../../styles/modules-tables.css';
+
+.inventario-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 12px;
+}
+
+.btn-tab {
+  padding: 10px 22px;
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-tab:hover {
+  background-color: #e2e6ea;
+  border-color: #adb5bd;
+}
+
+.btn-tab.activo {
+  background-color: #1C74A0;
+  color: white;
+  border-color: #1C74A0;
+  box-shadow: 0 4px 10px rgba(28, 116, 160, 0.25);
+}
+
+.modal-pequeno {
+  max-width: 600px;
+}
+
+/* --- HEADERS MODALES SEMÁNTICOS (NUEVO DISEÑO) --- */
+.header-baja {
+  background-color: transparent !important;
+  border-bottom-color: #dc3545 !important;
+}
+.header-baja h2,
+.header-baja .btn-cerrar-modal {
+  color: #dc3545 !important;
+}
+
+.header-traslado {
+  background-color: transparent !important;
+  border-bottom-color: #17a2b8 !important;
+}
+.header-traslado h2,
+.header-traslado .btn-cerrar-modal {
+  color: #17a2b8 !important;
+}
+
+/* --- BOTONES DE ACCIÓN --- */
+.btn-modal-danger {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-modal-traslado {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-traslado:hover {
+  background-color: #138496;
+}
+
+.btn-icon-traslado {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.btn-icon-traslado:hover {
+  background-color: #218838;
+}
+
+/* --- MODO OSCURO GLOBALES --- */
+:host-context(body.dark-mode) .inventario-tabs {
+  border-bottom-color: #333;
+}
+:host-context(body.dark-mode) .btn-tab {
+  background-color: #2a2a2a;
+  color: #b0b0b0;
+  border-color: #444;
+}
+:host-context(body.dark-mode) .btn-tab:hover {
+  background-color: #333;
+  color: #ffffff;
+  border-color: #555;
+}
+:host-context(body.dark-mode) .btn-tab.activo {
+  background-color: #FF9F13;
+  color: #1a1a1a;
+  border-color: #FF9F13;
+  box-shadow: 0 4px 10px rgba(255, 159, 19, 0.25);
+}
+
+/* --- MODO OSCURO: HEADERS SEMÁNTICOS --- */
+:host-context(body.dark-mode) .header-baja {
+  border-bottom-color: #ff6b7a !important;
+}
+:host-context(body.dark-mode) .header-baja h2,
+:host-context(body.dark-mode) .header-baja .btn-cerrar-modal {
+  color: #ff6b7a !important;
+}
+
+:host-context(body.dark-mode) .header-traslado {
+  border-bottom-color: #4dd0e1 !important;
+}
+:host-context(body.dark-mode) .header-traslado h2,
+:host-context(body.dark-mode) .header-traslado .btn-cerrar-modal {
+  color: #4dd0e1 !important;
+}
+
+:host-context(body.dark-mode) .btn-icon-traslado {
+  background-color: #2ea043;
+  color: #ffffff;
+}
+:host-context(body.dark-mode) .btn-icon-traslado:hover {
+  background-color: #3fb950;
+}

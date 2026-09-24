@@ -1,34 +1,32 @@
-// 5. src/app/modulos/prestamos/components/lista-prestamos/lista-prestamos.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PrestamosActivosService, PrestamoActivo } from '../../services/prestamos-activos.service';
+import { PaginationHelper } from '../../../shared/utils/pagination.helper';
+import { ModalDetallesPrestamoComponent } from '../../../shared/components/modal-detalles-prestamo/modal-detalles-prestamo.component';
 
 @Component({
   selector: 'app-lista-prestamos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalDetallesPrestamoComponent],
   templateUrl: './lista-prestamos.html',
   styleUrls: ['./lista-prestamos.css']
 })
-export class ListaPrestamosComponent implements OnInit {
+export class ListaPrestamosComponent extends PaginationHelper implements OnInit {
   prestamos: PrestamoActivo[] = [];
-  cargando = false;
-  
-  paginaActual = 1;
-  totalPaginas = 1;
-  totalElementos = 0;
-
   mostrarModal = false;
   prestamoSeleccionado: PrestamoActivo | null = null;
 
-  constructor(private prestamosService: PrestamosActivosService) {}
-
-  ngOnInit(): void {
-    this.cargarPrestamos();
+  constructor(private prestamosService: PrestamosActivosService) {
+    super();
   }
 
-  cargarPrestamos(): void {
+  ngOnInit(): void {
+    this.cargarDatos();
+  }
+
+  // IMPLEMENTACIÓN OBLIGATORIA DEL HELPER
+  cargarDatos(): void {
     this.cargando = true;
     this.prestamosService.obtenerPrestamos(this.paginaActual).subscribe({
       next: (response: any) => {
@@ -54,42 +52,20 @@ export class ListaPrestamosComponent implements OnInit {
   cerrarModal(): void {
     this.mostrarModal = false;
     this.prestamoSeleccionado = null;
-    this.cargarPrestamos();
+    this.cargarDatos();
   }
 
   obtenerNombreEstado(cod: number): string {
     const estados: { [key: number]: string } = {
-      1: 'Solicitado',
-      2: 'Entregado',
-      3: 'Devuelto',
-      4: 'Perdido',
-      5: 'Dañado'
+      1: 'Solicitado', 2: 'Entregado', 3: 'Devuelto', 4: 'Perdido', 5: 'Dañado'
     };
     return estados[cod] || 'Desconocido';
   }
 
   obtenerClaseEstado(cod: number): string {
     const clases: { [key: number]: string } = {
-      1: 'solicitado',
-      2: 'entregado',
-      3: 'devuelto',
-      4: 'perdido',
-      5: 'danado'
+      1: 'solicitado', 2: 'entregado', 3: 'devuelto', 4: 'perdido', 5: 'danado'
     };
     return clases[cod] || '';
-  }
-
-  irPaginaAnterior(): void {
-    if (this.paginaActual > 1) {
-      this.paginaActual--;
-      this.cargarPrestamos();
-    }
-  }
-
-  irPaginaSiguiente(): void {
-    if (this.paginaActual < this.totalPaginas) {
-      this.paginaActual++;
-      this.cargarPrestamos();
-    }
   }
 }

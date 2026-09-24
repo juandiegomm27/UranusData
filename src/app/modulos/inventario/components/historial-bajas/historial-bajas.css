@@ -1,0 +1,92 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-tables.css';
+
+.modal-ancho-historial {
+    max-width: 900px !important;
+    width: 90% !important;
+}
+
+.header-historial-bajas {
+    background-color: transparent !important;
+    border-bottom-color: #1C74A0 !important;
+}
+
+.header-historial-bajas h2,
+.header-historial-bajas .btn-cerrar-modal {
+    color: #1C74A0 !important;
+}
+
+.seccion-bajas-resumen {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tarjeta-resumen-baja {
+    flex: 1;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    border: 1px solid #ffdf7e;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.titulo-resumen {
+    font-size: 12px;
+    font-weight: 700;
+    color: #856404;
+    text-transform: uppercase;
+}
+
+.valor-resumen {
+    font-size: 24px;
+    font-weight: 800;
+    color: #533f03;
+}
+
+.badge-cantidad-baja {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.max-w-200 {
+    max-width: 200px;
+}
+
+.overflow-hidden-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* MODO OSCURO */
+:host-context(body.dark-mode) .header-historial-bajas {
+    border-bottom-color: #63b3ed !important;
+}
+
+:host-context(body.dark-mode) .header-historial-bajas h2,
+:host-context(body.dark-mode) .header-historial-bajas .btn-cerrar-modal {
+    color: #63b3ed !important;
+}
+
+:host-context(body.dark-mode) .tarjeta-resumen-baja {
+    background: linear-gradient(135deg, #332701 0%, #221a00 100%);
+    border-color: #534200;
+}
+
+:host-context(body.dark-mode) .titulo-resumen {
+    color: #ffda6a;
+}
+
+:host-context(body.dark-mode) .valor-resumen {
+    color: #ffeeba;
+}
+
+:host-context(body.dark-mode) .badge-cantidad-baja {
+    background-color: #491217;
+    color: #f8d7da;
+}

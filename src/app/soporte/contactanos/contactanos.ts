@@ -7,13 +7,13 @@ import { AuthService } from '../../core/service/auth.service';
   standalone: true,
   imports: [], 
   templateUrl: './contactanos.html',
-  styleUrl: '../../auth/login/login.css' 
+  styleUrl: './contactanos.css'
 })
 export class Contactanos {
   private router = inject(Router);
   private authService = inject(AuthService);
 
- irAlInicio(): void {
+  irAlInicio(): void {
     this.authService.irAlInicio(this.router);
   }
 }

@@ -6,20 +6,19 @@
   width: 100%;
   min-height: 100vh;
   background-image: url("/fondo-blanco.svg");
-  background-color: white;
+  background-color: var(--bg-color, #ffffff);
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  
-  color: black;
-  transition: background-image 0s ease, background-color 0s ease;
+  color: var(--text-main, #000000);
+  transition: background-image 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .pagina.modo-oscuro {
   background-image: url("/fondo-negro.svg");
-  background-color: #232323;
-  color: white;
+  background-color: var(--bg-color, #232323);
+  color: var(--text-main, #ffffff);
 }
 
 .app-content {
@@ -31,11 +30,14 @@
 .app-shell {
   display: flex;
   flex: 1;
+  width: 100%;
   min-height: 0;
 }
 
 .app-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   overflow-x: hidden;
 }

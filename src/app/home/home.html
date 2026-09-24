@@ -4,7 +4,7 @@
 } @else if (rolUsuario() === 'Docente') {
   <app-docente></app-docente>
 } @else {
-  <div style="padding: 40px; text-align: center; color: #666;">
+  <div class="loading-panel">
     <h2>Cargando panel de control...</h2>
     <p>Verificando permisos de rol: {{ rolUsuario() }}</p>
   </div>

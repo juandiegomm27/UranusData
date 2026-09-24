@@ -1,0 +1,89 @@
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* 1. ÉXITO (Verde) */
+.estado-entregado,
+.estado-activo,
+.estado-aprobada,
+.estado-completado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* 2. INFORMACIÓN (Azul) */
+.estado-devuelto {
+  background-color: #cfe2ff;
+  color: #084298;
+}
+
+/* 3. ADVERTENCIA (Amarillo) */
+.estado-solicitado,
+.estado-pendiente,
+.estado-pausa {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* 4. PELIGRO (Rojo) */
+.estado-perdido,
+.estado-danado,
+.estado-dañado,
+.estado-rechazada,
+.estado-bloqueado,
+.estado-baja {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* 5. NEUTRAL (Gris) */
+.estado-inactivo {
+  background-color: #ffda6a;
+  color: #383d41;
+}
+
+/* MODO OSCURO*/
+:host-context(body.dark-mode) .estado-entregado,
+:host-context(body.dark-mode) .estado-activo,
+:host-context(body.dark-mode) .estado-aprobada,
+:host-context(body.dark-mode) .estado-completado {
+  background-color: #1a3c24;
+  color: #75b798;
+}
+
+:host-context(body.dark-mode) .estado-devuelto {
+  background-color: #03285c;
+  color: #6ea8fe;
+}
+
+:host-context(body.dark-mode) .estado-solicitado,
+:host-context(body.dark-mode) .estado-pendiente,
+:host-context(body.dark-mode) .estado-pausa {
+  background-color: #332701;
+  color: #ffda6a;
+}
+
+:host-context(body.dark-mode) .estado-perdido,
+:host-context(body.dark-mode) .estado-danado,
+:host-context(body.dark-mode) .estado-dañado,
+:host-context(body.dark-mode) .estado-rechazada,
+:host-context(body.dark-mode) .estado-bloqueado,
+:host-context(body.dark-mode) .estado-baja {
+  background-color: #491217;
+  color: #ea868f;
+}
+
+:host-context(body.dark-mode) .estado-inactivo {
+  background-color: #ffa113af;
+  color: #383d41;
+}

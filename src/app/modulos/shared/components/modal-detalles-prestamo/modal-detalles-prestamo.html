@@ -1,0 +1,100 @@
+<div class="modal-overlay" (click)="cerrar()">
+  <div class="modal-contenido" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>Detalles del Préstamo #{{ prestamo?.id_reserva }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrar()">✕</button>
+    </div>
+
+    <div *ngIf="cargando" class="modal-body p-4">
+      <p class="text-center">⏳ Cargando detalles...</p>
+    </div>
+
+    <div *ngIf="!cargando && prestamo" class="modal-body">
+
+      <div class="seccion-info">
+        <h3>Información General</h3>
+        <div class="grid-info">
+          <div class="campo-info"><label>ID Reserva:</label><span>#{{ prestamo.id_reserva }}</span></div>
+          <div class="campo-info"><label>Documento Usuario:</label><span>{{ prestamo.documento }}</span></div>
+          <div class="campo-info"><label>Nombre Usuario:</label><span>{{ prestamo.nombre }}</span></div>
+          <div class="campo-info"><label>Elemento:</label><span>{{ prestamo.elemento }}</span></div>
+          <div class="campo-info"><label>Tipo:</label><span>{{ prestamo.tipo }}</span></div>
+          <div class="campo-info"><label>Cantidad:</label><span>{{ prestamo.cantidad }}</span></div>
+          <div class="campo-info"><label>Fecha Inicio:</label><span>{{ prestamo.fecha_inicio | date: 'medium' }}</span>
+          </div>
+          <div class="campo-info">
+            <label>Fecha Entrega:</label>
+            <span>{{ prestamo.fecha_entrega ? (prestamo.fecha_entrega | date: 'medium') : 'Pendiente' }}</span>
+          </div>
+          <div class="campo-info">
+            <label>Estado Actual:</label>
+            <div>
+              <span class="estado-badge" [ngClass]="'estado-' + obtenerClaseEstado(prestamo.cod_estado_prestamo)">
+                {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="seccion-info" *ngIf="prestamo.estado_elementos && prestamo.estado_elementos.length > 0">
+        <h3>Estado de Elementos</h3>
+        <div class="modulo-tabla-wrapper" style="max-height: 200px; margin-bottom: 0;">
+          <table class="modulo-tabla">
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let est of prestamo.estado_elementos">
+                <td>
+                  <span class="estado-badge" [ngClass]="'estado-' + est.estado.toLowerCase()">
+                    {{ est.estado }}
+                  </span>
+                </td>
+                <td>{{ est.total }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="seccion-edicion">
+        <h3>Actualizar Estado</h3>
+        <div class="grid-info">
+          <div class="campo-edicion">
+            <label for="nuevoEstado">Nuevo Estado:</label>
+            <select id="nuevoEstado" [(ngModel)]="nuevoEstado" class="select-estado" [disabled]="actualizando">
+              <option [value]="null">Seleccionar estado...</option>
+              <option *ngFor="let est of estadosDisponibles" [value]="est.cod">{{ est.nombre }}</option>
+            </select>
+          </div>
+          <div class="campo-edicion">
+            <label for="observaciones">Observaciones:</label>
+            <textarea id="observaciones" [(ngModel)]="observaciones" placeholder="Agregar observaciones (opcional)"
+              class="textarea-estado" style="resize: vertical; min-height: 42px;" [disabled]="actualizando"></textarea>
+          </div>
+        </div>
+
+        <div *ngIf="mensajeError" class="mensaje-alerta mensaje-error mt-2">
+          {{ mensajeError }}
+        </div>
+        <div *ngIf="mensajeExito" class="mensaje-alerta mensaje-success mt-2">
+          {{ mensajeExito }}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-secondary" (click)="cerrar()" [disabled]="actualizando">Cancelar</button>
+      <button class="btn-modal-primary" (click)="guardarCambios()" [disabled]="!nuevoEstado || actualizando">
+        {{ actualizando ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
+
+  </div>
+</div>

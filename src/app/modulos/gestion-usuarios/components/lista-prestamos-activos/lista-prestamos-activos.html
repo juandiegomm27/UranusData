@@ -1,57 +1,41 @@
 <div class="modulo-container">
-  <!-- HEADER -->
   <div class="modulo-header">
     <h2>Préstamos Activos</h2>
     <div class="modulo-header-actions">
       <button class="btn-secondary" (click)="limpiarFiltros()">
-        <span>🔄 Limpiar</span>
+        <span>Limpiar</span>
       </button>
     </div>
   </div>
 
-  <!-- BÚSQUEDA Y FILTROS -->
   <div class="modulo-busqueda-filtros">
     <div class="grupo-busqueda">
       <input
         type="text"
         class="input-busqueda"
         placeholder="Buscar por nombre, documento o elemento..."
-        [(ngModel)]="busqueda"
-        (keyup.enter)="buscar()"
+        [(ngModel)]="terminoBusqueda"
+        (keyup.enter)="aplicarFiltrosBase()"
       />
-      <button class="btn-primary" (click)="buscar()">
-        <span>🔍 Buscar</span>
-      </button>
+      <button class="btn-primary" (click)="aplicarFiltrosBase()">Buscar</button>
     </div>
 
     <div class="grupo-filtros">
-      <select class="filtro-select" [(ngModel)]="estadoSeleccionado" (change)="buscar()">
+      <select class="filtro-select" [(ngModel)]="estadoSeleccionado" (change)="aplicarFiltrosBase()">
         <option [value]="null">Todos los Estados</option>
-        <option *ngFor="let estado of estados" [value]="estado.cod">
-          {{ estado.nombre }}
-        </option>
+        <option *ngFor="let estado of estados" [value]="estado.cod">{{ estado.nombre }}</option>
       </select>
-
-      <select class="filtro-select" [(ngModel)]="tipoSeleccionado" (change)="buscar()">
+      
+      <select class="filtro-select" [(ngModel)]="tipoSeleccionado" (change)="aplicarFiltrosBase()">
         <option [value]="null">Todos los Tipos</option>
-        <option *ngFor="let tipo of tipos" [value]="tipo.cod">
-          {{ tipo.nombre }}
-        </option>
+        <option *ngFor="let tipo of tipos" [value]="tipo.cod">{{ tipo.nombre }}</option>
       </select>
     </div>
   </div>
 
-  <!-- MENSAJE DE CARGA -->
-  <div *ngIf="cargando" class="cargando">
-    Cargando préstamos activos...
-  </div>
+  <div *ngIf="cargando" class="cargando">Cargando préstamos activos...</div>
+  <div *ngIf="sinDatos && !cargando" class="sin-datos">No se encontraron préstamos activos</div>
 
-  <!-- MENSAJE SIN DATOS -->
-  <div *ngIf="sinDatos && !cargando" class="sin-datos">
-    No se encontraron préstamos activos
-  </div>
-
-  <!-- TABLA DE PRÉSTAMOS -->
   <div *ngIf="!cargando && prestamos.length > 0" class="modulo-tabla-wrapper">
     <table class="modulo-tabla">
       <thead>
@@ -68,82 +52,57 @@
           <th>Acciones</th>
         </tr>
       </thead>
-        <tbody>
-          <tr *ngFor="let prestamo of prestamos; trackBy: trackByIdReserva">
-            <td><strong>#{{ prestamo.id_reserva }}</strong></td>
-            <td>{{ prestamo.documento }}</td>
-            <td>{{ prestamo.nombre }}</td>
-            <td>{{ prestamo.elemento }}</td>
-            <td>{{ prestamo.tipo }}</td>
-            <td>{{ prestamo.cantidad }}</td>
-            <td>{{ prestamo.fecha_inicio | date: 'short' }}</td>
-            <td>
-              <span
-                class="estado-badge"
-                [ngClass]="obtenerClaseEstado(prestamo.cod_estado_prestamo)"
-              >
-                {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
+      <tbody>
+        <tr *ngFor="let prestamo of prestamos; trackBy: trackByIdReserva">
+          <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+          <td>{{ prestamo.documento }}</td>
+          <td>{{ prestamo.nombre }}</td>
+          <td>{{ prestamo.elemento }}</td>
+          <td>{{ prestamo.tipo }}</td>
+          <td>{{ prestamo.cantidad }}</td>
+          <td>{{ prestamo.fecha_inicio | date: 'short' }}</td>
+          <td>
+            <span class="estado-badge" [ngClass]="obtenerClaseEstado(prestamo.cod_estado_prestamo)">
+              {{ obtenerNombreEstado(prestamo.cod_estado_prestamo) }}
+            </span>
+          </td>
+          <td>
+            <div *ngFor="let estado of prestamo.estado_elementos; trackBy: trackByEstadoElemento" style="font-size: 11px">
+              <span class="estado-badge" [ngClass]="'estado-' + estado.estado.toLowerCase()">
+                {{ estado.estado }} ({{ estado.total }})
               </span>
-            </td>
-            <td>
-              <div *ngFor="let estado of prestamo.estado_elementos; trackBy: trackByEstadoElemento" style="font-size: 11px">
-                <span class="estado-badge" [ngClass]="'estado-' + estado.estado.toLowerCase()">
-                  {{ estado.estado }} ({{ estado.total }})
-                </span>
-              </div>
-            </td>
-            <td>
-              <div class="botones-accion-tabla">
-                <button
-                  class="btn-icon btn-ver-detalles"
-                  title="Ver detalles"
-                  (click)="verDetalles(prestamo)"
-                >
-                  👁️ Ver
-                </button>
-                <button
-                  class="btn-icon btn-entregar"
-                  title="Entregar préstamo"
-                  (click)="entregarPrestamo(prestamo)"
-                  [disabled]="prestamo.cod_estado_prestamo !== 1"
-                >
-                  ✅ Entregar
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
+            </div>
+          </td>
+          <td>
+            <div class="botones-accion-tabla">
+              <button class="btn-icon btn-icon-ver" title="Ver detalles" (click)="verDetalles(prestamo)">
+                <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
+                <span>Ver</span>
+              </button>
+              <button class="btn-icon btn-icon-success" title="Entregar préstamo" (click)="entregarPrestamo(prestamo)" [disabled]="prestamo.cod_estado_prestamo !== 1">
+                <span>Entregar</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 
-  <!-- PAGINACIÓN -->
   <div *ngIf="!cargando && prestamos.length > 0" class="paginacion">
-    <button
-      class="btn-paginacion"
-      [disabled]="paginaActual === 1"
-      (click)="paginaAnterior()"
-    >
-      ← Anterior
-    </button>
+    <button class="btn-paginacion" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
     <span class="indicador-pagina">
-      Página {{ paginaActual }} de {{ ultimaPagina }} | Mostrando {{ desde }}-{{ hasta }}
-      de {{ totalRegistros }} registros
+      Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} registros)
     </span>
-    <button
-      class="btn-paginacion"
-      [disabled]="paginaActual === ultimaPagina"
-      (click)="paginaSiguiente()"
-    >
-      Siguiente →
-    </button>
+    <button class="btn-paginacion" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
   </div>
 
-<!-- MODAL DE DETALLES -->
-<app-modal-detalles-prestamo
-  *ngIf="mostrarModal"
-  [prestamo]="prestamoSeleccionado"
-  (cerrarModal)="cerrarModal()"
-  (actualizarPrestamo)="onActualizarPrestamo($event)"
-></app-modal-detalles-prestamo>
+  <!-- MODAL UNIFICADO EN ACCIÓN -->
+  <app-detalles-prestamo
+    *ngIf="mostrarModal"
+    [prestamo]="prestamoSeleccionado"
+    (cerrarModal)="cerrarModal()"
+    (actualizarPrestamo)="onActualizarPrestamo()">
+  </app-detalles-prestamo>
 
 </div>

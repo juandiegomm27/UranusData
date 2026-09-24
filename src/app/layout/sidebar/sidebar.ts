@@ -30,8 +30,8 @@ export class Sidebar {
 
     if (this.rol === 'Gerente') {
       base.push(
-        { ruta: '/modulos/inventario', etiqueta: 'Inventario', icono: '/icons/inventario.svg' },
         { ruta: '/modulos/gestion-usuarios', etiqueta: 'Usuarios', icono: '/icons/usuarios.svg' },
+        { ruta: '/modulos/inventario', etiqueta: 'Inventario', icono: '/icons/inventario.svg' },
         { ruta: '/modulos/mantenimiento', etiqueta: 'Mantenimiento', icono: '/icons/mantenimiento.svg' },
         { ruta: '/prestamos/activos', etiqueta: 'Préstamos', icono: '/icons/prestamos.svg' },
       );

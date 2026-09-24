@@ -3,3 +3,33 @@
   width: 100%;
   height: 100%;
 }
+
+.loading-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+  min-height: 50vh;
+}
+
+.loading-panel h2 {
+  font-size: 24px;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.loading-panel p {
+  font-size: 15px;
+}
+
+/* MODO OSCURO */
+:host-context(body.dark-mode) .loading-panel {
+  color: #a3a3a3;
+}
+
+:host-context(body.dark-mode) .loading-panel h2 {
+  color: #eeeeee;
+}

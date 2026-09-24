@@ -1,0 +1,16 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-forms.css';
+@import '../../../styles/modules-tables.css';
+@import '../../../styles/modules-badges.css';
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
