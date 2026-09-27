@@ -24,12 +24,13 @@
         <div class="email-body">
             <p class="email-greeting">Se ha generado un nuevo ticket de soporte en <strong>UranusData</strong>.</p>
             
-            <div class="highlight-box">
-                <p><strong>De:</strong> {{ $nombre }}</p>
-                <p><strong>Documento:</strong> {{ $documento }}</p>
-                <p><strong>Rol:</strong> <span style="color: #FF9F13; font-weight: bold;">{{ $rol }}</span></p>
-                <p style="margin-top: 15px;"><strong>Asunto:</strong> {{ $asunto }}</p>
-            </div>
+                <div class="highlight-box">
+                    <p><strong>De:</strong> {{ $nombre }}</p>
+                    <p><strong>Documento:</strong> {{ $documento }}</p>
+                    <p><strong>Rol:</strong> <span style="color: #FF9F13; font-weight: bold;">{{ $rol }}</span></p>
+                    <p><strong>Motivo:</strong> {{ $motivo }}</p> <!-- Nueva línea -->
+                    <p style="margin-top: 15px;"><strong>Asunto:</strong> {{ $asunto }}</p>
+                </div>
             
             <p class="email-message"><strong>Descripción del problema:</strong><br>{{ $descripcion }}</p>
         </div>

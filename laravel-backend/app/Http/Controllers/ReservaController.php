@@ -11,10 +11,6 @@ class ReservaController extends Controller
 {
     use ApiResponse;
 
-    /**
-     * GET /api/reserva
-     * Listar todas las reserva con paginación
-     */
     public function index(Request $request)
     {
         $perPage = min($request->get('per_page', 10), 100);
@@ -22,7 +18,6 @@ class ReservaController extends Controller
 
         $query = Reserva::with('usuario', 'estado');
 
-        // Filtros opcionales
         if ($request->filled('documento')) {
             $query->where('documento', $request->documento);
         }
@@ -42,13 +37,9 @@ class ReservaController extends Controller
         $reserva = $query->orderBy('fecha', 'desc')
                          ->paginate($perPage, ['*'], 'page', $page);
 
-        return $this->paginatedResponse($reserva, 'reserva obtenidas correctamente');
+        return $this->paginatedResponse($reserva, 'Reservas obtenidas correctamente');
     }
 
-    /**
-     * POST /api/reserva
-     * Crear nueva reserva
-     */
     public function store(Request $request) {
         $validated = $request->validate([
             'documento' => 'required|exists:usuario,documento',
@@ -80,12 +71,15 @@ class ReservaController extends Controller
                         'cantidad_devuelta' => 0
                     ]);
 
-                    // Descontar la cantidad_disponible física del stock si es un accesorio
                     if (!empty($item['id_stock'])) {
                         $stock = \App\Models\StockAccesorio::find($item['id_stock']);
                         if ($stock) {
+                            // CORRECCIÓN: Validación estricta de stock antes de descontar
+                            if ($stock->cantidad_disponible < $item['cantidad']) {
+                                throw new \Exception("Stock insuficiente para el accesorio en bodega. Solicitado: {$item['cantidad']}, Disponible: {$stock->cantidad_disponible}");
+                            }
+                            
                             $stock->decrement('cantidad_disponible', $item['cantidad']);
-                            // Descontar también del catálogo global
                             \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
                                 ->decrement('cantidad_disponible', $item['cantidad']);
                         }
@@ -101,6 +95,7 @@ class ReservaController extends Controller
                 201
             );
         } catch (\Exception $e) {
+            // Si la validación de stock falla, caerá aquí y la transacción (DB::transaction) revertirá los INSERTs automáticamente
             return $this->errorResponse(
                 'Error al crear reserva: ' . $e->getMessage(),
                 500
@@ -108,10 +103,6 @@ class ReservaController extends Controller
         }
     }
 
-    /**
-     * POST /api/reserva/{id}/entregar
-     * Pasar de Reserva a Préstamo activo y marcar equipos como entregados
-     */
     public function entregarPrestamo(Request $request, $idReserva)
     {
         $reserva = Reserva::with('detalles')->find($idReserva);
@@ -121,11 +112,10 @@ class ReservaController extends Controller
 
         try {
             DB::transaction(function () use ($reserva) {
-                // 1. Crear o actualizar el registro en la tabla prestamo
                 \App\Models\Prestamo::updateOrCreate(
                     ['id_Reserva' => $reserva->id_Reserva],
                     [
-                        'cod_estado_prestamo' => 2, // Entregado
+                        'cod_estado_prestamo' => 2,
                         'fecha_inicio' => now()->toDateString(),
                         'fecha_entrega_original' => $reserva->plazo ?? now()->addDays(3)->toDateString(),
                         'fecha_limite_actual' => $reserva->plazo ?? now()->addDays(3)->toDateString(),
@@ -133,10 +123,8 @@ class ReservaController extends Controller
                     ]
                 );
 
-                // 2. Actualizar la reserva a Aprobada (Num_estado = 2)
                 $reserva->update(['Num_estado' => 2]);
 
-                // 3. Marcar los detalles como entregados y cambiar el estado del inventario a "En Préstamo" (Estado 2)
                 foreach ($reserva->detalles as $detalle) {
                     $detalle->update([
                         'cantidad_entregada' => $detalle->cantidad_solicitada
@@ -155,10 +143,6 @@ class ReservaController extends Controller
         }
     }
 
-    /**
-     * POST /api/prestamo/detalles/{idDetalle}/devolver-parcial
-     * Registrar devolución de un detalle específico
-     */
     public function devolverParcial(Request $request, $idDetalle)
     {
         $validated = $request->validate([
@@ -187,7 +171,6 @@ class ReservaController extends Controller
                     \App\Models\Inventario::where('id_elemento', $detalle->id_elemento)
                         ->update(['cod_estado_elemento' => $validated['estado_devolucion']]);
                 } elseif ($detalle->id_stock) {
-                    // Sumar stock disponible al devolver accesorios
                     $stock = \App\Models\StockAccesorio::find($detalle->id_stock);
                     if ($stock) {
                         $stock->increment('cantidad_disponible', $validated['cantidad_a_devolver']);
@@ -203,7 +186,7 @@ class ReservaController extends Controller
 
                 if ($pendientes === 0) {
                     \App\Models\Prestamo::where('id_Reserva', $reservaId)
-                        ->update(['cod_estado_prestamo' => 3]); // Devuelto
+                        ->update(['cod_estado_prestamo' => 3]);
                 }
             });
 
@@ -213,13 +196,8 @@ class ReservaController extends Controller
         }
     }
 
-    /**
-     * GET /api/reserva/{id}
-     * Obtener una reserva específica
-     */
     public function show($id)
     {
-        // Incluimos los detalles para que la API devuelva los equipos solicitados
         $reserva = Reserva::with('usuario', 'estado', 'detalles.elemento', 'detalles.stock.accesorio', 'prestamo')->find($id);
         if (!$reserva) {
             return $this->notFoundResponse('Reserva');
@@ -230,13 +208,8 @@ class ReservaController extends Controller
         );
     }
 
-    /**
-     * PUT /api/reserva/{id}
-     * Actualizar una reserva
-     */
     public function update(Request $request, $id)
     {
-        // Cargamos los detalles para poder devolver el stock antes de actualizar
         $reserva = Reserva::with('detalles')->find($id);
         
         if (!$reserva) {
@@ -255,13 +228,10 @@ class ReservaController extends Controller
 
         try {
             DB::transaction(function () use ($reserva, $validated, $request) {
-                // Actualizar solo los campos de la cabecera que vengan en la petición
                 $reserva->update($request->only(['Num_estado', 'fecha', 'plazo']));
 
-                // Si mandan nuevos detalles, reemplazamos los anteriores
                 if (isset($validated['detalles'])) {
 
-                    // 1. Devolver el stock de los detalles viejos
                     foreach ($reserva->detalles as $viejoDetalle) {
                         if ($viejoDetalle->id_stock) {
                             $stock = \App\Models\StockAccesorio::find($viejoDetalle->id_stock);
@@ -273,11 +243,22 @@ class ReservaController extends Controller
                         }
                     }
 
-                    // 2. Eliminar detalles viejos
                     $reserva->detalles()->delete();
 
-                    // 3. Crear los nuevos detalles y descontar el nuevo stock
                     foreach ($validated['detalles'] as $item) {
+                        if (!empty($item['id_stock'])) {
+                            $stock = \App\Models\StockAccesorio::find($item['id_stock']);
+                            if ($stock) {
+                                // CORRECCIÓN: Validación estricta de stock antes de descontar en actualización
+                                if ($stock->cantidad_disponible < $item['cantidad']) {
+                                    throw new \Exception("Stock insuficiente para actualizar el accesorio. Solicitado: {$item['cantidad']}, Disponible: {$stock->cantidad_disponible}");
+                                }
+                                $stock->decrement('cantidad_disponible', $item['cantidad']);
+                                \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                                    ->decrement('cantidad_disponible', $item['cantidad']);
+                            }
+                        }
+
                         \App\Models\ReservaDetalle::create([
                             'id_Reserva' => $reserva->id_Reserva,
                             'id_elemento' => $item['id_elemento'] ?? null,
@@ -286,15 +267,6 @@ class ReservaController extends Controller
                             'cantidad_entregada' => 0,
                             'cantidad_devuelta' => 0
                         ]);
-
-                        if (!empty($item['id_stock'])) {
-                            $stock = \App\Models\StockAccesorio::find($item['id_stock']);
-                            if ($stock) {
-                                $stock->decrement('cantidad_disponible', $item['cantidad']);
-                                \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
-                                    ->decrement('cantidad_disponible', $item['cantidad']);
-                            }
-                        }
                     }
                 }
             });
@@ -311,13 +283,8 @@ class ReservaController extends Controller
         }
     }
 
-    /**
-     * DELETE /api/reserva/{id}
-     * Eliminar una reserva
-     */
     public function destroy($id)
     {
-        // Cargamos los detalles para saber qué accesorios devolver al stock
         $reserva = Reserva::with('detalles')->find($id);
 
         if (!$reserva) {
@@ -326,7 +293,6 @@ class ReservaController extends Controller
 
         try {
             DB::transaction(function () use ($reserva) {
-                // Devolver todo el stock a su respectiva ubicación
                 foreach ($reserva->detalles as $detalle) {
                     if ($detalle->id_stock) {
                         $stock = \App\Models\StockAccesorio::find($detalle->id_stock);
@@ -337,8 +303,6 @@ class ReservaController extends Controller
                         }
                     }
                 }
-
-                // Borrar la reserva (eliminará los detalles por cascada)
                 $reserva->delete();
             });
 

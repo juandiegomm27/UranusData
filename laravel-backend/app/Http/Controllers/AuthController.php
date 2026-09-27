@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use App\Models\Rol;
-use App\Models\PasswordResetToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\NotificationMail;
 
 class AuthController extends Controller
 {
@@ -52,7 +48,6 @@ class AuthController extends Controller
             if ($intentos >= self::MAX_INTENTOS) {
                 Cache::put("login_bloqueado_{$documento}", time() + self::TIEMPO_BLOQUEO, self::TIEMPO_BLOQUEO);
                 
-                // Si se bloquea por intentos y el usuario existe, eliminar sus tokens activos
                 if ($usuario) {
                     $usuario->tokens()->delete();
                 }
@@ -100,136 +95,6 @@ class AuthController extends Controller
                 'cod_estado_usuario' => $usuario->cod_estado_usuario
             ],
             'token' => $token
-        ]);
-    }
-
-    public function solicitarRecuperacion(Request $request)
-    {
-        $validated = $request->validate([
-            'documento' => 'required|digits:10'
-        ]);
-
-        $usuario = Usuario::where('documento', $validated['documento'])->first();
-
-        if (!$usuario) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Usuario no encontrado'
-            ], 404);
-        }
-
-        // Validar estado del usuario
-        if ($usuario->cod_estado_usuario == 2) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Tu usuario está inactivo. No puedes recuperar contraseña'
-            ], 403);
-        }
-
-        if ($usuario->cod_estado_usuario == 3) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Tu usuario está bloqueado. Por favor comunícate con soporte'
-            ], 403);
-        }
-
-        if ($usuario->cod_estado_usuario !== 1) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'No puedes recuperar contraseña en este momento'
-            ], 403);
-        }
-
-        $token = bin2hex(random_bytes(32));
-        $expiresAt = now()->addHours(1);
-
-        PasswordResetToken::where('documento', $usuario->documento)->delete();
-
-        PasswordResetToken::create([
-            'documento' => $usuario->documento,
-            'token' => $token,
-            'expires_at' => $expiresAt
-        ]);
-
-        $correo = $usuario->correos()->first()?->correo;
-
-        if ($correo) {
-            try {
-                Mail::send(new NotificationMail('recovery-request', [
-                    'nombre' => $usuario->nombre,
-                    'token' => $token,
-                    'subject' => 'Recuperación de Contraseña - UranusData',
-                    'enlace' => env('FRONTEND_URL', 'http://localhost:4200') . '/recuperar-contrasena?token=' . $token
-                ]));
-            } catch (\Exception $e) {
-                Log::error('Error enviando email de recuperación: ' . $e->getMessage());
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'mensaje' => 'Se ha enviado un enlace de recuperación a tu correo',
-            'usuario' => [
-                'cod_estado_usuario' => $usuario->cod_estado_usuario
-            ]
-        ]);
-    }
-
-    public function verificarToken(Request $request, $token)
-    {
-        $validated = $request->validate([
-            'token' => 'required|string'
-        ]);
-
-        $resetToken = PasswordResetToken::where('token', $token)->first();
-
-        if (!$resetToken || $resetToken->expires_at < now()) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'El token ha expirado o es inválido'
-            ], 401);
-        }
-
-        return response()->json([
-            'success' => true,
-            'mensaje' => 'Token válido'
-        ]);
-    }
-
-    public function confirmarRecuperacion(Request $request)
-    {
-        $validated = $request->validate([
-            'token' => 'required|string',
-            'password' => 'required|string|min:6|max:15',
-            'confirmPassword' => 'required|string|same:password'
-        ]);
-
-        $resetToken = PasswordResetToken::where('token', $validated['token'])->first();
-
-        if (!$resetToken || $resetToken->expires_at < now()) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'El token ha expirado o es inválido'
-            ], 401);
-        }
-
-        $usuario = Usuario::where('documento', $resetToken->documento)->first();
-
-        if (!$usuario) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Usuario no encontrado'
-            ], 404);
-        }
-
-        $usuario->password = Hash::make($validated['password']);
-        $usuario->save();
-
-        $resetToken->delete();
-
-        return response()->json([
-            'success' => true,
-            'mensaje' => 'Contraseña actualizada exitosamente'
         ]);
     }
 

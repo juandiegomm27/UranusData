@@ -1,12 +1,11 @@
-version: '3.8'
-
 services:
-  app:
-    build: .
-    container_name: uranusdata-app
-    working_dir: /app
+  # 1. CONTENEDOR DEL BACKEND (LARAVEL)
+  backend:
+    build: 
+      context: ./laravel-backend
+    container_name: uranusdata-backend
     volumes:
-      - ./:/app
+      - ./laravel-backend:/app
     ports:
       - "8000:8000"
     environment:
@@ -19,6 +18,21 @@ services:
     networks:
       - uranusdata
 
+  # 2. CONTENEDOR DEL FRONTEND (ANGULAR)
+  frontend:
+    build: 
+      context: .
+    container_name: uranusdata-frontend
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/laravel-backend
+    ports:
+      - "4200:4200"
+    networks:
+      - uranusdata
+
+  # 3. CONTENEDOR DE BASE DE DATOS (MYSQL)
   mysql:
     image: mysql:8.0
     container_name: uranusdata-mysql
@@ -31,20 +45,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - uranusdata
-
-  phpmyadmin:
-    image: phpmyadmin
-    container_name: uranusdata-phpmyadmin
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: uranusdata_user
-      PMA_PASSWORD: uranusdata_password
-    ports:
-      - "8080:80"
-    depends_on:
-      - mysql
     networks:
       - uranusdata
 

@@ -16,6 +16,7 @@ class ContactoController extends Controller
     public function enviarMensaje(Request $request)
     {
         $validated = $request->validate([
+            'motivo' => 'required|string|max:100',
             'asunto' => 'required|string|max:150',
             'descripcion' => 'required|string|max:2000',
         ]);
@@ -28,11 +29,11 @@ class ContactoController extends Controller
             if (Cache::has($cacheKey)) {
                 $expiracion = Cache::get($cacheKey);
                 $tiempoRestante = $expiracion - time();
-                
+
                 if ($tiempoRestante > 0) {
                     $minutos = ceil($tiempoRestante / 60);
                     return $this->errorResponse(
-                        "Por seguridad y para evitar spam, solo puedes enviar un mensaje cada 2 horas. Intenta de nuevo en $minutos minutos.", 
+                        "Por seguridad y para evitar spam, solo puedes enviar un mensaje cada 2 horas. Intenta de nuevo en $minutos minutos.",
                         429
                     );
                 } else {
@@ -45,10 +46,10 @@ class ContactoController extends Controller
 
         $correoDestino = env('MAIL_SOPORTE_ADDRESS', env('MAIL_FROM_ADDRESS'));
 
-        // 2. ENVIAR EL CORREO (Aislado)
         try {
             Mail::to($correoDestino)->send(new NotificationMail('contacto-soporte', [
                 'subject' => 'Nuevo reporte de soporte - UranusData',
+                'motivo' => $validated['motivo'],
                 'asunto' => $validated['asunto'],
                 'descripcion' => $validated['descripcion'],
                 'nombre' => trim($usuario->nombre . ' ' . $usuario->apellido),
