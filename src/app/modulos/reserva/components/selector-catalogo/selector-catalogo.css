@@ -1,0 +1,159 @@
+@import '../../../styles/modules-forms.css';
+
+.selector-catalogo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selector-buscador {
+  display: flex;
+  gap: 10px;
+}
+
+.selector-buscador input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f8f9fa;
+}
+
+.selector-buscador select {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f8f9fa;
+  min-width: 160px;
+  cursor: pointer;
+}
+
+.btn-buscar {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1C74A0;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.catalogo-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.catalogo-columna h4 {
+  margin: 0 0 10px;
+  color: #1C74A0;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.catalogo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+
+.catalogo-item-seleccionado {
+  border-color: #1C74A0;
+  background: #eef7fb;
+}
+
+.catalogo-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.catalogo-item-info span {
+  color: #777;
+  font-size: 12px;
+}
+
+.btn-agregar {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1C74A0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-agregar:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.seleccionados-panel {
+  border: 1px dashed #1C74A0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #f4faff;
+}
+
+.seleccionados-panel h4 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #1C74A0;
+}
+
+.seleccionado-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.seleccionado-nombre {
+  flex: 1;
+  font-size: 13px;
+}
+
+.seleccionado-cantidad {
+  width: 60px;
+  padding: 6px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.seleccionado-max {
+  font-size: 12px;
+  color: #777;
+}
+
+.btn-quitar {
+  border: none;
+  background: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.sin-datos {
+  color: #888;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .catalogo-columnas {
+    grid-template-columns: 1fr;
+  }
+  .selector-buscador {
+    flex-direction: column;
+  }
+}

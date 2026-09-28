@@ -43,7 +43,9 @@ export class Sidebar {
       );
     } else if (this.rol === 'Docente') {
       base.push(
-        { ruta: '/reserva/consultar', etiqueta: 'Mis reservas', icono: '/icons/consultar.svg' }
+        { ruta: '/reserva/crear', etiqueta: 'Nueva reserva', icono: '/icons/mas.svg' },
+        { ruta: '/reserva/consultar', etiqueta: 'Mis reservas', icono: '/icons/consultar.svg' },
+        { ruta: '/reserva/editar', etiqueta: 'Editar reserva', icono: '/icons/editar.svg' }
       );
     }
 

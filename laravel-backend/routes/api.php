@@ -18,6 +18,7 @@ use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConfiguracionUsuarioController;
+use App\Http\Controllers\CatalogoController;
 
 // AUTH 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
@@ -55,7 +56,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('gestion/usuario', UsuarioGestorController::class);
     });
 
-    // RESERVAS DEL USUARIO ACTUAL  
+    // CATÁLOGO DISPONIBLE PARA RESERVAR (cualquier usuario autenticado)
+    Route::get('/catalogo/tipos-elemento', [CatalogoController::class, 'tipos']);
+    Route::get('/catalogo/elementos-disponibles', [CatalogoController::class, 'elementosDisponibles']);
+    Route::get('/catalogo/accesorios-disponibles', [CatalogoController::class, 'accesoriosDisponibles']);
+
+    // RESERVAS DEL USUARIO ACTUAL
     Route::get('/mis-reserva', [ReservaUsuarioController::class, 'obtenerMisReservas']);
     Route::post('/mis-reserva', [ReservaUsuarioController::class, 'crearReserva']);
     Route::put('/mis-reserva/{id}', [ReservaUsuarioController::class, 'actualizarReserva']);

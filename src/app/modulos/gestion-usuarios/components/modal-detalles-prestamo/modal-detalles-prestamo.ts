@@ -70,7 +70,7 @@ export class ModalDetallesPrestamo implements OnInit {
 
     this.prestamosService
       .actualizarEstadoPrestamo(
-        this.prestamo.id_reserva,
+        this.prestamo.id_Reserva,
         this.nuevoEstado,
         this.observaciones
       )
@@ -81,7 +81,7 @@ export class ModalDetallesPrestamo implements OnInit {
 
           // Emitir evento para que el padre recargue la lista
           this.actualizarPrestamo.emit({
-            idReserva: this.prestamo!.id_reserva,
+            idReserva: this.prestamo!.id_Reserva,
             nuevoEstado: this.nuevoEstado!,
             observaciones: this.observaciones
           });

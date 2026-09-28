@@ -20,6 +20,7 @@ export class ListaPrestamosActivosComponent extends PaginationHelper implements 
   sinDatos = false;
   mostrarModal = false;
   prestamoSeleccionado: PrestamoActivo | null = null;
+  entregando: number | null = null;
   
   estadoSeleccionado: number | null = null;
   tipoSeleccionado: number | null = null;
@@ -102,8 +103,23 @@ export class ListaPrestamosActivosComponent extends PaginationHelper implements 
   }
 
   entregarPrestamo(prestamo: PrestamoActivo): void {
-    this.prestamoSeleccionado = { ...prestamo };
-    this.mostrarModal = true;
+    if (prestamo.cod_estado_prestamo !== 1) return;
+    if (!confirm(`¿Confirmas la entrega del préstamo #${prestamo.id_Reserva} a ${prestamo.nombre}?`)) return;
+
+    this.entregando = prestamo.id_Reserva;
+    this.cdr.detectChanges();
+
+    this.prestamosService.entregarPrestamo(prestamo.id_Reserva).subscribe({
+      next: () => {
+        this.entregando = null;
+        this.cargarDatos();
+      },
+      error: (error) => {
+        this.entregando = null;
+        this.cdr.detectChanges();
+        alert(error.error?.mensaje || 'No se pudo entregar el préstamo.');
+      }
+    });
   }
 
   cerrarModal(): void {
@@ -116,7 +132,7 @@ export class ListaPrestamosActivosComponent extends PaginationHelper implements 
   }
 
   trackByIdReserva(index: number, prestamo: PrestamoActivo): number {
-    return prestamo.id_reserva;
+    return prestamo.id_Reserva;
   }
 
   trackByEstadoElemento(index: number, estado: any): number {

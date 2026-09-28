@@ -1,0 +1,20 @@
+@import '../../../styles/modules-forms.css';
+
+.modulo-form-card {
+  max-width: 900px;
+}
+
+.mensaje-error {
+  color: #dc3545;
+  font-size: 13px;
+  margin: 0;
+}
+
+.mensaje-hint {
+  color: #856404;
+  background: #fff3cd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin: 0;
+}

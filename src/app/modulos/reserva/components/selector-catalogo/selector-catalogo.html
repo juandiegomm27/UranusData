@@ -1,0 +1,86 @@
+<div class="selector-catalogo">
+  <div class="selector-buscador">
+    <input
+      type="text"
+      placeholder="Buscar equipo o accesorio..."
+      [(ngModel)]="busqueda"
+      (keyup.enter)="buscar()">
+    <select [(ngModel)]="tipoSeleccionado" (change)="buscar()">
+      <option value="">Todos los tipos</option>
+      @for (tipo of tipos(); track tipo.cod_tipo_elemento) {
+        <option [value]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option>
+      }
+    </select>
+    <button type="button" class="btn-buscar" (click)="buscar()">Buscar</button>
+  </div>
+
+  @if (seleccionados().length > 0) {
+    <div class="seleccionados-panel">
+      <h4>Elementos seleccionados</h4>
+      @for (item of seleccionados(); track item) {
+        <div class="seleccionado-fila">
+          <span class="seleccionado-nombre">{{ item.nombre }}</span>
+          <input
+            type="number"
+            class="seleccionado-cantidad"
+            [ngModel]="item.cantidad"
+            (ngModelChange)="actualizarCantidad(item, $event)"
+            [min]="1"
+            [max]="item.maxCantidad">
+          <span class="seleccionado-max">/ {{ item.maxCantidad }} disp.</span>
+          <button type="button" class="btn-quitar" (click)="quitarSeleccionado(item)">✕</button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando catálogo disponible...</p>
+  } @else {
+    <div class="catalogo-columnas">
+      <div class="catalogo-columna">
+        <h4>Equipos disponibles</h4>
+        @if (elementos().length === 0) {
+          <p class="sin-datos">No hay equipos disponibles por ahora.</p>
+        }
+        @for (elemento of elementos(); track elemento.id_elemento) {
+          <div class="catalogo-item" [class.catalogo-item-seleccionado]="estaSeleccionadoElemento(elemento.id_elemento)">
+            <div class="catalogo-item-info">
+              <strong>{{ elemento.nombre_elemento }}</strong>
+              <span>{{ elemento.tipo?.tipo }} · {{ elemento.ubicacion?.ubicacion }}</span>
+            </div>
+            <button
+              type="button"
+              class="btn-agregar"
+              [disabled]="estaSeleccionadoElemento(elemento.id_elemento)"
+              (click)="agregarElemento(elemento)">
+              {{ estaSeleccionadoElemento(elemento.id_elemento) ? 'Agregado' : '+ Agregar' }}
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="catalogo-columna">
+        <h4>Accesorios disponibles</h4>
+        @if (accesorios().length === 0) {
+          <p class="sin-datos">No hay accesorios disponibles por ahora.</p>
+        }
+        @for (accesorio of accesorios(); track accesorio.id_stock) {
+          <div class="catalogo-item" [class.catalogo-item-seleccionado]="estaSeleccionadoAccesorio(accesorio.id_stock)">
+            <div class="catalogo-item-info">
+              <strong>{{ accesorio.accesorio?.nombre }}</strong>
+              <span>{{ accesorio.ubicacion?.ubicacion }} · {{ accesorio.cantidad_disponible }} disp.</span>
+            </div>
+            <button
+              type="button"
+              class="btn-agregar"
+              [disabled]="estaSeleccionadoAccesorio(accesorio.id_stock)"
+              (click)="agregarAccesorio(accesorio)">
+              {{ estaSeleccionadoAccesorio(accesorio.id_stock) ? 'Agregado' : '+ Agregar' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

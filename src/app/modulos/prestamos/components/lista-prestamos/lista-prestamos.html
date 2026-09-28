@@ -22,9 +22,9 @@
           </tr>
         </thead>
         <tbody>
-          @for (prestamo of prestamos; track prestamo.id_reserva) {
+          @for (prestamo of prestamos; track prestamo.id_Reserva) {
             <tr>
-              <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+              <td><strong>#{{ prestamo.id_Reserva }}</strong></td>
               <td>{{ prestamo.nombre }} ({{ prestamo.documento }})</td>
               <td>{{ prestamo.elemento }}</td>
               <td>{{ prestamo.cantidad }}</td>
