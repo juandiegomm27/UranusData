@@ -1,36 +1,29 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema (Agregamos 'dos2unix' para evitar errores de saltos de línea de Windows)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    mysql-client \
-    vim \
+    zip \
     unzip \
+    dos2unix \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
 # Instalar Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copiar proyecto
-COPY . .
-
-# Instalar dependencias de PHP
-RUN composer install --no-dev --optimize-autoloader
-
-# Permisos
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
-
-# Exponer puerto
+# Exponer puerto para artisan serve
 EXPOSE 8000
 
-# Comando por defecto
-CMD ["php", "artisan", "serve", "--host=0.0.0.0"]
+# Copiar el script de entrypoint, corregir saltos de línea y darle permisos de ejecución
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
+
+# El comando por defecto ahora es el script, no el php artisan serve directo
+CMD ["/usr/local/bin/entrypoint.sh"]
