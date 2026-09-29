@@ -1,40 +1,42 @@
 <div class="contacto-dashboard-container">
   <div class="contacto-header">
     <h1 class="contacto-titulo">Soporte y Contacto</h1>
-    <p class="contacto-subtitulo">¿Necesitas ayuda con el sistema, inventario o reservas? Envíanos tu consulta y nuestro equipo técnico lo revisará.</p>
+    <p class="contacto-subtitulo">¿Necesitas ayuda con el sistema, inventario o reservas? Envíanos tu consulta y nuestro
+      equipo técnico lo revisará.</p>
   </div>
 
   <div class="contacto-card">
     @if (mensaje) {
-      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
-        <span class="icono-alerta">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
-        <span>{{ mensaje }}</span>
-      </div>
+    <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
+      <span class="icono-alerta">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span>{{ mensaje }}</span>
+    </div>
     }
+
+
+    <div class="grupo-campo">
+      <label class="form-label" for="motivo">Motivo del contacto</label>
+      <select id="motivo" class="form-input" [(ngModel)]="motivo" name="motivo" [disabled]="enviando">
+        <option value="" disabled selected>Selecciona un motivo...</option>
+        <option value="Reporte de Bug">Reporte de Bug / Falla del sistema</option>
+        <option value="Reporte de Incidente">Reporte de Incidente (Daños/Pérdidas)</option>
+        <option value="Consulta General">Consulta General</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
 
     <form class="contacto-form">
       <div class="grupo-campo">
         <label class="form-label" for="asunto">Asunto del reporte</label>
-        <input
-          type="text"
-          id="asunto"
-          class="form-input"
-          placeholder="Ej. Problema con una reserva o equipo dañado"
-          [(ngModel)]="asunto"
-          name="asunto"
-          [disabled]="enviando">
+        <input type="text" id="asunto" class="form-input" placeholder="Ej. Problema con una reserva o equipo dañado"
+          [(ngModel)]="asunto" name="asunto" [disabled]="enviando">
       </div>
 
       <div class="grupo-campo">
         <label class="form-label" for="descripcion">Descripción detallada</label>
-        <textarea
-          id="descripcion"
-          rows="6"
-          class="form-input"
-          placeholder="Describe tu problema con el mayor detalle posible..."
-          [(ngModel)]="descripcion"
-          name="descripcion"
-          [disabled]="enviando"></textarea>
+        <textarea id="descripcion" rows="6" class="form-input"
+          placeholder="Describe tu problema con el mayor detalle posible..." [(ngModel)]="descripcion"
+          name="descripcion" [disabled]="enviando"></textarea>
       </div>
 
       <div class="form-actions">

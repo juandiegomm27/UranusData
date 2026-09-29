@@ -10,7 +10,7 @@ use App\Http\Controllers\ReservaUsuarioController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\MantenimientoController;
-use App\Http\Controllers\RecuperarContrasenadController;
+use App\Http\Controllers\RecuperarContrasenaController;
 use App\Http\Controllers\TipoElementoController;
 use App\Http\Controllers\InventarioAccesorioController;
 use App\Http\Controllers\HistorialBajasController;
@@ -23,9 +23,9 @@ use App\Http\Controllers\ConfiguracionUsuarioController;
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/activar/validar', [AuthController::class, 'validarActivacion']);
 Route::post('/activar/cuenta', [AuthController::class, 'activarCuenta']);
-Route::post('/recuperar-contrasena/solicitar', [RecuperarContrasenadController::class, 'solicitarRecuperacion'])->middleware('throttle:5,1');
-Route::get('/recuperar-contrasena/verificar/{token}', [RecuperarContrasenadController::class, 'verificarToken'])->middleware('throttle:10,1');
-Route::post('/recuperar-contrasena/confirmar', [RecuperarContrasenadController::class, 'confirmarRecuperacion'])->middleware('throttle:5,1');
+Route::post('/recuperar-contrasena/solicitar', [RecuperarContrasenaController::class, 'solicitarRecuperacion'])->middleware('throttle:5,1');
+Route::get('/recuperar-contrasena/verificar/{token}', [RecuperarContrasenaController::class, 'verificarToken'])->middleware('throttle:10,1');
+Route::post('/recuperar-contrasena/confirmar', [RecuperarContrasenaController::class, 'confirmarRecuperacion'])->middleware('throttle:5,1');
 
 
 // Rutas protegidas por Sanctum

@@ -70,7 +70,7 @@ docker-compose exec app php artisan migrate
 | GET | `/api/perfil/{doc}` | Obtener perfil |
 | PUT | `/api/perfil/{doc}` | Actualizar perfil |
 
-**[Ver documentación completa →](./API_DOCUMENTATION.md)**
+**[Ver documentación completa →](./DOCUMENTATION.md)**
 
 ---
 
