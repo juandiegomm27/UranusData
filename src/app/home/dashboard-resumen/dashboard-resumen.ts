@@ -153,7 +153,7 @@ export class DashboardResumen implements OnInit {
   obtenerClaseEstadoElemento(estado: string): string {
     const estadoNorm = (estado || '').toLowerCase();
     if (estadoNorm.includes('activo') && !estadoNorm.includes('inactivo')) return 'estado-activo';
-    if (estadoNorm.includes('inactivo')) return 'estado-inactivo';
+    if (estadoNorm.includes('préstamo') || estadoNorm.includes('prestamo')) return 'estado-devuelto';
     if (estadoNorm.includes('baja') || estadoNorm.includes('dañado') || estadoNorm.includes('danado')) return 'estado-danado';
     if (estadoNorm.includes('mantenimiento') || estadoNorm.includes('pendiente')) return 'estado-pendiente';
     return 'estado-inactivo';

@@ -1,0 +1,35 @@
+<div class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+
+    <div class="modal-header header-baja">
+      <h2>Dar de Baja: {{ accesorio?.nombre }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje"><span>{{ mensaje }}</span></div>
+      }
+
+      <div class="info-stock-baja">
+        <span>Ubicación: <strong>{{ stock?.ubicacion?.ubicacion }}</strong></span><br>
+        <span>Unidades disponibles para retirar: <strong>{{ stock?.cantidad_disponible }}</strong></span>
+      </div>
+
+      <div class="grupo-campo">
+        <label>Cantidad a dar de baja *</label>
+        <input type="number" min="1" [max]="stock?.cantidad_disponible" [(ngModel)]="cantidad" [disabled]="procesando">
+      </div>
+
+      <div class="grupo-campo">
+        <label>Motivo de la baja *</label>
+        <textarea [(ngModel)]="motivo" placeholder="Especifique el motivo de la baja del accesorio..." [disabled]="procesando"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-danger" [disabled]="procesando" (click)="confirmar()">{{ procesando ? 'Procesando...' : 'Confirmar Baja' }}</button>
+      <button class="btn-modal-secondary" [disabled]="procesando" (click)="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

@@ -16,14 +16,20 @@ mkdir -p storage/framework/cache
 mkdir -p storage/framework/sessions
 chmod -R 777 bootstrap/cache storage
 
-# 3. Generar la llave (solo si no se ha generado antes)
+# 3. Instalar dependencias si el volumen de vendor está vacío
+if [ ! -f "vendor/autoload.php" ]; then
+    echo "✅ Instalando dependencias de Composer (solo la primera vez)..."
+    composer install --no-interaction --prefer-dist
+fi
+
+# 4. Generar la llave (solo si no se ha generado antes)
 echo "✅ Generando APP_KEY..."
 php artisan key:generate --no-interaction
 
-# 4. Ejecutar migraciones automáticamente
+# 5. Ejecutar migraciones automáticamente
 echo "✅ Ejecutando migraciones de la base de datos..."
 php artisan migrate:fresh --seed --force
 
 echo "✅ Todo listo. Encendiendo servidor..."
-# 5. Arrancar el servidor de Laravel
+# 6. Arrancar el servidor de Laravel
 exec php artisan serve --host=0.0.0.0 --port=8000

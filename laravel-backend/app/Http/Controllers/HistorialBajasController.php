@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\HistorialBajaGeneral;
 use App\Models\Inventario;
 use App\Models\InventarioAccesorio;
-use App\Models\StockAccesorio; // <--- Importación clave añadida
+use App\Models\StockAccesorio;
 use Illuminate\Support\Facades\DB;
 
 class HistorialBajasController extends Controller
@@ -133,47 +133,61 @@ class HistorialBajasController extends Controller
     /**
      * Dar de baja un Activo Fijo (Equipo único).
      */
-    public function darDeBajaActivo($id, Request $request)
+        public function darDeBajaActivo($id, Request $request)
     {
         $request->validate([
             'motivo' => 'nullable|string'
         ]);
 
-        DB::beginTransaction();
+        $activo = Inventario::with(['ubicacion', 'tipo'])->find($id);
+
+        if (!$activo) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Activo no encontrado.'
+            ], 404);
+        }
+
+        if ($activo->cod_estado_elemento == Inventario::ESTADO_BAJA) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Este activo ya se encuentra dado de baja.'
+            ], 422);
+        }
+
+        if ($activo->cod_estado_elemento == Inventario::ESTADO_EN_PRESTAMO) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No puedes dar de baja un activo que está en préstamo. Registra primero su devolución.'
+            ], 422);
+        }
+
         try {
-            $activo = Inventario::with(['ubicacion', 'tipo'])->findOrFail($id);
+            DB::transaction(function () use ($activo, $request) {
+                HistorialBajaGeneral::create([
+                    'tipo_item' => 'activo',
+                    'id_original' => $activo->id_elemento,
+                    'nombre' => $activo->nombre_elemento,
+                    'codigo_identificacion' => $activo->cod_elemento ?? ('EQ-' . $activo->id_elemento),
+                    'modelo' => $activo->modelo,
+                    'descripcion' => $activo->descripcion,
+                    'cantidad' => 1,
+                    'cod_tipo_elemento' => $activo->cod_tipo_elemento,
+                    'cod_ubi_elemento' => $activo->cod_ubi_elemento,
+                    'ubicacion' => $activo->ubicacion ? $activo->ubicacion->ubicacion : 'N/A',
+                    'motivo' => $request->input('motivo', 'Baja de activo fijo')
+                ]);
+                
+                $activo->motivoMovimiento = $request->input('motivo');
+                $activo->cod_estado_elemento = Inventario::ESTADO_BAJA;
+                $activo->save();
+            });
 
-            if ($activo->cod_estado_elemento == 2) {
-                return response()->json([
-                    'success' => false,
-                    'mensaje' => 'Este activo ya se encuentra dado de baja.'
-                ], 422);
-            }
-
-            HistorialBajaGeneral::create([
-                'tipo_item' => 'activo',
-                'id_original' => $activo->id_elemento,
-                'nombre' => $activo->nombre_elemento,
-                'codigo_identificacion' => $activo->cod_elemento ?? ('EQ-' . $activo->id_elemento),
-                'modelo' => $activo->modelo,
-                'descripcion' => $activo->descripcion,
-                'cantidad' => 1,
-                'cod_tipo_elemento' => $activo->cod_tipo_elemento,
-                'cod_ubi_elemento' => $activo->cod_ubi_elemento,
-                'ubicacion' => $activo->ubicacion ? $activo->ubicacion->ubicacion : 'N/A',
-                'motivo' => $request->input('motivo', 'Baja de activo fijo')
-            ]);
-
-            $activo->cod_estado_elemento = 2; // Estado Dado de Baja
-            $activo->save();
-
-            DB::commit();
             return response()->json([
                 'success' => true,
                 'mensaje' => 'Activo fijo dado de baja correctamente.'
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'mensaje' => 'Error al procesar la baja del activo: ' . $e->getMessage()

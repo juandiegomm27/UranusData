@@ -1,0 +1,43 @@
+@if (elemento) {
+<div class="modal-overlay overlay-superior" (click)="cerrarModal()">
+  <div class="modal-contenido modal-ancho" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>Movimientos: {{ elemento.nombre_elemento }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (cargando) {
+      <div class="cargando">Cargando movimientos...</div>
+      } @else if (movimientos.length === 0) {
+      <div class="sin-datos">Este elemento aún no tiene movimientos registrados</div>
+      } @else {
+      <div class="lista-movimientos">
+        @for (m of movimientos; track m.id_movimiento) {
+        <div class="movimiento-item">
+          <span class="estado-badge" [ngClass]="claseTipo(m.tipo)">{{ etiquetaTipo(m.tipo) }}</span>
+          <div class="movimiento-detalle">
+            <p class="movimiento-texto">{{ m.descripcion }}</p>
+            <small class="movimiento-meta">{{ m.usuario || 'Sistema' }} · {{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+        </div>
+        }
+      </div>
+
+      @if (totalPaginas > 1) {
+      <div class="paginacion">
+        <button class="btn-paginacion" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+        <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalElementos }} movimientos)</span>
+        <button class="btn-paginacion" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+      </div>
+      }
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+}

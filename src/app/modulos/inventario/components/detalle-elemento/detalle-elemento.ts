@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
 import { HistorialMantenimientoComponent } from '../historial-mantenimiento/historial-mantenimiento';
+import { claseEstadoElemento } from '../../inventario.constants';
+import { extraerMensajeError } from '../../../shared/utils/api-error.helper';
+import { SelectorPadreComponent } from '../selector-padre/selector-padre';
+import { HistorialMovimientosComponent } from '../historial-movimientos/historial-movimientos';
 
 @Component({
   selector: 'app-detalle-elemento',
   standalone: true,
-  imports: [CommonModule, FormsModule, HistorialMantenimientoComponent],
+  imports: [CommonModule, FormsModule, HistorialMantenimientoComponent, SelectorPadreComponent, HistorialMovimientosComponent],
   templateUrl: './detalle-elemento.html',
   styleUrls: ['./detalle-elemento.css']
 })
@@ -29,7 +33,7 @@ export class DetalleElementoComponent implements OnInit {
   mensaje = '';
   tipoMensaje: 'success' | 'error' = 'success';
   formulario: any = {};
-  
+
   mostrarModalUbicacion = false;
   nuevaUbicacionNombre = '';
   mostrarModalTipo = false;
@@ -37,6 +41,7 @@ export class DetalleElementoComponent implements OnInit {
   nuevoTipoNombre = '';
   tipoIdAEditar: number | null = null;
   mostrarHistorial = false;
+  mostrarMovimientos = false;
 
   ngOnInit(): void {}
 
@@ -52,32 +57,35 @@ export class DetalleElementoComponent implements OnInit {
 
   guardarCambios(): void {
     if (this.tipoTab === 'activos') {
-      if (!this.formulario.nombre_elemento || !this.formulario.cod_tipo_elemento || !this.formulario.cod_ubi_elemento || !this.formulario.cod_estado_elemento) {
+      if (!this.formulario.nombre_elemento || !this.formulario.cod_tipo_elemento || !this.formulario.cod_ubi_elemento) {
         this.mensaje = 'Por favor completa los campos obligatorios (*)';
         this.tipoMensaje = 'error';
         return;
       }
       this.cargando = true;
-      const seEnvioAMantenimiento = (this.formulario.cod_estado_elemento == 4 && this.elemento.cod_estado_elemento != 4);
-      
-      this.inventarioService.actualizarElemento(this.elemento.id_elemento, this.formulario).subscribe({
+
+      const datos = {
+        cod_elemento: this.formulario.cod_elemento || null,
+        nombre_elemento: this.formulario.nombre_elemento,
+        cod_tipo_elemento: this.formulario.cod_tipo_elemento,
+        cod_ubi_elemento: this.formulario.cod_ubi_elemento,
+        serial: this.formulario.serial || null,
+        modelo: this.formulario.modelo || null,
+        descripcion: this.formulario.descripcion || null,
+        id_elemento_padre: this.formulario.id_elemento_padre || null
+      };
+
+      this.inventarioService.actualizarElemento(this.elemento.id_elemento, datos).subscribe({
         next: (response: any) => {
           if (response.success !== false) {
-            if (seEnvioAMantenimiento) {
-              const datosAutomaticos = { cod_tipo_mantenimiento: 1, descripcion: 'Enviado a mantenimiento automáticamente por edición.' };
-              this.inventarioService.enviarMantenimiento(this.elemento.id_elemento, datosAutomaticos).subscribe({
-                next: () => this.finalizarGuardado('Elemento actualizado y enviado a mantenimiento.'),
-                error: () => this.finalizarGuardado('Elemento actualizado (Error al enviar a mantenimiento).')
-              });
-            } else {
-              this.finalizarGuardado('Elemento actualizado exitosamente');
-            }
+            this.finalizarGuardado('Elemento actualizado exitosamente');
           }
         },
-        error: () => {
-          this.mensaje = 'Error al actualizar el elemento';
+        error: (err: any) => {
+          this.mensaje = extraerMensajeError(err, 'Error al actualizar el elemento');
           this.tipoMensaje = 'error';
           this.cargando = false;
+          this.cdr.detectChanges();
         }
       });
     } else {
@@ -88,7 +96,7 @@ export class DetalleElementoComponent implements OnInit {
         return;
       }
       this.cargando = true;
-      
+
       const datosAccesorio = {
         nombre: this.formulario.nombre,
         cod_tipo_elemento: this.formulario.cod_tipo_elemento || null,
@@ -103,9 +111,10 @@ export class DetalleElementoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Error al actualizar accesorio:', err);
-          this.mensaje = err.error?.mensaje || 'Error al actualizar el accesorio';
+          this.mensaje = extraerMensajeError(err, 'Error al actualizar el accesorio');
           this.tipoMensaje = 'error';
           this.cargando = false;
+          this.cdr.detectChanges();
         }
       });
     }
@@ -116,6 +125,7 @@ export class DetalleElementoComponent implements OnInit {
     this.tipoMensaje = 'success';
     this.actualizado.emit();
     this.cargando = false;
+    this.cdr.detectChanges();
     setTimeout(() => this.cerrarModal(), 1500);
   }
 
@@ -127,7 +137,7 @@ export class DetalleElementoComponent implements OnInit {
       next: (res: any) => {
         this.formulario.cod_ubi_elemento = res?.ubicacion?.cod_ubi_elemento || res?.id;
         this.cerrarModalUbicacion();
-        this.actualizado.emit(); 
+        this.actualizado.emit();
       }
     });
   }
@@ -137,7 +147,7 @@ export class DetalleElementoComponent implements OnInit {
       next: () => { this.formulario.cod_ubi_elemento = ''; this.actualizado.emit(); }
     });
   }
-  
+
   abrirModalTipo(editar = false): void {
     this.editandoTipo = editar;
     if (editar) {
@@ -175,8 +185,11 @@ export class DetalleElementoComponent implements OnInit {
   cerrarHistorial(): void { this.mostrarHistorial = false; this.cdr.detectChanges(); }
   cerrarModal(): void { this.cerrar.emit(); }
   
+  abrirMovimientos(): void { this.mostrarMovimientos = true; this.cdr.detectChanges(); }
+  cerrarMovimientos(): void { this.mostrarMovimientos = false; this.cdr.detectChanges(); }
+
   obtenerNombreTipo(cod: any): string { return this.tipos.find(t => t.cod_tipo_elemento == cod)?.tipo || 'N/A'; }
   obtenerNombreEstado(cod: any): string { return this.estados.find(e => e.cod_estado_elemento == cod)?.estado || 'N/A'; }
-  obtenerClaseEstado(cod: any): string { return ({ 1: 'estado-activo', 2: 'estado-inactivo', 3: 'estado-danado', 4: 'estado-pendiente' } as Record<number, string>)[cod] || 'estado-inactivo'; }
+  obtenerClaseEstado(cod: any): string { return claseEstadoElemento(cod); }
   obtenerNombreUbicacion(cod: any): string { return this.ubicaciones.find(u => u.cod_ubi_elemento == cod)?.ubicacion || 'N/A'; }
 }

@@ -13,12 +13,13 @@ export class InventarioService {
   constructor(private http: HttpClient) {}
 
   // --- ACTIVOS FIJOS ---
-  obtenerElementos(pagina: number = 1, perPage: number = 10, search: string = '', tipo: string = '', estado: string = '', ubicacion: string = ''): Observable<any> {
+  obtenerElementos(pagina: number = 1, perPage: number = 10, search: string = '', tipo: string = '', estado: string = '', ubicacion: string = '', soloPrincipales: boolean = false): Observable<any> {
     let params = new HttpParams().set('page', pagina.toString()).set('per_page', perPage.toString());
     if (search) params = params.set('search', search);
     if (tipo) params = params.set('tipo', tipo);
     if (estado) params = params.set('estado', estado);
     if (ubicacion) params = params.set('ubicacion', ubicacion);
+    if (soloPrincipales) params = params.set('principales', '1');
     return this.http.get<any>(this.apiUrl, { params });
   }
 
@@ -44,6 +45,11 @@ export class InventarioService {
 
   obtenerHistorialMantenimiento(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}/historial`);
+  }
+
+  obtenerMovimientos(id: number, pagina: number = 1, perPage: number = 10): Observable<any> {
+    const params = new HttpParams().set('page', pagina.toString()).set('per_page', perPage.toString());
+    return this.http.get<any>(`${this.apiUrl}/${id}/movimientos`, { params });
   }
 
   enviarMantenimiento(id: number, datos: any): Observable<any> {

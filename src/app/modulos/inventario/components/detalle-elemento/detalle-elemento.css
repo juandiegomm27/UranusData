@@ -1,5 +1,6 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-forms.css';
+@import '../../../styles/modules-badges.css';
 
 /* Nuevas clases extraídas del HTML */
 .btn-modal-info {

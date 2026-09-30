@@ -1,0 +1,42 @@
+<div class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+
+    <div class="modal-header header-traslado">
+      <h2>Trasladar Stock: {{ accesorio?.nombre }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje"><span>{{ mensaje }}</span></div>
+      }
+
+      <div class="info-stock-traslado">
+        <span>Origen actual: <strong>{{ stock?.ubicacion?.ubicacion }}</strong></span><br>
+        <span>Disponible para trasladar: <strong>{{ stock?.cantidad_disponible }}</strong></span>
+      </div>
+
+      <div class="grupo-campo">
+        <label>Cantidad a trasladar *</label>
+        <input type="number" min="1" [max]="stock?.cantidad_disponible" [(ngModel)]="cantidad" [disabled]="procesando">
+      </div>
+
+      <div class="grupo-campo">
+        <label>Ubicación de destino *</label>
+        <select [(ngModel)]="ubicacionDestino" [disabled]="procesando">
+          <option value="">Seleccionar destino...</option>
+          @for (ub of ubicaciones; track ub.cod_ubi_elemento) {
+            @if (ub.cod_ubi_elemento != stock?.cod_ubi_elemento) {
+              <option [value]="ub.cod_ubi_elemento">{{ ub.ubicacion }}</option>
+            }
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-primary btn-modal-traslado" [disabled]="procesando" (click)="confirmar()">{{ procesando ? 'Procesando...' : 'Confirmar Traslado' }}</button>
+      <button class="btn-modal-secondary" [disabled]="procesando" (click)="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

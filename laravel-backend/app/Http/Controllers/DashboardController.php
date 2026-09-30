@@ -19,20 +19,21 @@ class DashboardController extends Controller
     public function resumen()
     {
         try {
-            // 1. Totales Inventario
-            $totalElementos = Inventario::count();
-            $totalActivos = Inventario::where('cod_estado_elemento', 1)->count();
+            // 1. Totales Inventario (las bajas no cuentan como parte del inventario)
+            $totalElementos = Inventario::visibles()->count();
+            $totalActivos = Inventario::where('cod_estado_elemento', Inventario::ESTADO_ACTIVO)->count();
 
             // 2. Gráfica de Dona (Distribución por tipo de equipo)
             $distribucionTipo = DB::table('inventario')
                 ->join('tipo_elemento', 'inventario.cod_tipo_elemento', '=', 'tipo_elemento.cod_tipo_elemento')
                 ->select('tipo_elemento.tipo as name', DB::raw('count(*) as value'))
-                ->where('inventario.cod_estado_elemento', '!=', 2) // Ignora equipos dados de baja
+                ->where('inventario.cod_estado_elemento', '!=', Inventario::ESTADO_BAJA)
                 ->groupBy('tipo_elemento.tipo')
                 ->get();
 
             // 3. Tabla Inventario (8 más recientes)
-            $inventarioTabla = Inventario::with(['tipo', 'ubicacion', 'estado'])
+            $inventarioTabla = Inventario::visibles()
+                ->with(['tipo', 'ubicacion', 'estado'])
                 ->orderBy('id_elemento', 'desc')
                 ->limit(8)
                 ->get();

@@ -119,8 +119,8 @@ public function completarMantenimiento(Request $request, $id)
                     $elemento->update(['cod_estado_elemento' => 1]); 
                 } 
                 elseif ($request->cod_estado_mantenimiento == 4) {
-                    // Dado de Baja -> Pasa a estado Inactivo/Baja (2)
-                    $elemento->update(['cod_estado_elemento' => 2]); 
+                    // Dado de Baja -> estado Baja (4)
+                    $elemento->update(['cod_estado_elemento' => Inventario::ESTADO_BAJA]); 
 
                     // Inserción en el Historial General Unificado SIN el prefijo quemado
                     \App\Models\HistorialBajaGeneral::create([
@@ -176,8 +176,8 @@ public function completarMantenimiento(Request $request, $id)
                 $elemento->save();
             } 
             elseif ($request->cod_estado_mantenimiento == 4) {
-                // Pasamos el equipo físico a Dado de Baja (código 2)
-                $elemento->cod_estado_elemento = 2; 
+                // Pasamos el equipo físico a Baja (código 4)
+                $elemento->cod_estado_elemento = Inventario::ESTADO_BAJA; 
                 $elemento->save();
 
                 // INSERCIÓN EXACTA A LA TABLA GENERAL DE BAJAS

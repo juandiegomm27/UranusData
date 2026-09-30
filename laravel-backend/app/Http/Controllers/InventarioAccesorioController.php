@@ -11,14 +11,29 @@ class InventarioAccesorioController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $query = InventarioAccesorio::with(['tipo', 'stocks.ubicacion']);
+        $perPage = min((int) $request->input('per_page', 10), 100);
+
+        $query = InventarioAccesorio::with([
+            'tipo',
+            'stocks' => function ($q) use ($request) {
+                if ($request->filled('ubicacion')) {
+                    $q->where('cod_ubi_elemento', $request->ubicacion);
+                }
+            },
+            'stocks.ubicacion',
+        ]);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
-            $query->where('nombre', 'like', $searchTerm)
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nombre', 'like', $searchTerm)
                   ->orWhere('modelo', 'like', $searchTerm)
                   ->orWhere('descripcion', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('tipo')) {
+            $query->where('cod_tipo_elemento', $request->tipo);
         }
 
         if ($request->filled('ubicacion')) {

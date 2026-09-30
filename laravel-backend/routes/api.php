@@ -95,6 +95,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/inventario/{id}/mantenimiento', [InventarioController::class, 'enviarMantenimiento']);
         Route::get('/inventario/{id}/historial', [App\Http\Controllers\InventarioController::class, 'historial']);
+        Route::get('/inventario/{id}/movimientos', [InventarioController::class, 'movimientos']);
         Route::post('/ubicaciones', [UbiElementoController::class, 'store']);
         
         Route::post('/tipos-elemento', [TipoElementoController::class, 'store']);
@@ -102,7 +103,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/tipos-elemento/{id}', [TipoElementoController::class, 'destroy']);
         
         // El apiResource siempre debe ir debajo de las rutas fijas/personalizadas
-        Route::apiResource('inventario', InventarioController::class);
+        Route::apiResource('inventario', InventarioController::class)->except(['destroy']);
     });
 
     // MANTENIMIENTO (Gerente/Técnico)

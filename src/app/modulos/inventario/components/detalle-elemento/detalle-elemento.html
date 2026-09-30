@@ -36,8 +36,28 @@
           </div>
           <div class="campo-info"><label>Serial:</label><span>{{ elemento.serial || 'N/A' }}</span></div>
           <div class="campo-info"><label>Modelo:</label><span>{{ elemento.modelo || 'N/A' }}</span></div>
-          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
-              descripción' }}</span></div>
+          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin descripción' }}</span></div>
+            
+          <div class="campo-info campo-completo">
+            <label>Pertenece a:</label>
+            <span>
+              @if (elemento.padre) {
+                {{ elemento.padre.cod_elemento || ('#' + elemento.padre.id_elemento) }} · {{ elemento.padre.nombre_elemento }}
+              } @else {
+                Elemento principal (no es componente de otro)
+              }
+            </span>
+          </div>
+          @if (elemento.hijos?.length) {
+          <div class="campo-info campo-completo">
+            <label>Componentes ({{ elemento.hijos.length }}):</label>
+            <span>
+              @for (h of elemento.hijos; track h.id_elemento) {
+                {{ h.cod_elemento || ('#' + h.id_elemento) }} · {{ h.nombre_elemento }}<br>
+              }
+            </span>
+          </div>
+          }
           } @else {
           <div class="campo-info"><label>ID:</label><span>{{ elemento.id_accesorio }}</span></div>
           <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre }}</span></div>
@@ -47,8 +67,7 @@
           <div class="campo-info"><label>Cant. Global Disp:</label><span class="fw-bold"
               [ngClass]="elemento.cantidad_disponible > 0 ? 'text-success' : 'text-danger'">{{
               elemento.cantidad_disponible }}</span></div>
-          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
-              descripción' }}</span></div>
+          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin descripción' }}</span></div>
           }
         </div>
       </div>
@@ -107,19 +126,29 @@
         </div>
         <div class="fila-formulario">
           <div class="grupo-campo">
-            <label>Estado *</label>
+            <label>Estado</label>
             <select [(ngModel)]="formulario.cod_estado_elemento" name="estado">
               @for (estado of estados; track estado.cod_estado_elemento) { <option [value]="estado.cod_estado_elemento">
                 {{ estado.estado }}</option> }
             </select>
           </div>
-          <div class="grupo-campo"><label>Serial</label><input type="text" [(ngModel)]="formulario.serial"
-              name="serial"></div>
+                  <div class="grupo-campo campo-completo">
+          <label>Pertenece a (elemento principal)</label>
+          @if (elemento.hijos?.length) {
+            <small style="color: #6c757d;">Este elemento tiene componentes, por eso no puede ser componente de otro.</small>
+          } @else {
+            <app-selector-padre
+              [padreInicial]="elemento.padre"
+              [excluirId]="elemento.id_elemento"
+              (cambio)="formulario.id_elemento_padre = $event">
+            </app-selector-padre>
+          }
         </div>
         <div class="fila-formulario">
-          <div class="grupo-campo"><label>Modelo</label><input type="text" [(ngModel)]="formulario.modelo"
-              name="modelo"></div>
+          <div class="grupo-campo"><label>Serial</label><input type="text" [(ngModel)]="formulario.serial" name="serial"></div>
+          <div class="grupo-campo"><label>Modelo</label><input type="text" [(ngModel)]="formulario.modelo" name="modelo"></div>
         </div>
+      </div>
 
         <!-- CORRECCIÓN: Agregado .grupo-campo para reparar el label y la alineación -->
         <div class="grupo-campo campo-completo">
@@ -169,7 +198,10 @@
       <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">Cancelar</button>
       } @else {
       <button class="btn-modal-primary" (click)="abrirEdicion()">Editar</button>
-      @if (tipoTab === 'activos') { <button class="btn-modal-info" (click)="abrirHistorial()">Ver Historial</button> }
+      @if (tipoTab === 'activos') {
+        <button class="btn-modal-info" (click)="abrirHistorial()">Mantenimientos</button>
+        <button class="btn-modal-info" (click)="abrirMovimientos()">Movimientos</button>
+      }
       <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
       }
     </div>
@@ -213,4 +245,8 @@
 @if (mostrarHistorial && tipoTab === 'activos') {
 <app-historial-mantenimiento [mostrar]="mostrarHistorial" [elemento]="elemento"
   (cerrar)="cerrarHistorial()"></app-historial-mantenimiento>
+}
+
+@if (mostrarMovimientos && tipoTab === 'activos') {
+<app-historial-movimientos [elemento]="elemento" (cerrar)="cerrarMovimientos()"></app-historial-movimientos>
 }}

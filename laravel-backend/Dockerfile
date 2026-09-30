@@ -11,7 +11,16 @@ RUN apt-get update && apt-get install -y \
     unzip \
     dos2unix \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql opcache
+
+# OPcache: evita recompilar Laravel en cada petición (los cambios de código se ven en ~2 s)
+RUN { \
+    echo 'opcache.enable=1'; \
+    echo 'opcache.memory_consumption=192'; \
+    echo 'opcache.max_accelerated_files=20000'; \
+    echo 'opcache.validate_timestamps=1'; \
+    echo 'opcache.revalidate_freq=2'; \
+} > /usr/local/etc/php/conf.d/opcache.ini
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

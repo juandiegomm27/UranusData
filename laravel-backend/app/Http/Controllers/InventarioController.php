@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventario;
+use App\Models\InventarioMovimiento;
 use App\Models\TipoElemento;
 use App\Models\UbiElemento;
 use App\Models\EstadoElemento;
@@ -13,14 +14,23 @@ use Illuminate\Support\Facades\DB;
 
 class InventarioController extends Controller
 {
+    private const MENSAJES_VALIDACION = [
+        'serial.unique' => 'Ya existe un elemento con ese serial.',
+        'cod_elemento.unique' => 'Ya existe un elemento con ese código.',
+        'id_elemento_padre.exists' => 'El elemento principal seleccionado no existe.',
+    ];
+
     public function index(Request $request)
     {
-        $query = Inventario::where('cod_estado_elemento', '!=', 2);
+        $query = Inventario::visibles()
+            ->with('padre:id_elemento,cod_elemento,nombre_elemento')
+            ->withCount(['hijos' => fn ($q) => $q->visibles()]);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('nombre_elemento', 'like', $searchTerm)
+                  ->orWhere('cod_elemento', 'like', $searchTerm)
                   ->orWhere('serial', 'like', $searchTerm)
                   ->orWhere('modelo', 'like', $searchTerm);
             });
@@ -34,8 +44,12 @@ class InventarioController extends Controller
         if ($request->filled('ubicacion')) {
             $query->where('cod_ubi_elemento', $request->ubicacion);
         }
-        
-        $perPage = $request->input('per_page', 10);
+        // Solo elementos principales (que no son componente de otro): para elegir un padre
+        if ($request->boolean('principales')) {
+            $query->whereNull('id_elemento_padre');
+        }
+
+        $perPage = min((int) $request->input('per_page', 10), 100);
         $elementos = $query->paginate($perPage);
 
         return response()->json([
@@ -48,7 +62,16 @@ class InventarioController extends Controller
 
     public function show($id)
     {
-        $elemento = Inventario::with(['tipo', 'ubicacion', 'estado', 'mantenimiento.tipo'])->find($id);
+        $elemento = Inventario::with([
+            'tipo',
+            'ubicacion',
+            'estado',
+            'mantenimiento.tipo',
+            'padre:id_elemento,cod_elemento,nombre_elemento',
+            'hijos' => fn ($q) => $q->visibles()->select(
+                'id_elemento', 'id_elemento_padre', 'cod_elemento', 'nombre_elemento', 'serial'
+            ),
+        ])->find($id);
 
         if (!$elemento) {
             return response()->json([
@@ -63,30 +86,26 @@ class InventarioController extends Controller
         ]);
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'cod_elemento' => 'nullable|string|max:50|unique:inventario,cod_elemento',
-            'nombre_elemento' => 'required|string|max:255',
+            'cod_elemento' => 'nullable|string|max:45|unique:inventario,cod_elemento',
+            'nombre_elemento' => 'required|string|max:100',
             'cod_tipo_elemento' => 'required|exists:tipo_elemento,cod_tipo_elemento',
             'cod_ubi_elemento' => 'required|exists:ubi_elemento,cod_ubi_elemento',
-            'cod_estado_elemento' => 'nullable|exists:estado_elemento,cod_estado_elemento',
             'serial' => 'nullable|string|max:100|unique:inventario,serial',
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
-            'cantidad' => 'nullable|integer|min:1'
-        ]);
+            'id_elemento_padre' => ['nullable', 'integer', 'exists:inventario,id_elemento', $this->reglaPadre(null)]
+        ], self::MENSAJES_VALIDACION);
 
-        if (!isset($validated['cod_estado_elemento'])) {
-            $validated['cod_estado_elemento'] = 1; 
-        }
+        // Un elemento nuevo siempre nace disponible; los demás estados se alcanzan por su flujo
+        $validated['cod_estado_elemento'] = Inventario::ESTADO_ACTIVO;
 
         $elemento = Inventario::create($validated);
 
         if (empty($elemento->cod_elemento)) {
-            $prefijo = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $elemento->nombre_elemento), 0, 3));
-            $numero = str_pad($elemento->id_elemento, 3, '0', STR_PAD_LEFT);
-            $elemento->update(['cod_elemento' => $prefijo . '-' . $numero]);
+            $elemento->update(['cod_elemento' => $this->generarCodigo($elemento)]);
         }
 
         return response()->json([
@@ -107,17 +126,17 @@ public function store(Request $request)
             ], 404);
         }
 
+        // El estado NO se edita aquí: cambia solo por préstamo, mantenimiento o baja
         $validated = $request->validate([
-            'nombre_elemento' => 'string|max:255',
+            'nombre_elemento' => 'string|max:100',
             'cod_tipo_elemento' => 'exists:tipo_elemento,cod_tipo_elemento',
             'cod_ubi_elemento' => 'exists:ubi_elemento,cod_ubi_elemento',
-            'cod_estado_elemento' => 'exists:estado_elemento,cod_estado_elemento',
-            'cod_elemento' => 'nullable|string|max:50|unique:inventario,cod_elemento,' . $id . ',id_elemento',
+            'cod_elemento' => 'nullable|string|max:45|unique:inventario,cod_elemento,' . $id . ',id_elemento',
             'serial' => 'nullable|string|max:100|unique:inventario,serial,' . $id . ',id_elemento',
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
-            'cantidad' => 'nullable|integer|min:1'
-        ]);
+            'id_elemento_padre' => ['nullable', 'integer', 'exists:inventario,id_elemento', $this->reglaPadre($elemento)]
+        ], self::MENSAJES_VALIDACION);
 
         $elemento->update($validated);
 
@@ -128,24 +147,6 @@ public function store(Request $request)
         ]);
     }
 
-    public function darDeBaja($id)
-    {
-        $elemento = Inventario::find($id);
-    
-        if (!$elemento) {
-            return response()->json(['mensaje' => 'Elemento no encontrado'], 404); 
-        }
-    
-        $elemento->cod_estado_elemento = 3; 
-        $elemento->save();
-    
-        return response()->json([
-            'success' => true,
-            'data' => $elemento,
-            'mensaje' => 'Elemento dado de baja exitosamente'
-        ], 200);
-    }
-
     // OBTENER OPCIONES PARA FILTROS
     public function getOpciones()
     {
@@ -153,13 +154,14 @@ public function store(Request $request)
             'success' => true,
             'tipos' => TipoElemento::all(),
             'ubicaciones' => UbiElemento::all(),
-            'estados' => EstadoElemento::all(),
+            // "Baja" no es un filtro útil: esos elementos no se listan en el inventario
+            'estados' => EstadoElemento::where('cod_estado_elemento', '!=', Inventario::ESTADO_BAJA)->get(),
             'tipos_mantenimiento' => TipoMantenimiento::all()
         ]);
     }
 
-    // ENVIAR A MANTENIMIENTO (CORREGIDO PARA EVITAR EL ERROR 1054)
-public function enviarMantenimiento(Request $request, $id)
+    // ENVIAR A MANTENIMIENTO
+    public function enviarMantenimiento(Request $request, $id)
     {
         $elemento = Inventario::find($id);
         if (!$elemento) {
@@ -169,11 +171,10 @@ public function enviarMantenimiento(Request $request, $id)
             ], 404);
         }
 
-        // VALIDACIÓN: Evitar enviar si ya está en mantenimiento (Estado 4)
-        if ($elemento->cod_estado_elemento == 3) {
+        if ($elemento->cod_estado_elemento != Inventario::ESTADO_ACTIVO) {
             return response()->json([
                 'success' => false,
-                'mensaje' => 'Este elemento ya se encuentra en mantenimiento'
+                'mensaje' => 'Solo los elementos activos pueden enviarse a mantenimiento'
             ], 400);
         }
 
@@ -184,18 +185,22 @@ public function enviarMantenimiento(Request $request, $id)
             'observaciones' => 'nullable|string'
         ]);
 
-        $mantenimiento = Mantenimiento::create([
-            'documento' => $request->user()?->documento ?? $validated['documento_tecnico'] ?? null,
-            'id_elemento' => $elemento->id_elemento, 
-            'serial' => $elemento->serial ?? 'N/A', 
-            'elemento' => $elemento->nombre_elemento,
-            'fecha' => now()->toDateString(),
-            'cod_tipo_mantenimiento' => $validated['cod_tipo_mantenimiento'],
-            'descripcion' => $validated['descripcion'],
-            'cod_estado_mantenimiento' => 1 
-        ]);
+        $mantenimiento = DB::transaction(function () use ($request, $elemento, $validated) {
+            $mantenimiento = Mantenimiento::create([
+                'documento' => $request->user()?->documento ?? $validated['documento_tecnico'] ?? null,
+                'id_elemento' => $elemento->id_elemento,
+                'serial' => $elemento->serial ?? 'N/A',
+                'elemento' => $elemento->nombre_elemento,
+                'fecha' => now()->toDateString(),
+                'cod_tipo_mantenimiento' => $validated['cod_tipo_mantenimiento'],
+                'descripcion' => $validated['descripcion'],
+                'cod_estado_mantenimiento' => 1
+            ]);
 
-        $elemento->update(['cod_estado_elemento' => 3]);
+            $elemento->update(['cod_estado_elemento' => Inventario::ESTADO_MANTENIMIENTO]);
+
+            return $mantenimiento;
+        });
 
         return response()->json([
             'success' => true,
@@ -207,7 +212,8 @@ public function enviarMantenimiento(Request $request, $id)
     // OBTENER ELEMENTOS POR TIPO
     public function obtenerElementosPorTipo($tipo)
     {
-        $elementos = Inventario::where('cod_tipo_elemento', $tipo)
+        $elementos = Inventario::visibles()
+            ->where('cod_tipo_elemento', $tipo)
             ->with(['tipo', 'ubicacion', 'estado'])
             ->get();
 
@@ -221,7 +227,7 @@ public function enviarMantenimiento(Request $request, $id)
     public function exportarInventario()
     {
         try {
-            $elementos = Inventario::with(['tipo', 'ubicacion', 'estado'])->get();
+            $elementos = Inventario::with(['tipo', 'ubicacion', 'estado', 'padre'])->get();
 
             $filename = 'inventario_' . now()->format('Y-m-d') . '.csv';
 
@@ -237,16 +243,16 @@ public function enviarMantenimiento(Request $request, $id)
                 $file = fopen('php://output', 'w');
                 fputs($file, "\xEF\xBB\xBF");
                 fputcsv($file, [
-                    'ID', 
-                    'Código', 
-                    'Nombre', 
-                    'Serial', 
-                    'Modelo', 
-                    'Tipo', 
-                    'Estado', 
-                    'Ubicación', 
-                    'Cantidad'
-                    ]);
+                    'ID',
+                    'Código',
+                    'Nombre',
+                    'Serial',
+                    'Modelo',
+                    'Tipo',
+                    'Estado',
+                    'Ubicación',
+                    'Pertenece a'
+                ]);
 
                 foreach ($elementos as $item) {
                     fputcsv($file, [
@@ -258,7 +264,7 @@ public function enviarMantenimiento(Request $request, $id)
                         $item->tipo?->tipo ?? '',
                         $item->estado?->estado ?? '',
                         $item->ubicacion?->ubicacion ?? '',
-                        $item->cantidad ?? 1
+                        $item->padre?->cod_elemento ?? ''
                     ]);
                 }
                 fclose($file);
@@ -273,20 +279,17 @@ public function enviarMantenimiento(Request $request, $id)
         }
     }
 
-public function historial($id)
+    // HISTORIAL DE MANTENIMIENTO DE UN ELEMENTO
+    public function historial($id)
     {
         try {
-            // Obtenemos directamente los registros de mantenimiento del elemento sin joins complejos
-            $historial = DB::table('mantenimiento')
-                ->where('id_elemento', $id)
-                ->orderBy('id_mantenimiento', 'desc')
-                ->get()
-                ->map(function ($item) {
-                    // Asignamos valores por defecto seguros para la vista
-                    $item->tipo = 'Mantenimiento General';
-                    $item->estado = $item->cod_estado_mantenimiento == 3 ? 'Completado' : 'Pendiente';
-                    return $item;
-                });
+            $historial = DB::table('mantenimiento as m')
+                ->leftJoin('tipo_mantenimiento as t', 'm.cod_tipo_mantenimiento', '=', 't.cod_tipo_mantenimiento')
+                ->leftJoin('estado_mantenimiento as e', 'm.cod_estado_mantenimiento', '=', 'e.cod_estado_mantenimiento')
+                ->where('m.id_elemento', $id)
+                ->orderByDesc('m.id_mantenimiento')
+                ->select('m.*', 't.tipo as tipo', 'e.estado as estado')
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -295,8 +298,77 @@ public function historial($id)
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'mensaje' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // MOVIMIENTOS (HISTORIAL) DE UN ELEMENTO
+    public function movimientos(Request $request, $id)
+    {
+        if (!Inventario::whereKey($id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Elemento no encontrado'
+            ], 404);
+        }
+
+        $perPage = min((int) $request->input('per_page', 10), 50);
+        $movimientos = InventarioMovimiento::where('id_elemento', $id)
+            ->orderByDesc('id_movimiento')
+            ->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => $movimientos->items(),
+            'total' => $movimientos->total(),
+            'last_page' => $movimientos->lastPage()
+        ]);
+    }
+
+    // Regla de validación del elemento principal: un solo nivel, sin ciclos, sin bajas
+    private function reglaPadre(?Inventario $elemento): \Closure
+    {
+        return function (string $atributo, mixed $valor, \Closure $fail) use ($elemento) {
+            if (!$valor) {
+                return;
+            }
+
+            $padre = Inventario::find($valor);
+            if (!$padre) {
+                return;
+            }
+
+            if ($elemento && $padre->id_elemento == $elemento->id_elemento) {
+                $fail('Un elemento no puede pertenecer a sí mismo.');
+                return;
+            }
+            if ($padre->cod_estado_elemento == Inventario::ESTADO_BAJA) {
+                $fail('El elemento principal está dado de baja.');
+                return;
+            }
+            if ($padre->id_elemento_padre) {
+                $fail('El elemento principal ya es componente de otro. Solo se permite un nivel.');
+                return;
+            }
+            if ($elemento && $elemento->hijos()->exists()) {
+                $fail('Este elemento ya tiene componentes, por eso no puede pertenecer a otro.');
+            }
+        };
+    }
+
+    // Código tipo "LAP-005"; si ya existe (por un código manual) agrega un sufijo
+    private function generarCodigo(Inventario $elemento): string
+    {
+        $prefijo = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $elemento->nombre_elemento), 0, 3)) ?: 'EQ';
+        $base = $prefijo . '-' . str_pad($elemento->id_elemento, 3, '0', STR_PAD_LEFT);
+
+        $codigo = $base;
+        $n = 1;
+        while (Inventario::where('cod_elemento', $codigo)->exists()) {
+            $codigo = $base . '-' . $n++;
+        }
+
+        return $codigo;
     }
 }

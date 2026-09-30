@@ -73,6 +73,13 @@
             </div>
           </div>
 
+            @if (tipoTab === 'activos') {
+            <div class="grupo-campo">
+              <label>Pertenece a (opcional)</label>
+              <app-selector-padre (cambio)="id_elemento_padre = $event"></app-selector-padre>
+            </div>
+          }
+
           @if (tipoTab === 'activos') {
             <div class="fila-formulario">
               <div class="grupo-campo"><label for="serial">Serial/Número de Serie</label><input id="serial" type="text" [(ngModel)]="serial" name="serial" placeholder="Ej: ABC123456"></div>

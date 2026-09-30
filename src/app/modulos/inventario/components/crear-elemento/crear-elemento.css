@@ -1,7 +1,7 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-forms.css';
+@import '../../../styles/modules-autocomplete.css';
 
-/* Estilos para el contenedor del autocompletado */
 .autocomplete-container {
   position: relative;
 }
@@ -57,10 +57,6 @@
 
 :host-context(body.dark-mode) .autocomplete-item .acc-nombre {
   color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .autocomplete-item .acc-info {
-  color: #aaa;
 }
 
 /* Resto de estilos originales intactos */

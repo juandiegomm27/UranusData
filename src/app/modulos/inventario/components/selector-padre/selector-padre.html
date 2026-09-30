@@ -1,0 +1,29 @@
+<div class="autocomplete-container">
+  @if (elegido) {
+    <div class="padre-elegido">
+      <span><strong>{{ elegido.cod_elemento || ('#' + elegido.id_elemento) }}</strong> · {{ elegido.nombre_elemento }}</span>
+      <button type="button" class="btn-quitar-padre" (click)="quitar()" title="Quitar">✕</button>
+    </div>
+  } @else {
+    <input
+      type="text"
+      [(ngModel)]="termino"
+      [ngModelOptions]="{ standalone: true }"
+      (input)="buscar()"
+      placeholder="Buscar por nombre, código o serial (opcional)"
+      autocomplete="off">
+
+    @if (sugerencias.length > 0) {
+      <div class="autocomplete-dropdown">
+        @for (s of sugerencias; track s.id_elemento) {
+          <div class="autocomplete-item" (click)="elegir(s)">
+            <div class="acc-nombre"><strong>{{ s.cod_elemento || ('#' + s.id_elemento) }}</strong> · {{ s.nombre_elemento }}</div>
+            <div class="acc-info">Serial: {{ s.serial || 'N/A' }}</div>
+          </div>
+        }
+      </div>
+    } @else if (buscado) {
+      <small class="sin-resultados">Sin resultados</small>
+    }
+  }
+</div>
