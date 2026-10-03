@@ -45,10 +45,12 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
 
   // Filtros específicos (terminoBusqueda se hereda del helper)
   filtroTipo = '';
+  filtroMarca = '';
   filtroEstado = '';
   filtroUbicacion = '';
 
   tipos: any[] = [];
+  marcas: any[] = [];
   estados: any[] = [];
   ubicaciones: any[] = [];
 
@@ -72,10 +74,16 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
 
   inicializarComponente(): void {
     this.cargando = true;
+    this.recargarOpciones();
+  }
+
+  // Recarga catálogos (tipos, marcas, estados, ubicaciones) y la tabla
+  recargarOpciones(): void {
     this.inventarioService.obtenerOpciones().subscribe({
       next: (response: any) => {
         if (response) {
           this.tipos = response.tipos || [];
+          this.marcas = response.marcas || [];
           this.estados = response.estados || [];
           this.ubicaciones = response.ubicaciones || [];
         }
@@ -111,7 +119,9 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
       this.terminoBusqueda,
       this.filtroTipo,
       this.filtroEstado,
-      this.filtroUbicacion
+      this.filtroUbicacion,
+      false,
+      this.filtroMarca
     ).subscribe({
       next: (response: any) => {
         this.elementos = response.data || [];
@@ -139,7 +149,8 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
       this.perPage,
       this.terminoBusqueda,
       this.filtroTipo,
-      this.filtroUbicacion
+      this.filtroUbicacion,
+      this.filtroMarca
     ).subscribe({
       next: (response: any) => {
         this.accesorios = response.data || [];
@@ -162,6 +173,7 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
   limpiarFiltrosLocal(): void {
     super.limpiarFiltrosBase();
     this.filtroTipo = '';
+    this.filtroMarca = '';
     this.filtroEstado = '';
     this.filtroUbicacion = '';
     this.cargarDatos();
@@ -169,33 +181,17 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
 
   // --- CREAR / DETALLES / MANTENIMIENTO ---
   abrirCrear(): void { this.mostrarCrear = true; }
-  cerrarCrear(): void { this.mostrarCrear = false; this.cargarDatos(); }
+  cerrarCrear(): void { this.mostrarCrear = false; this.recargarOpciones(); }
 
   verDetalles(elemento: any): void {
-    if (this.tipoTab === 'activos') {
-      this.inventarioService.obtenerElemento(elemento.id_elemento).subscribe({
-        next: (response: any) => {
-          this.elementoSeleccionado = response?.data || response;
-          this.mostrarDetalles = true;
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.elementoSeleccionado = elemento;
-          this.mostrarDetalles = true;
-          this.cdr.detectChanges();
-        }
-      });
-    } else {
-      this.elementoSeleccionado = { ...elemento };
-      this.mostrarDetalles = true;
-      this.cdr.detectChanges();
-    }
+    // Se abre de inmediato con los datos de la fila; el detalle completo lo carga el propio modal
+    this.elementoSeleccionado = this.tipoTab === 'activos' ? elemento : { ...elemento };
+    this.mostrarDetalles = true;
   }
 
   cerrarDetalles(): void {
     this.mostrarDetalles = false;
     this.elementoSeleccionado = null;
-    this.cargarDatos();
   }
 
   abrirMantenimiento(elemento: any): void {

@@ -162,6 +162,13 @@ class HistorialBajasController extends Controller
             ], 422);
         }
 
+        if ($activo->cod_estado_elemento == Inventario::ESTADO_MANTENIMIENTO) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Este equipo está en mantenimiento. Finaliza el mantenimiento o dalo de baja desde el módulo de Mantenimiento.'
+            ], 422);
+        }
+
         try {
             DB::transaction(function () use ($activo, $request) {
                 HistorialBajaGeneral::create([

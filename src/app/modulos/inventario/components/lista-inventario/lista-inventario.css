@@ -104,3 +104,19 @@
 :host-context(body.dark-mode) .celda-sin-stock {
   color: #adb5bd;
 }
+
+/* --- ENLACES A PADRE / COMPONENTES --- */
+.enlace-relacion {
+  color: #1C74A0;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.enlace-relacion:hover {
+  text-decoration: underline;
+}
+
+:host-context(body.dark-mode) .enlace-relacion {
+  color: #FF9F13;
+}

@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
 import { extraerMensajeError } from '../../../shared/utils/api-error.helper';
 import { SelectorPadreComponent } from '../selector-padre/selector-padre';
+import { SelectorMarcaComponent } from '../selector-marca/selector-marca';
 
 @Component({
   selector: 'app-crear-elemento',
   standalone: true,
-    imports: [CommonModule, FormsModule, SelectorPadreComponent],
+  imports: [CommonModule, FormsModule, SelectorPadreComponent, SelectorMarcaComponent],
   templateUrl: './crear-elemento.html',
   styleUrls: ['./crear-elemento.css']
 })
@@ -43,7 +44,8 @@ export class CrearElementoComponent implements OnInit {
   mostrarModalTipo = false;
   nuevoTipoNombre = '';
   cod_elemento = '';
-    id_elemento_padre: number | null = null;
+  id_elemento_padre: number | null = null;
+  cod_marca: number | null = null;
 
   constructor(
     private inventarioService: InventarioService,
@@ -107,6 +109,7 @@ export class CrearElementoComponent implements OnInit {
       this.cod_tipo_elemento = acc.cod_tipo_elemento;
     }
     this.descripcion = acc.descripcion || '';
+    this.cod_marca = acc.cod_marca ?? null;
     this.sugerenciasAccesorios = [];
     this.cdr.detectChanges();
   }
@@ -127,6 +130,7 @@ export class CrearElementoComponent implements OnInit {
         serial: this.serial || null,
         modelo: this.modelo || null,
         descripcion: this.descripcion || null,
+        cod_marca: this.cod_marca,
         id_elemento_padre: this.id_elemento_padre
       };
 
@@ -157,6 +161,7 @@ export class CrearElementoComponent implements OnInit {
         id_accesorio: this.accesorioSeleccionado ? this.accesorioSeleccionado.id_accesorio : null,
         nombre: this.nombre_elemento,
         cod_tipo_elemento: this.cod_tipo_elemento || null,
+        cod_marca: this.cod_marca,
         descripcion: this.descripcion || null,
         cantidad_total: this.cantidad_total,
         cantidad_disponible: this.cantidad_total,
@@ -279,6 +284,7 @@ export class CrearElementoComponent implements OnInit {
     this.cantidad_total = 1;
     this.sugerenciasAccesorios = [];
     this.accesorioSeleccionado = null;
+    this.cod_marca = null;
     this.mensaje = '';
     this.id_elemento_padre = null;
   }

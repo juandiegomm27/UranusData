@@ -85,8 +85,8 @@ export class ListaMantenimientoComponent extends PaginationHelper implements OnI
       next: (res: any) => {
         const data = res?.data || res;
         this.mantenimientos = Array.isArray(data) ? data : data?.data || [];
-        this.totalElementos = res?.total || data?.total || this.mantenimientos.length;
-        this.totalPaginas = res?.last_page || data?.last_page || 1;
+        this.totalElementos = res?.pagination?.total ?? res?.total ?? this.mantenimientos.length;
+        this.totalPaginas = res?.pagination?.last_page ?? res?.last_page ?? 1
         this.cargando = false;
         this.cdr.detectChanges();
       },

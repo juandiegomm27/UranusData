@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventario;
 use App\Models\InventarioMovimiento;
+use App\Models\Marca;
 use App\Models\TipoElemento;
 use App\Models\UbiElemento;
 use App\Models\EstadoElemento;
@@ -16,14 +17,16 @@ class InventarioController extends Controller
 {
     private const MENSAJES_VALIDACION = [
         'serial.unique' => 'Ya existe un elemento con ese serial.',
+        'cod_cod_elemento.unique' => 'Ya existe un elemento con ese código.',
         'cod_elemento.unique' => 'Ya existe un elemento con ese código.',
         'id_elemento_padre.exists' => 'El elemento principal seleccionado no existe.',
+        'cod_marca.exists' => 'La marca seleccionada no existe.',
     ];
 
     public function index(Request $request)
     {
         $query = Inventario::visibles()
-            ->with('padre:id_elemento,cod_elemento,nombre_elemento')
+            ->with(['padre:id_elemento,cod_elemento,nombre_elemento', 'marca:cod_marca,marca'])
             ->withCount(['hijos' => fn ($q) => $q->visibles()]);
 
         if ($request->filled('search')) {
@@ -32,11 +35,15 @@ class InventarioController extends Controller
                 $q->where('nombre_elemento', 'like', $searchTerm)
                   ->orWhere('cod_elemento', 'like', $searchTerm)
                   ->orWhere('serial', 'like', $searchTerm)
-                  ->orWhere('modelo', 'like', $searchTerm);
+                  ->orWhere('modelo', 'like', $searchTerm)
+                  ->orWhereHas('marca', fn ($m) => $m->where('marca', 'like', $searchTerm));
             });
         }
         if ($request->filled('tipo')) {
             $query->where('cod_tipo_elemento', $request->tipo);
+        }
+        if ($request->filled('marca')) {
+            $query->where('cod_marca', $request->marca);
         }
         if ($request->filled('estado')) {
             $query->where('cod_estado_elemento', $request->estado);
@@ -64,6 +71,7 @@ class InventarioController extends Controller
     {
         $elemento = Inventario::with([
             'tipo',
+            'marca',
             'ubicacion',
             'estado',
             'mantenimiento.tipo',
@@ -92,6 +100,7 @@ class InventarioController extends Controller
             'cod_elemento' => 'nullable|string|max:45|unique:inventario,cod_elemento',
             'nombre_elemento' => 'required|string|max:100',
             'cod_tipo_elemento' => 'required|exists:tipo_elemento,cod_tipo_elemento',
+            'cod_marca' => 'nullable|integer|exists:marca,cod_marca',
             'cod_ubi_elemento' => 'required|exists:ubi_elemento,cod_ubi_elemento',
             'serial' => 'nullable|string|max:100|unique:inventario,serial',
             'modelo' => 'nullable|string|max:100',
@@ -130,6 +139,7 @@ class InventarioController extends Controller
         $validated = $request->validate([
             'nombre_elemento' => 'string|max:100',
             'cod_tipo_elemento' => 'exists:tipo_elemento,cod_tipo_elemento',
+            'cod_marca' => 'nullable|integer|exists:marca,cod_marca',
             'cod_ubi_elemento' => 'exists:ubi_elemento,cod_ubi_elemento',
             'cod_elemento' => 'nullable|string|max:45|unique:inventario,cod_elemento,' . $id . ',id_elemento',
             'serial' => 'nullable|string|max:100|unique:inventario,serial,' . $id . ',id_elemento',
@@ -153,6 +163,7 @@ class InventarioController extends Controller
         return response()->json([
             'success' => true,
             'tipos' => TipoElemento::all(),
+            'marcas' => Marca::orderBy('marca')->get(),
             'ubicaciones' => UbiElemento::all(),
             // "Baja" no es un filtro útil: esos elementos no se listan en el inventario
             'estados' => EstadoElemento::where('cod_estado_elemento', '!=', Inventario::ESTADO_BAJA)->get(),
@@ -227,7 +238,7 @@ class InventarioController extends Controller
     public function exportarInventario()
     {
         try {
-            $elementos = Inventario::with(['tipo', 'ubicacion', 'estado', 'padre'])->get();
+            $elementos = Inventario::with(['tipo', 'marca', 'ubicacion', 'estado', 'padre'])->get();
 
             $filename = 'inventario_' . now()->format('Y-m-d') . '.csv';
 
@@ -246,6 +257,7 @@ class InventarioController extends Controller
                     'ID',
                     'Código',
                     'Nombre',
+                    'Marca',
                     'Serial',
                     'Modelo',
                     'Tipo',
@@ -259,6 +271,7 @@ class InventarioController extends Controller
                         $item->id_elemento,
                         $item->cod_elemento ?? '',
                         $item->nombre_elemento,
+                        $item->marca?->marca ?? '',
                         $item->serial ?? '',
                         $item->modelo ?? '',
                         $item->tipo?->tipo ?? '',

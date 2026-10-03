@@ -12,12 +12,17 @@ class InventarioAccesorio extends Model {
         'modelo',
         'descripcion', 
         'cod_tipo_elemento',
+        'cod_marca',
         'cantidad_total', 
         'cantidad_disponible'
     ];
 
     public function tipo() {
         return $this->belongsTo(TipoElemento::class, 'cod_tipo_elemento', 'cod_tipo_elemento');
+    }
+
+    public function marca() {
+        return $this->belongsTo(Marca::class, 'cod_marca', 'cod_marca');
     }
 
     public function stocks() {

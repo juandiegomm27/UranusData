@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
 import { HistorialMantenimientoComponent } from '../historial-mantenimiento/historial-mantenimiento';
+import { HistorialMovimientosComponent } from '../historial-movimientos/historial-movimientos';
+import { SelectorPadreComponent } from '../selector-padre/selector-padre';
 import { claseEstadoElemento } from '../../inventario.constants';
 import { extraerMensajeError } from '../../../shared/utils/api-error.helper';
-import { SelectorPadreComponent } from '../selector-padre/selector-padre';
-import { HistorialMovimientosComponent } from '../historial-movimientos/historial-movimientos';
+import { SelectorMarcaComponent } from '../selector-marca/selector-marca';
 
 @Component({
   selector: 'app-detalle-elemento',
   standalone: true,
-  imports: [CommonModule, FormsModule, HistorialMantenimientoComponent, SelectorPadreComponent, HistorialMovimientosComponent],
+  imports: [CommonModule, FormsModule, HistorialMantenimientoComponent, HistorialMovimientosComponent, SelectorPadreComponent, SelectorMarcaComponent],
   templateUrl: './detalle-elemento.html',
   styleUrls: ['./detalle-elemento.css']
 })
@@ -34,6 +35,11 @@ export class DetalleElementoComponent implements OnInit {
   tipoMensaje: 'success' | 'error' = 'success';
   formulario: any = {};
 
+  cargandoDetalle = false;
+  parcial = false;
+
+  private pila: any[] = [];
+
   mostrarModalUbicacion = false;
   nuevaUbicacionNombre = '';
   mostrarModalTipo = false;
@@ -43,9 +49,77 @@ export class DetalleElementoComponent implements OnInit {
   mostrarHistorial = false;
   mostrarMovimientos = false;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.tipoTab !== 'activos' || !this.elemento?.id_elemento) return;
 
+    this.parcial = this.esParcial(this.elemento);
+    this.cargarDetalle(this.elemento.id_elemento);
+  }
+
+  // --- CARGA Y NAVEGACIÓN ---
+  private esParcial(elemento: any): boolean {
+    return !!elemento && elemento.cod_tipo_elemento === undefined;
+  }
+
+  private cargarDetalle(id: number): void {
+    this.cargandoDetalle = true;
+    this.cdr.detectChanges();
+
+    this.inventarioService.obtenerElemento(id).subscribe({
+      next: (res: any) => {
+        if (this.elemento?.id_elemento !== id) return;
+
+        this.elemento = res?.data || res;
+        this.parcial = false;
+        this.cargandoDetalle = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        if (this.elemento?.id_elemento !== id) return;
+
+        this.parcial = false;
+        this.cargandoDetalle = false;
+        this.mensaje = 'No se pudo cargar el detalle completo del elemento';
+        this.tipoMensaje = 'error';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  get puedeVolver(): boolean {
+    return this.pila.length > 0;
+  }
+
+  get etiquetaAnterior(): string {
+    const anterior = this.pila[this.pila.length - 1];
+    return anterior ? (anterior.cod_elemento || ('#' + anterior.id_elemento)) : '';
+  }
+
+  verRelacionado(relacionado: any): void {
+    if (!relacionado?.id_elemento || relacionado.id_elemento === this.elemento?.id_elemento) return;
+
+    this.pila.push(this.elemento);
+    this.editando = false;
+    this.mensaje = '';
+    this.elemento = { ...relacionado };
+    this.parcial = this.esParcial(this.elemento);
+    this.cargarDetalle(relacionado.id_elemento);
+  }
+
+  volver(): void {
+    const anterior = this.pila.pop();
+    if (!anterior) return;
+
+    this.editando = false;
+    this.mensaje = '';
+    this.elemento = anterior;
+    this.parcial = this.esParcial(anterior);
+    this.cargarDetalle(anterior.id_elemento);
+  }
+
+  // --- EDICIÓN ---
   abrirEdicion(): void {
+    if (this.cargandoDetalle) return;
     this.editando = true;
     this.formulario = { ...this.elemento };
   }
@@ -69,6 +143,7 @@ export class DetalleElementoComponent implements OnInit {
         nombre_elemento: this.formulario.nombre_elemento,
         cod_tipo_elemento: this.formulario.cod_tipo_elemento,
         cod_ubi_elemento: this.formulario.cod_ubi_elemento,
+        cod_marca: this.formulario.cod_marca || null,
         serial: this.formulario.serial || null,
         modelo: this.formulario.modelo || null,
         descripcion: this.formulario.descripcion || null,
@@ -100,6 +175,7 @@ export class DetalleElementoComponent implements OnInit {
       const datosAccesorio = {
         nombre: this.formulario.nombre,
         cod_tipo_elemento: this.formulario.cod_tipo_elemento || null,
+        cod_marca: this.formulario.cod_marca || null,
         descripcion: this.formulario.descripcion || null
       };
 
@@ -129,8 +205,12 @@ export class DetalleElementoComponent implements OnInit {
     setTimeout(() => this.cerrarModal(), 1500);
   }
 
-  abrirModalUbicacion(): void { this.nuevaUbicacionNombre = ''; this.mostrarModalUbicacion = true; }
-  cerrarModalUbicacion(): void { this.mostrarModalUbicacion = false; this.nuevaUbicacionNombre = ''; }
+  abrirModalUbicacion(): void {
+    this.nuevaUbicacionNombre = ''; this.mostrarModalUbicacion = true;
+  }
+  cerrarModalUbicacion(): void {
+    this.mostrarModalUbicacion = false; this.nuevaUbicacionNombre = '';
+  }
   guardarNuevaUbicacion(): void {
     if (!this.nuevaUbicacionNombre) return;
     this.inventarioService.crearUbicacion({ ubicacion: this.nuevaUbicacionNombre.trim() }).subscribe({
@@ -181,15 +261,36 @@ export class DetalleElementoComponent implements OnInit {
     });
   }
 
-  abrirHistorial(): void { this.mostrarHistorial = true; this.cdr.detectChanges(); }
-  cerrarHistorial(): void { this.mostrarHistorial = false; this.cdr.detectChanges(); }
-  cerrarModal(): void { this.cerrar.emit(); }
-  
-  abrirMovimientos(): void { this.mostrarMovimientos = true; this.cdr.detectChanges(); }
-  cerrarMovimientos(): void { this.mostrarMovimientos = false; this.cdr.detectChanges(); }
+  // --- MODALES HIJOS ---
+  abrirHistorial(): void {
+    this.mostrarHistorial = true; this.cdr.detectChanges();
+  }
+  cerrarHistorial(): void {
+    this.mostrarHistorial = false; this.cdr.detectChanges();
+  }
+  abrirMovimientos(): void {
+    this.mostrarMovimientos = true; this.cdr.detectChanges();
+  }
+  cerrarMovimientos(): void {
+    this.mostrarMovimientos = false; this.cdr.detectChanges();
+  }
 
-  obtenerNombreTipo(cod: any): string { return this.tipos.find(t => t.cod_tipo_elemento == cod)?.tipo || 'N/A'; }
-  obtenerNombreEstado(cod: any): string { return this.estados.find(e => e.cod_estado_elemento == cod)?.estado || 'N/A'; }
-  obtenerClaseEstado(cod: any): string { return claseEstadoElemento(cod); }
-  obtenerNombreUbicacion(cod: any): string { return this.ubicaciones.find(u => u.cod_ubi_elemento == cod)?.ubicacion || 'N/A'; }
+  cerrarModal(): void {
+    this.pila = [];
+    this.cerrar.emit();
+  }
+
+  // --- HELPERS VISUALES ---
+  obtenerNombreTipo(cod: any): string {
+    return this.tipos.find(t => t.cod_tipo_elemento == cod)?.tipo || 'N/A';
+  }
+  obtenerNombreEstado(cod: any): string {
+    return this.estados.find(e => e.cod_estado_elemento == cod)?.estado || 'N/A';
+  }
+  obtenerClaseEstado(cod: any): string {
+    return claseEstadoElemento(cod);
+  }
+  obtenerNombreUbicacion(cod: any): string {
+    return this.ubicaciones.find(u => u.cod_ubi_elemento == cod)?.ubicacion || 'N/A';
+  }
 }

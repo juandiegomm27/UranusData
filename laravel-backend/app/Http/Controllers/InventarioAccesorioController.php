@@ -15,6 +15,7 @@ class InventarioAccesorioController extends Controller
 
         $query = InventarioAccesorio::with([
             'tipo',
+            'marca',
             'stocks' => function ($q) use ($request) {
                 if ($request->filled('ubicacion')) {
                     $q->where('cod_ubi_elemento', $request->ubicacion);
@@ -27,13 +28,18 @@ class InventarioAccesorioController extends Controller
             $searchTerm = '%' . $request->search . '%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nombre', 'like', $searchTerm)
-                  ->orWhere('modelo', 'like', $searchTerm)
-                  ->orWhere('descripcion', 'like', $searchTerm);
+                    ->orWhere('modelo', 'like', $searchTerm)
+                    ->orWhere('descripcion', 'like', $searchTerm)
+                    ->orWhereHas('marca', fn($m) => $m->where('marca', 'like', $searchTerm));
             });
         }
 
         if ($request->filled('tipo')) {
             $query->where('cod_tipo_elemento', $request->tipo);
+        }
+
+        if ($request->filled('marca')) {
+            $query->where('cod_marca', $request->marca);
         }
 
         if ($request->filled('ubicacion')) {
@@ -61,6 +67,7 @@ class InventarioAccesorioController extends Controller
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
             'cod_tipo_elemento' => 'nullable|exists:tipo_elemento,cod_tipo_elemento',
+            'cod_marca' => 'nullable|integer|exists:marca,cod_marca',
             'cantidad_total' => 'required|integer|min:1',
             'cod_ubi_elemento' => 'required|exists:ubi_elemento,cod_ubi_elemento'
         ]);
@@ -69,9 +76,9 @@ class InventarioAccesorioController extends Controller
         try {
             // 2. Comprobamos si nos enviaron un ID (significa que el accesorio ya existe)
             if ($request->has('id_accesorio') && !empty($request->id_accesorio)) {
-                
+
                 $accesorio = InventarioAccesorio::findOrFail($request->id_accesorio);
-                
+
                 // Actualizamos las cantidades globales del catálogo de este accesorio
                 $accesorio->cantidad_total += $validated['cantidad_total'];
                 $accesorio->cantidad_disponible += $validated['cantidad_total'];
@@ -89,7 +96,6 @@ class InventarioAccesorioController extends Controller
                 $stock->save();
 
                 $mensaje = 'Stock añadido al accesorio existente exitosamente';
-                
             } else {
                 // 3. Lógica original: Crear un accesorio completamente nuevo
                 $accesorio = InventarioAccesorio::create([
@@ -97,6 +103,7 @@ class InventarioAccesorioController extends Controller
                     'modelo' => $validated['modelo'] ?? null,
                     'descripcion' => $validated['descripcion'] ?? null,
                     'cod_tipo_elemento' => $validated['cod_tipo_elemento'] ?? null,
+                    'cod_marca' => $validated['cod_marca'] ?? null,
                     'cantidad_total' => $validated['cantidad_total'],
                     'cantidad_disponible' => $validated['cantidad_total']
                 ]);
@@ -117,7 +124,6 @@ class InventarioAccesorioController extends Controller
                 'mensaje' => $mensaje,
                 'data' => $accesorio->load('stocks.ubicacion')
             ], 201);
-            
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'mensaje' => $e->getMessage()], 500);
@@ -136,7 +142,8 @@ class InventarioAccesorioController extends Controller
             'nombre' => 'string|max:255',
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
-            'cod_tipo_elemento' => 'nullable|exists:tipo_elemento,cod_tipo_elemento'
+            'cod_tipo_elemento' => 'nullable|exists:tipo_elemento,cod_tipo_elemento',
+            'cod_marca' => 'nullable|integer|exists:marca,cod_marca',
         ]);
 
         $accesorio->update($validated);
@@ -176,7 +183,7 @@ class InventarioAccesorioController extends Controller
             $stockDestino->cantidad_total += $validated['cantidad'];
             $stockDestino->cantidad_disponible += $validated['cantidad'];
             $stockDestino->save();
-            
+
             if ($stockOrigen->cantidad_total == 0 && $stockOrigen->cantidad_disponible == 0) {
                 $stockOrigen->delete();
             }

@@ -26,15 +26,14 @@ class Inventario extends Model
         'modelo',
         'descripcion',
         'cod_tipo_elemento',
+        'cod_marca',
         'cod_estado_elemento',
         'cod_ubi_elemento',
         'id_elemento_padre'
     ];
 
-    // Contexto opcional para el historial (ej. motivo de la baja). No se guarda en la tabla.
     public ?string $motivoMovimiento = null;
 
-    // Elementos que siguen formando parte del inventario (excluye las bajas)
     public function scopeVisibles(Builder $query): Builder
     {
         return $query->where('cod_estado_elemento', '!=', self::ESTADO_BAJA);
@@ -50,6 +49,11 @@ class Inventario extends Model
         return $this->belongsTo(TipoElemento::class, 'cod_tipo_elemento', 'cod_tipo_elemento');
     }
 
+    public function marca()
+    {
+        return $this->belongsTo(Marca::class, 'cod_marca', 'cod_marca');
+    }
+
     public function ubicacion()
     {
         return $this->belongsTo(UbiElemento::class, 'cod_ubi_elemento', 'cod_ubi_elemento');
@@ -60,13 +64,11 @@ class Inventario extends Model
         return $this->hasMany(Mantenimiento::class, 'id_elemento', 'id_elemento');
     }
 
-    // Elemento principal al que pertenece (ej. el portátil de un cargador)
     public function padre()
     {
         return $this->belongsTo(Inventario::class, 'id_elemento_padre', 'id_elemento');
     }
 
-    // Componentes de este elemento (ej. cargador, mouse)
     public function hijos()
     {
         return $this->hasMany(Inventario::class, 'id_elemento_padre', 'id_elemento');

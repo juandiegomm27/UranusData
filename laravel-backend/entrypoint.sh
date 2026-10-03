@@ -22,14 +22,34 @@ if [ ! -f "vendor/autoload.php" ]; then
     composer install --no-interaction --prefer-dist
 fi
 
-# 4. Generar la llave (solo si no se ha generado antes)
-echo "✅ Generando APP_KEY..."
-php artisan key:generate --no-interaction
+# 4. Generar la llave solo si no existe
+if ! grep -q "^APP_KEY=." .env; then
+    echo "✅ Generando APP_KEY..."
+    php artisan key:generate --no-interaction
+fi
 
-# 5. Ejecutar migraciones automáticamente
+# 5. Migraciones (conservan los datos). Espera a que MySQL esté listo.
 echo "✅ Ejecutando migraciones de la base de datos..."
-php artisan migrate:fresh --seed --force
+intentos=0
+until php artisan migrate --force; do
+    intentos=$((intentos + 1))
+    if [ "$intentos" -ge 20 ]; then
+        echo "❌ No se pudieron ejecutar las migraciones. Revisa el error de arriba."
+        exit 1
+    fi
+    echo "⏳ Reintentando en 3 segundos ($intentos/20)..."
+    sleep 3
+done
+
+# 6. Datos iniciales SOLO si la base está vacía
+USUARIOS=$(php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo Illuminate\Support\Facades\DB::table("usuario")->count();')
+if [ "$USUARIOS" = "0" ]; then
+    echo "✅ Base vacía: cargando datos iniciales..."
+    php artisan db:seed --force
+else
+    echo "✅ La base ya tiene datos: no se vuelve a sembrar."
+fi
 
 echo "✅ Todo listo. Encendiendo servidor..."
-# 6. Arrancar el servidor de Laravel
+# 7. Arrancar el servidor de Laravel
 exec php artisan serve --host=0.0.0.0 --port=8000

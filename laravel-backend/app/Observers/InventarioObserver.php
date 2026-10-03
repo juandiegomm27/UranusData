@@ -8,6 +8,7 @@ use App\Models\TipoElemento;
 use App\Models\UbiElemento;
 use App\Services\InventarioService;
 use Illuminate\Support\Str;
+use App\Models\Marca;
 
 class InventarioObserver
 {
@@ -18,6 +19,7 @@ class InventarioObserver
         'modelo' => 'Modelo',
         'descripcion' => 'Descripción',
         'cod_tipo_elemento' => 'Tipo',
+        'cod_marca' => 'Marca',
     ];
 
     public function created(Inventario $elemento): void
@@ -204,7 +206,7 @@ class InventarioObserver
                 $elemento->id_elemento,
                 InventarioService::TIPO_VINCULO,
                 'Sus ' . $hijos->count() . ' componente(s) quedaron como elementos independientes: '
-                    . $hijos->map(fn ($h) => $this->etiqueta($h))->implode(', ')
+                    . $hijos->map(fn($h) => $this->etiqueta($h))->implode(', ')
             );
         }
 
@@ -256,6 +258,10 @@ class InventarioObserver
 
         if ($campo === 'cod_tipo_elemento') {
             return TipoElemento::find($valor)?->tipo ?? ('#' . $valor);
+        }
+
+        if ($campo === 'cod_marca') {
+            return Marca::find($valor)?->marca ?? ('#' . $valor);
         }
 
         return Str::limit((string) $valor, 40);
