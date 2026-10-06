@@ -115,6 +115,7 @@
           <th>Lote (ID)</th>
           <th>Nombre</th>
           <th>Marca</th>
+          <th>Modelo</th>
           <th>Descripción</th>
           <th>Ubicación</th>
           <th>Cant. Total</th>
@@ -127,16 +128,19 @@
         @if (acc.stocks && acc.stocks.length > 0) {
         @for (stock of acc.stocks; track stock.id_stock) {
         <tr>
-          <td><strong>#{{ acc.id_accesorio }}</strong><br><small class="sub-linea">Stock Lote: {{ stock.id_stock
-              }}</small></td>
+          <td><strong>#{{ acc.id_accesorio }}</strong>
+            <br><small class="sub-linea">Stock Lote: {{ stock.id_stockm}}</small>
+          </td>
           <td>{{ acc.nombre }}</td>
           <td>{{ acc.marca?.marca || '-' }}</td>
           <td class="celda-descripcion">{{ acc.descripcion || '-' }}</td>
           <td>{{ stock.ubicacion?.ubicacion || 'N/A' }}</td>
           <td><strong>{{ stock.cantidad_total }}</strong></td>
-          <td><span class="estado-badge"
-              [ngClass]="stock.cantidad_disponible > 0 ? 'estado-activo' : 'estado-inactivo'">{{
-              stock.cantidad_disponible }} disp.</span></td>
+          <td>
+            <span class="estado-badge" [ngClass]="stock.cantidad_disponible > 0 ? 'estado-activo' : 'estado-inactivo'">
+              {{stock.cantidad_disponible }} disp.
+            </span>
+          </td>
           <td>
             <div class="botones-accion-tabla">
               <button class="btn-icon btn-icon-ver" (click)="verDetalles(acc)" title="Ver detalles (global)">
@@ -153,17 +157,18 @@
             </div>
           </td>
         </tr>
+      }
+    } @else {
+      <tr>
+        <td><strong>#{{ acc.id_accesorio }}</strong></td>
+        <td>{{ acc.nombre }}</td>
+        <td>{{ acc.marca?.marca || '-' }}</td>
+        <td>{{ acc.modelo || '-' }}</td>
+        <td>{{ acc.descripcion || '-' }}</td>
+        <td colspan="5" class="celda-sin-stock">Sin inventario físico (stock vacío)</td>
+      </tr>
         }
-        } @else {
-        <tr>
-          <td><strong>#{{ acc.id_accesorio }}</strong></td>
-          <td>{{ acc.nombre }}</td>
-          <td>{{ acc.marca?.marca || '-' }}</td>
-          <td>{{ acc.descripcion || '-' }}</td>
-          <td colspan="4" class="celda-sin-stock">Sin inventario físico (stock vacío)</td>
-        </tr>
-        }
-        }
+      }
       </tbody>
     </table>
   </div>

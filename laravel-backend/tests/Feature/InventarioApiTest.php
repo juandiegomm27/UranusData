@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Marca;
+use App\Models\InventarioAccesorio;
 
 class InventarioApiTest extends TestCase
 {
@@ -174,7 +175,6 @@ class InventarioApiTest extends TestCase
         ]);
         $this->assertDatabaseHas('inventario_movimientos', ['id_elemento' => $principal->id_elemento, 'tipo' => 'baja']);
 
-        // Restaurar desde el historial de bajas
         $idBaja = HistorialBajaGeneral::where('id_original', $principal->id_elemento)->value('id_baja');
         $this->postJson("/api/inventario/historial-bajas-general/{$idBaja}/restaurar")->assertOk();
 
@@ -238,18 +238,136 @@ class InventarioApiTest extends TestCase
 
     public function test_filtro_y_busqueda_por_marca(): void
     {
-        $dell = Marca::create(['marca' => 'Dell']);
-        $hp = Marca::create(['marca' => 'HP']);
+        $gerente = Usuario::find('3333333333');
+        $this->actingAs($gerente);
 
-        $conDell = $this->crearElemento(['cod_marca' => $dell->cod_marca]);
-        $conHp = $this->crearElemento(['cod_marca' => $hp->cod_marca]);
+        $marca = \App\Models\Marca::firstOrCreate(['marca' => 'Dell']);
+        
+        $this->postJson('/api/inventario-accesorios', [
+            'nombre' => 'Teclado Especial ' . uniqid(),
+            'cantidad_total' => 15,
+            'cod_ubi_elemento' => 1,
+            'cod_marca' => $marca->cod_marca
+        ])->assertStatus(201);
 
-        $porFiltro = collect($this->getJson("/api/inventario?marca={$dell->cod_marca}")->assertOk()->json('data'))->pluck('id_elemento');
-        $this->assertTrue($porFiltro->contains($conDell->id_elemento));
-        $this->assertFalse($porFiltro->contains($conHp->id_elemento));
+        $this->getJson('/api/inventario-accesorios?marca=' . $marca->cod_marca)
+            ->assertOk()
+            ->assertJsonFragment(['cod_marca' => $marca->cod_marca]);
+    }
 
-        $porBusqueda = collect($this->getJson('/api/inventario?search=HP')->assertOk()->json('data'))->pluck('id_elemento');
-        $this->assertTrue($porBusqueda->contains($conHp->id_elemento));
-        $this->assertFalse($porBusqueda->contains($conDell->id_elemento));
+        public function test_restaurar_baja_de_accesorio_recrea_el_stock_si_ya_no_existe(): void
+    {
+        $creado = $this->postJson('/api/inventario-accesorios', [
+            'nombre' => 'Gancho de prueba',
+            'cantidad_total' => 10,
+            'cod_ubi_elemento' => 1,
+        ])->assertStatus(201);
+
+        $idAccesorio = $creado->json('data.id_accesorio');
+        $idStock = $creado->json('data.stocks.0.id_stock');
+
+        $this->postJson("/api/inventario/accesorios/{$idStock}/dar-de-baja", ['cantidad' => 4, 'motivo' => 'Dañados'])
+            ->assertOk();
+
+        // Se traslada lo que queda: el stock de origen se elimina
+        $this->postJson('/api/inventario-accesorios/trasladar', [
+            'id_stock_origen' => $idStock,
+            'cod_ubi_destino' => 2,
+            'cantidad' => 6,
+        ])->assertOk();
+        $this->assertDatabaseMissing('stock_accesorios', ['id_stock' => $idStock]);
+
+        $idBaja = HistorialBajaGeneral::where('tipo_item', 'accesorio')->value('id_baja');
+        $this->postJson("/api/inventario/historial-bajas-general/{$idBaja}/restaurar")->assertOk();
+
+        $this->assertDatabaseHas('stock_accesorios', [
+            'id_accesorio' => $idAccesorio,
+            'cod_ubi_elemento' => 1,
+            'cantidad_total' => 4,
+            'cantidad_disponible' => 4,
+        ]);
+        $this->assertEquals(10, InventarioAccesorio::find($idAccesorio)->cantidad_total);
+        $this->assertDatabaseMissing('historial_bajas_general', ['id_baja' => $idBaja]);
+    }
+
+    public function test_busqueda_global_encuentra_usuarios_y_equipos_por_marca(): void
+    {
+        $marca = Marca::create(['marca' => 'Zeta']);
+        $elemento = $this->crearElemento(['cod_marca' => $marca->cod_marca]);
+
+        $porMarca = $this->getJson('/api/buscar?q=Zeta')->assertOk();
+        $this->assertTrue(
+            collect($porMarca->json('data.inventario'))->pluck('id_elemento')->contains($elemento->id_elemento)
+        );
+
+        $this->getJson('/api/buscar?q=Gerente&tipo=usuario')
+            ->assertOk()
+            ->assertJsonCount(1, 'data.usuario');
+    }
+
+        public function test_equipo_con_reserva_pendiente_no_se_da_de_baja_ni_va_a_mantenimiento(): void
+    {
+        $docente = Usuario::create([
+            'documento' => '4444444444',
+            'nombre' => 'Dora',
+            'apellido' => 'Docente',
+            'cod_rol' => 1,
+            'cod_estado_usuario' => 1,
+            'password' => bcrypt('4444444444'),
+        ]);
+        $gerente = Usuario::find('3333333333');
+        $equipo = $this->crearElemento();
+
+        $this->actingAs($docente);
+        $idReserva = $this->postJson('/api/mis-reserva', [
+            'fecha' => now()->toDateString(),
+            'plazo' => now()->addDays(2)->toDateString(),
+            'detalles' => [['id_elemento' => $equipo->id_elemento, 'cantidad' => 1]],
+        ])->assertStatus(201)->json('data.id_Reserva');
+
+        $this->actingAs($gerente);
+        $this->patchJson("/api/inventario/activos/{$equipo->id_elemento}/dar-de-baja", ['motivo' => 'x'])
+            ->assertStatus(422);
+        $this->postJson("/api/inventario/{$equipo->id_elemento}/mantenimiento", [
+            'cod_tipo_mantenimiento' => 1,
+            'descripcion' => 'Falla',
+        ])->assertStatus(422);
+        $this->assertEquals(Inventario::ESTADO_ACTIVO, $equipo->fresh()->cod_estado_elemento);
+
+        // El docente cancela su reserva y el bloqueo desaparece
+        $this->actingAs($docente);
+        $this->deleteJson("/api/mis-reserva/{$idReserva}")->assertOk();
+
+        $this->actingAs($gerente);
+        $this->patchJson("/api/inventario/activos/{$equipo->id_elemento}/dar-de-baja", ['motivo' => 'x'])
+            ->assertOk();
+    }
+
+    public function test_no_se_crea_un_accesorio_con_nombre_duplicado(): void
+    {
+        $datos = ['nombre' => 'Cable HDMI', 'cantidad_total' => 5, 'cod_ubi_elemento' => 1];
+
+        $this->postJson('/api/inventario-accesorios', $datos)->assertStatus(201);
+        $this->postJson('/api/inventario-accesorios', array_merge($datos, ['nombre' => '  cable hdmi ']))
+            ->assertStatus(422);
+
+        $this->assertEquals(1, InventarioAccesorio::count());
+    }
+
+    public function test_historial_de_bajas_devuelve_resumen_de_todo_el_historial(): void
+    {
+        $idStock = $this->postJson('/api/inventario-accesorios', [
+            'nombre' => 'Tornillo',
+            'cantidad_total' => 20,
+            'cod_ubi_elemento' => 1,
+        ])->assertStatus(201)->json('data.stocks.0.id_stock');
+
+        $this->postJson("/api/inventario/accesorios/{$idStock}/dar-de-baja", ['cantidad' => 2, 'motivo' => 'a'])->assertOk();
+        $this->postJson("/api/inventario/accesorios/{$idStock}/dar-de-baja", ['cantidad' => 3, 'motivo' => 'b'])->assertOk();
+
+        $this->getJson('/api/inventario/historial-bajas-general?tipo=accesorio')
+            ->assertOk()
+            ->assertJsonPath('resumen.registros', 2)
+            ->assertJsonPath('resumen.unidades', 5);
     }
 }

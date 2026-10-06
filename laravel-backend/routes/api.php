@@ -79,7 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('reserva', ReservaController::class);
 
         Route::post('/inventario-accesorios/trasladar', [InventarioAccesorioController::class, 'trasladar']);
-        Route::apiResource('inventario-accesorios', InventarioAccesorioController::class)->except(['show']);
+        Route::apiResource('inventario-accesorios', InventarioAccesorioController::class)->except(['show', 'destroy']);
     });
 
     // INVENTARIO (Gerente/Técnico)  

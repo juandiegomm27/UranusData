@@ -9,6 +9,7 @@ use App\Models\TipoMantenimiento;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MantenimientoController extends Controller
 {
@@ -109,7 +110,7 @@ class MantenimientoController extends Controller
                     'cod_tipo_elemento' => $elemento->cod_tipo_elemento,
                     'cod_ubi_elemento' => $elemento->cod_ubi_elemento,
                     'ubicacion' => $elemento->ubicacion ? $elemento->ubicacion->ubicacion : 'N/A',
-                    'motivo' => $validated['observaciones'],
+                    'motivo' => Str::limit($validated['observaciones'], 255, ''),
                     'fecha_baja' => now()
                 ]);
 

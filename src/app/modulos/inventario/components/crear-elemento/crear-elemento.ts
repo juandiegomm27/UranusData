@@ -154,14 +154,12 @@ export class CrearElementoComponent implements OnInit {
         }
       });
     } else {
-      // TRAYECTO DE ACCESORIOS (NUEVO STOCK)
-      // Si `this.accesorioSeleccionado` existe, enviamos su `id_accesorio`. 
-      // El backend entenderá que debe agregar el stock a ese ID en lugar de crear un duplicado global.
       const datosAccesorio = {
         id_accesorio: this.accesorioSeleccionado ? this.accesorioSeleccionado.id_accesorio : null,
         nombre: this.nombre_elemento,
         cod_tipo_elemento: this.cod_tipo_elemento || null,
         cod_marca: this.cod_marca,
+        modelo: this.modelo || null,
         descripcion: this.descripcion || null,
         cantidad_total: this.cantidad_total,
         cantidad_disponible: this.cantidad_total,
@@ -183,7 +181,7 @@ export class CrearElementoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Error al guardar accesorio:', err);
-          this.mensaje = err.error?.mensaje || 'Error al procesar el accesorio';
+          this.mensaje = extraerMensajeError(err, 'Error al procesar el accesorio');
           this.tipoMensaje = 'error';
           this.cargando = false;
           this.cdr.detectChanges();

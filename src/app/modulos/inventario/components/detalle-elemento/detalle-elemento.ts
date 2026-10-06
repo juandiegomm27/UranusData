@@ -176,6 +176,7 @@ export class DetalleElementoComponent implements OnInit {
         nombre: this.formulario.nombre,
         cod_tipo_elemento: this.formulario.cod_tipo_elemento || null,
         cod_marca: this.formulario.cod_marca || null,
+        modelo: this.formulario.modelo || null,
         descripcion: this.formulario.descripcion || null
       };
 

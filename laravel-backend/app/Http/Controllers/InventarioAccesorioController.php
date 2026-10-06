@@ -60,10 +60,9 @@ class InventarioAccesorioController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Añadimos 'id_accesorio' a las validaciones permitidas
         $validated = $request->validate([
             'id_accesorio' => 'nullable|exists:inventario_accesorios,id_accesorio',
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:100',
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
             'cod_tipo_elemento' => 'nullable|exists:tipo_elemento,cod_tipo_elemento',
@@ -72,32 +71,34 @@ class InventarioAccesorioController extends Controller
             'cod_ubi_elemento' => 'required|exists:ubi_elemento,cod_ubi_elemento'
         ]);
 
+        if (empty($validated['id_accesorio']) && $this->nombreDuplicado($validated['nombre'])) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Ya existe un accesorio con ese nombre. Selecciónalo de la lista de sugerencias para añadirle stock.'
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
-            // 2. Comprobamos si nos enviaron un ID (significa que el accesorio ya existe)
-            if ($request->has('id_accesorio') && !empty($request->id_accesorio)) {
+            if (!empty($validated['id_accesorio'])) {
 
-                $accesorio = InventarioAccesorio::findOrFail($request->id_accesorio);
+                $accesorio = InventarioAccesorio::findOrFail($validated['id_accesorio']);
 
-                // Actualizamos las cantidades globales del catálogo de este accesorio
                 $accesorio->cantidad_total += $validated['cantidad_total'];
                 $accesorio->cantidad_disponible += $validated['cantidad_total'];
                 $accesorio->save();
 
-                // Buscamos si ya hay stock de este accesorio en la ubicación indicada
                 $stock = StockAccesorio::firstOrNew([
                     'id_accesorio' => $accesorio->id_accesorio,
                     'cod_ubi_elemento' => $validated['cod_ubi_elemento']
                 ]);
 
-                // Le sumamos la cantidad (si era nuevo, empezará en 0 antes de sumar)
                 $stock->cantidad_total += $validated['cantidad_total'];
                 $stock->cantidad_disponible += $validated['cantidad_total'];
                 $stock->save();
 
                 $mensaje = 'Stock añadido al accesorio existente exitosamente';
             } else {
-                // 3. Lógica original: Crear un accesorio completamente nuevo
                 $accesorio = InventarioAccesorio::create([
                     'nombre' => $validated['nombre'],
                     'modelo' => $validated['modelo'] ?? null,
@@ -139,12 +140,23 @@ class InventarioAccesorioController extends Controller
         }
 
         $validated = $request->validate([
-            'nombre' => 'string|max:255',
+            'nombre' => 'string|max:100',
             'modelo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
             'cod_tipo_elemento' => 'nullable|exists:tipo_elemento,cod_tipo_elemento',
             'cod_marca' => 'nullable|integer|exists:marca,cod_marca',
         ]);
+
+        if (
+            isset($validated['nombre'])
+            && mb_strtolower(trim($validated['nombre'])) !== mb_strtolower(trim($accesorio->nombre))
+            && $this->nombreDuplicado($validated['nombre'], (int) $id)
+        ) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Ya existe otro accesorio con ese nombre.'
+            ], 422);
+        }
 
         $accesorio->update($validated);
 
@@ -207,5 +219,16 @@ class InventarioAccesorioController extends Controller
         }
         $accesorio->delete();
         return response()->json(['success' => true, 'mensaje' => 'Accesorio eliminado del catálogo general']);
+    }
+
+    private function nombreDuplicado(string $nombre, ?int $exceptoId = null): bool
+    {
+        $query = InventarioAccesorio::whereRaw('LOWER(nombre) = ?', [mb_strtolower(trim($nombre))]);
+
+        if ($exceptoId) {
+            $query->where('id_accesorio', '!=', $exceptoId);
+        }
+
+        return $query->exists();
     }
 }

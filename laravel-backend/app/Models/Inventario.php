@@ -73,4 +73,17 @@ class Inventario extends Model
     {
         return $this->hasMany(Inventario::class, 'id_elemento_padre', 'id_elemento');
     }
+
+    public function reservaPendiente(): ?int
+    {
+        return ReservaDetalle::where('id_elemento', $this->id_elemento)
+            ->whereHas('reserva', function ($q) {
+                $q->where('Num_estado', 1)
+                  ->where(function ($sub) {
+                      $sub->whereDoesntHave('prestamo')
+                          ->orWhereHas('prestamo', fn ($p) => $p->where('cod_estado_prestamo', 1));
+                  });
+            })
+            ->value('id_Reserva');
+    }
 }

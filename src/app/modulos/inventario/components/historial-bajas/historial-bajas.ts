@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventarioService } from '../../services/inventario.service';
+import { PaginationHelper } from '../../../shared/utils/pagination.helper';
 
 @Component({
   selector: 'app-historial-bajas',
@@ -9,7 +10,7 @@ import { InventarioService } from '../../services/inventario.service';
   templateUrl: './historial-bajas.html',
   styleUrls: ['./historial-bajas.css']
 })
-export class HistorialBajasComponent implements OnChanges {
+export class HistorialBajasComponent extends PaginationHelper implements OnChanges {
   @Input() mostrar = false;
   @Input() tipoItem: 'activo' | 'accesorio' = 'activo';
   @Output() cerrar = new EventEmitter<void>();
@@ -20,29 +21,33 @@ export class HistorialBajasComponent implements OnChanges {
 
   historialBajas: any[] = [];
   totalUnidadesBaja = 0;
-  cargando = false;
   mensajeModal = '';
   tipoMensajeModal: 'success' | 'error' = 'success';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['mostrar'] && this.mostrar) {
-      this.cargarHistorial();
+      this.paginaActual = 1;
+      this.cargarDatos();
     }
   }
 
-  cargarHistorial(): void {
+  cargarDatos(): void {
     this.cargando = true;
-    this.inventarioService.obtenerHistorialBajasGeneral(this.tipoItem).subscribe({
+    this.inventarioService.obtenerHistorialBajasGeneral(this.tipoItem, this.paginaActual).subscribe({
       next: (res: any) => {
-        const items = res?.data?.data || res?.data || [];
-        this.historialBajas = items;
-        this.totalUnidadesBaja = this.historialBajas.reduce((acc, curr) => acc + Number(curr.cantidad), 0);
+        const pagina = res?.data;
+        this.historialBajas = pagina?.data || [];
+        this.totalElementos = pagina?.total ?? res?.resumen?.registros ?? 0;
+        this.totalPaginas = pagina?.last_page || 1;
+        this.totalUnidadesBaja = res?.resumen?.unidades ?? 0;
         this.cargando = false;
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Error al cargar historial:', err);
         this.historialBajas = [];
+        this.totalElementos = 0;
+        this.totalPaginas = 1;
         this.totalUnidadesBaja = 0;
         this.cargando = false;
         this.cdr.detectChanges();
@@ -54,13 +59,19 @@ export class HistorialBajasComponent implements OnChanges {
     if (!confirm(`¿Estás seguro de restaurar "${baja.nombre}" al inventario?`)) {
       return;
     }
-    
+
     this.inventarioService.restaurarBaja(baja.id_baja).subscribe({
       next: (res: any) => {
         this.mensajeModal = res.mensaje || 'Elemento restaurado exitosamente';
         this.tipoMensajeModal = 'success';
-        this.cargarHistorial(); // Recargar la tabla local
-        this.recargar.emit();   // Avisar al componente padre que recargue su tabla
+
+        // Si era el único registro de la última página, retrocede una página
+        if (this.historialBajas.length === 1 && this.paginaActual > 1) {
+          this.paginaActual--;
+        }
+
+        this.cargarDatos();
+        this.recargar.emit();
         this.cdr.detectChanges();
 
         setTimeout(() => {

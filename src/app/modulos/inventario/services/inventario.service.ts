@@ -77,8 +77,8 @@ export class InventarioService {
     return this.http.post<any>(`${this.apiAccesoriosUrl}/trasladar`, datos);
   }
 
-  obtenerHistorialBajasGeneral(tipo?: string): Observable<any> {
-    let params = new HttpParams();
+  obtenerHistorialBajasGeneral(tipo?: string, pagina: number = 1): Observable<any> {
+    let params = new HttpParams().set('page', pagina.toString());
     if (tipo) params = params.set('tipo', tipo);
     return this.http.get<any>(`${environment.apiUrl}/inventario/historial-bajas-general`, { params });
   }
@@ -91,9 +91,9 @@ export class InventarioService {
     return this.http.put<any>(`${this.apiAccesoriosUrl}/${id}`, accesorio);
   }
 
-  eliminarAccesorio(id: number): Observable<any> {
+  /*eliminarAccesorio(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiAccesoriosUrl}/${id}`);
-  }
+  }*/
 
   // --- OPCIONES GENERALES Y CATÁLOGOS ---
   obtenerOpciones(): Observable<any> {

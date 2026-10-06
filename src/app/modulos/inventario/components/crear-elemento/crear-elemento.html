@@ -70,6 +70,12 @@
           <label>Marca</label>
           <app-selector-marca [valor]="cod_marca" (cambio)="cod_marca = $event"></app-selector-marca>
         </div>
+        @if (tipoTab === 'accesorios') {
+        <div class="grupo-campo">
+          <label for="modelo-acc">Modelo</label>
+          <input id="modelo-acc" type="text" [(ngModel)]="modelo" name="modelo_acc" placeholder="Ej: HDMI-2M">
+        </div>
+        }
         }
 
         <div class="grupo-campo">
@@ -140,8 +146,8 @@
           alt="Cerrar" class="icono-cerrar"></button>
     </div>
     <div class="modal-body">
-      <div class="grupo-campo"><label>Nombre</label><input type="text" [(ngModel)]="nuevoTipoNombre"
-          class="input-full" placeholder="Ej: Cable de red"></div>
+      <div class="grupo-campo"><label>Nombre</label><input type="text" [(ngModel)]="nuevoTipoNombre" class="input-full"
+          placeholder="Ej: Cable de red"></div>
     </div>
     <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarNuevoTipo()">Guardar</button><button
         class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>

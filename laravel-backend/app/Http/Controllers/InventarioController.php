@@ -27,16 +27,16 @@ class InventarioController extends Controller
     {
         $query = Inventario::visibles()
             ->with(['padre:id_elemento,cod_elemento,nombre_elemento', 'marca:cod_marca,marca'])
-            ->withCount(['hijos' => fn ($q) => $q->visibles()]);
+            ->withCount(['hijos' => fn($q) => $q->visibles()]);
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nombre_elemento', 'like', $searchTerm)
-                  ->orWhere('cod_elemento', 'like', $searchTerm)
-                  ->orWhere('serial', 'like', $searchTerm)
-                  ->orWhere('modelo', 'like', $searchTerm)
-                  ->orWhereHas('marca', fn ($m) => $m->where('marca', 'like', $searchTerm));
+                    ->orWhere('cod_elemento', 'like', $searchTerm)
+                    ->orWhere('serial', 'like', $searchTerm)
+                    ->orWhere('modelo', 'like', $searchTerm)
+                    ->orWhereHas('marca', fn($m) => $m->where('marca', 'like', $searchTerm));
             });
         }
         if ($request->filled('tipo')) {
@@ -76,8 +76,12 @@ class InventarioController extends Controller
             'estado',
             'mantenimiento.tipo',
             'padre:id_elemento,cod_elemento,nombre_elemento',
-            'hijos' => fn ($q) => $q->visibles()->select(
-                'id_elemento', 'id_elemento_padre', 'cod_elemento', 'nombre_elemento', 'serial'
+            'hijos' => fn($q) => $q->visibles()->select(
+                'id_elemento',
+                'id_elemento_padre',
+                'cod_elemento',
+                'nombre_elemento',
+                'serial'
             ),
         ])->find($id);
 
@@ -187,6 +191,13 @@ class InventarioController extends Controller
                 'success' => false,
                 'mensaje' => 'Solo los elementos activos pueden enviarse a mantenimiento'
             ], 400);
+        }
+
+        if ($idReserva = $elemento->reservaPendiente()) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => "Este equipo tiene la reserva #{$idReserva} pendiente de entrega. Entrégala o pide al docente que la cancele antes de enviarlo a mantenimiento."
+            ], 422);
         }
 
         $validated = $request->validate([
