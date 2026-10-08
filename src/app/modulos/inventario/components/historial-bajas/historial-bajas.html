@@ -16,7 +16,7 @@
         <div class="seccion-bajas-resumen">
           <div class="tarjeta-resumen-baja">
             <span class="titulo-resumen">Registros en Historial</span>
-            <span class="valor-resumen">{{ historialBajas.length }}</span>
+            <span class="valor-resumen">{{ totalElementos }}</span>
           </div>
           <div class="tarjeta-resumen-baja">
             <span class="titulo-resumen">Unidades Retiradas</span>
@@ -63,6 +63,14 @@
               </tbody>
             </table>
           </div>
+
+          @if (totalPaginas > 1) {
+            <div class="paginacion">
+              <button class="btn-paginacion" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+              <span class="indicador-pagina">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+              <button class="btn-paginacion" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+            </div>
+          }
         }
       </div>
       

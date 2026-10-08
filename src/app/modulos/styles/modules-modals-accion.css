@@ -1,0 +1,93 @@
+/* Modales pequeños de acción (baja, traslado) */
+.modal-pequeno {
+    max-width: 600px;
+}
+
+.header-baja {
+    background-color: transparent !important;
+    border-bottom-color: #dc3545 !important;
+}
+
+.header-baja h2,
+.header-baja .btn-cerrar-modal {
+    color: #dc3545 !important;
+}
+
+.header-traslado {
+    background-color: transparent !important;
+    border-bottom-color: #17a2b8 !important;
+}
+
+.header-traslado h2,
+.header-traslado .btn-cerrar-modal {
+    color: #17a2b8 !important;
+}
+
+.info-stock-baja {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #fff8e1;
+    border: 1px solid #ffe69c;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #533f03;
+}
+
+.info-stock-traslado {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #f1f8e9;
+    border: 1px solid #c5e1a5;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #33691e;
+}
+
+.btn-modal-traslado {
+    background-color: #17a2b8;
+    color: #ffffff;
+}
+
+.btn-modal-traslado:hover:not(:disabled) {
+    background-color: #138496;
+}
+
+/* MODO OSCURO */
+:host-context(body.dark-mode) .header-baja {
+    border-bottom-color: #ff6b7a !important;
+}
+
+:host-context(body.dark-mode) .header-baja h2,
+:host-context(body.dark-mode) .header-baja .btn-cerrar-modal {
+    color: #ff6b7a !important;
+}
+
+:host-context(body.dark-mode) .header-traslado {
+    border-bottom-color: #4dd0e1 !important;
+}
+
+:host-context(body.dark-mode) .header-traslado h2,
+:host-context(body.dark-mode) .header-traslado .btn-cerrar-modal {
+    color: #4dd0e1 !important;
+}
+
+:host-context(body.dark-mode) .info-stock-baja {
+    background: #332701;
+    border-color: #534200;
+    color: #ffda6a;
+}
+
+:host-context(body.dark-mode) .info-stock-traslado {
+    background: #1a3c24;
+    border-color: #2c5233;
+    color: #75b798;
+}
+
+:host-context(body.dark-mode) .btn-modal-traslado {
+    background-color: #138496;
+    color: #ffffff;
+}
+
+:host-context(body.dark-mode) .btn-modal-traslado:hover:not(:disabled) {
+    background-color: #17a2b8;
+}

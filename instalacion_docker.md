@@ -122,3 +122,8 @@ docker-compose exec backend php artisan cache:clear
 ```bash
 docker-compose exec backend rm -rf vendor bootstrap/cache/*.php
 ```
+
+* **reiniciar la base**
+```bash
+docker-compose exec backend php artisan migrate:fresh --seed
+```

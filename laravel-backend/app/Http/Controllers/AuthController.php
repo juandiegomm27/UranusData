@@ -65,7 +65,7 @@ class AuthController extends Controller
             ], 403);
         }
 
-        if ($usuario->cod_estado_usuario == 3) {
+        if ($usuario->cod_estado_usuario == 3) { 
             return response()->json([
                 'success' => false,
                 'mensaje' => 'Tu usuario está bloqueado. Por favor comunícate con soporte'

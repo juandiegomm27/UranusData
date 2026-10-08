@@ -1,0 +1,59 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-layout.css';
+@import '../../../styles/modules-badges.css';
+
+/* Este modal se abre encima del modal de detalle */
+.overlay-superior {
+  z-index: 1200;
+}
+
+.modal-ancho {
+  max-width: 760px;
+}
+
+.lista-movimientos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.movimiento-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.movimiento-item .estado-badge {
+  flex-shrink: 0;
+  min-width: 96px;
+}
+
+.movimiento-texto {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #212529;
+  word-break: break-word;
+}
+
+.movimiento-meta {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+:host-context(body.dark-mode) .movimiento-item {
+  background: #2a2a2a;
+  border-color: #333;
+}
+
+:host-context(body.dark-mode) .movimiento-texto {
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .movimiento-meta {
+  color: #adb5bd;
+}

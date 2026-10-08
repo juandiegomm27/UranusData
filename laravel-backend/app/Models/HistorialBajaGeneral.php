@@ -16,6 +16,7 @@ class HistorialBajaGeneral extends Model
     // AÑADE LOS CAMPOS FALTANTES AQUÍ
     protected $fillable = [
         'tipo_item',
+        'id_accesorio',
         'id_original',
         'nombre',
         'codigo_identificacion',

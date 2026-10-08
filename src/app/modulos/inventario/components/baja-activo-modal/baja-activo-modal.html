@@ -1,0 +1,35 @@
+<div class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+
+    <div class="modal-header header-baja">
+      <h2>Dar de Baja: {{ elemento?.nombre_elemento }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (mensaje) {
+      <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje"><span>{{ mensaje }}</span></div>
+      }
+
+      <div class="info-stock-baja">
+        <span>Código: <strong>{{ elemento?.cod_elemento || 'N/A' }}</strong></span>
+      </div>
+
+      @if (elemento?.hijos_count > 0) {
+      <div class="mensaje-alerta mensaje-warning">
+        <span>Este equipo tiene {{ elemento.hijos_count }} componente(s). Al darlo de baja quedarán como elementos independientes (siguen activos).</span>
+      </div>
+      }
+
+      <div class="grupo-campo">
+        <label>Motivo de la baja *</label>
+        <textarea [(ngModel)]="motivo" placeholder="Especifique el motivo de la baja del equipo..." [disabled]="procesando"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-danger" [disabled]="procesando" (click)="confirmar()">{{ procesando ? 'Procesando...' : 'Confirmar Baja' }}</button>
+      <button class="btn-modal-secondary" [disabled]="procesando" (click)="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

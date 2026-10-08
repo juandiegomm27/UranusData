@@ -86,11 +86,23 @@ class ReservaController extends Controller
                     }
                 }
 
+                // Si queda pendiente, crear de una vez el registro de préstamo
+                // "Solicitado" para que aparezca en la lista de préstamos.
+                if ($reserva->Num_estado == 1) {
+                    \App\Models\Prestamo::create([
+                        'id_Reserva' => $reserva->id_Reserva,
+                        'cod_estado_prestamo' => 1, // Solicitado
+                        'fecha_entrega_original' => $validated['plazo'] ?? null,
+                        'fecha_limite_actual' => $validated['plazo'] ?? null,
+                        'extension_aprobada' => false,
+                    ]);
+                }
+
                 return $reserva;
             });
 
             return $this->successResponse(
-                $reserva->load('usuario', 'estado', 'detalles.elemento', 'detalles.stock.accesorio'),
+                $reserva->load('usuario', 'estado', 'detalles.elemento', 'detalles.stock.accesorio', 'prestamo'),
                 'Reserva creada correctamente',
                 201
             );
@@ -230,6 +242,18 @@ class ReservaController extends Controller
             DB::transaction(function () use ($reserva, $validated, $request) {
                 $reserva->update($request->only(['Num_estado', 'fecha', 'plazo']));
 
+                // Mantener sincronizada la fecha límite del préstamo mientras
+                // siga "Solicitado" (aún no entregado).
+                if (array_key_exists('plazo', $validated)) {
+                    \App\Models\Prestamo::where('id_Reserva', $reserva->id_Reserva)
+                        ->where('cod_estado_prestamo', 1)
+                        ->update([
+                            'fecha_entrega_original' => $validated['plazo'],
+                            'fecha_limite_actual' => $validated['plazo'],
+                        ]);
+                }
+
+                // Si mandan nuevos detalles, reemplazamos los anteriores
                 if (isset($validated['detalles'])) {
 
                     foreach ($reserva->detalles as $viejoDetalle) {

@@ -10,7 +10,7 @@ export interface EstadoElemento {
 }
 
 export interface PrestamoActivo {
-  id_reserva: number;
+  id_Reserva: number;
   documento: string;
   nombre: string;
   apellido?: string;
@@ -42,6 +42,7 @@ export interface PrestamosResponse {
 })
 export class PrestamosActivosService {
   private baseUrl = `${environment.apiUrl}/gestion/usuario/prestamos-activos`;
+  private reservaUrl = `${environment.apiUrl}/reserva`;
 
   constructor(private http: HttpClient) {}
 
@@ -118,16 +119,12 @@ export class PrestamosActivosService {
   }
 
   /**
-   * Marcar préstamo como entregado
+   * Pasar una reserva "Solicitada" a préstamo entregado de verdad:
+   * marca los equipos como en préstamo, descuenta stock y crea/actualiza
+   * el registro de Prestamo. A diferencia de actualizarEstadoPrestamo,
+   * esto sí aplica los efectos reales de la entrega.
    */
-  marcarComoEntregado(idReserva: number): Observable<any> {
-    return this.actualizarEstadoPrestamo(idReserva, 2, 'Entregado por sistema');
-  }
-
-  /**
-   * Marcar préstamo como devuelto
-   */
-  marcarComoDevuelto(idReserva: number): Observable<any> {
-    return this.actualizarEstadoPrestamo(idReserva, 3, 'Devuelto por sistema');
+  entregarPrestamo(idReserva: number): Observable<any> {
+    return this.http.post<any>(`${this.reservaUrl}/${idReserva}/entregar`, {});
   }
 }

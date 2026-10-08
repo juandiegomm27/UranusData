@@ -2,15 +2,24 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RolSeeder extends Seeder
 {
     public function run(): void
-{
-    \App\Models\Rol::create(['cargo' => 'Docente']);
-    \App\Models\Rol::create(['cargo' => 'Tecnico']);
-    \App\Models\Rol::create(['cargo' => 'Gerente']);
-}
+    {
+        $roles = [
+            1 => 'Docente',
+            2 => 'Tecnico',
+            3 => 'Gerente',
+        ];
+
+        foreach ($roles as $codigo => $cargo) {
+            DB::table('rol')->updateOrInsert(
+                ['cod_rol' => $codigo],
+                ['cargo' => $cargo]
+            );
+        }
+    }
 }

@@ -1,0 +1,33 @@
+<div class="modulo-form-container">
+  <div class="modulo-form-card">
+    <div class="modulo-form-header">
+      <h2>Nueva reserva</h2>
+      <button type="button" class="btn-cerrar" (click)="cancelar()">✕</button>
+    </div>
+
+    <form class="modulo-form" (ngSubmit)="guardar()">
+      <div class="grupo-campo">
+        <label>Fecha límite para recoger *</label>
+        <input type="date" [(ngModel)]="plazo" name="plazo" [min]="fecha" required>
+      </div>
+
+      <div class="grupo-campo">
+        <label>Elementos a reservar</label>
+        <app-selector-catalogo (cambioSeleccion)="onCambioSeleccion($event)"></app-selector-catalogo>
+      </div>
+
+      @if (mensajeError()) {
+        <p class="mensaje-error">{{ mensajeError() }}</p>
+      } @else if (!formularioValido && mensajesFaltantes.length > 0) {
+        <p class="mensaje-hint">Para confirmar falta: {{ mensajesFaltantes.join(', ') }}.</p>
+      }
+
+      <div class="modulo-botones-accion">
+        <button type="button" class="btn-limpiar" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="btn-guardar" [disabled]="!formularioValido || guardando()">
+          {{ guardando() ? 'Guardando...' : 'Confirmar reserva' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

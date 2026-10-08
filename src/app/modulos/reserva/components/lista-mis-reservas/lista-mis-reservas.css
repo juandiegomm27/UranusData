@@ -1,0 +1,64 @@
+@import '../../../styles/modules-layout.css';
+@import '../../../styles/modules-tables.css';
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-forms.css';
+
+.pestanas-reserva {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pestana-btn {
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pestana-btn:hover {
+  border-color: #1C74A0;
+}
+
+.pestana-activa {
+  background-color: #1C74A0;
+  color: #fff;
+  border-color: #1C74A0;
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-cerrar-modal-footer {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #6c757d;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mensaje-error {
+  color: #dc3545;
+  font-size: 13px;
+  margin: 0;
+}

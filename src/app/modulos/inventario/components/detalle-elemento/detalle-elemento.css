@@ -1,5 +1,6 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-forms.css';
+@import '../../../styles/modules-badges.css';
 
 /* Nuevas clases extraídas del HTML */
 .btn-modal-info {
@@ -112,4 +113,121 @@
   background-color: #1a1a1a;
   border-color: #444;
   color: #fff;
+}
+/* --- NAVEGACIÓN PADRE / COMPONENTES --- */
+.barra-navegacion {
+  margin-bottom: 4px;
+}
+
+.btn-volver {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1C74A0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-volver:hover {
+  text-decoration: underline;
+}
+
+.lista-relacionados {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-relacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(28, 116, 160, 0.35);
+  border-radius: 8px;
+  background: #eef6fb;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-relacion:hover {
+  background: #dcebf5;
+}
+
+.campo-info .btn-relacion .relacion-texto {
+  font-size: 14px;
+  color: #212529;
+}
+
+.campo-info .btn-relacion .relacion-ver {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1C74A0;
+}
+
+.titulo-parcial {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* --- ESQUELETO DE CARGA --- */
+.skeleton {
+  height: 16px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e9ecef 25%, #f8f9fa 37%, #e9ecef 63%);
+  background-size: 400% 100%;
+  animation: skeleton-brillo 1.4s ease infinite;
+}
+
+.skeleton-etiqueta {
+  width: 40%;
+  height: 11px;
+}
+
+.skeleton-fila {
+  height: 36px;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-brillo {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* --- MODO OSCURO --- */
+:host-context(body.dark-mode) .btn-volver {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .btn-relacion {
+  background: #2a2a2a;
+  border-color: rgba(255, 159, 19, 0.4);
+}
+
+:host-context(body.dark-mode) .btn-relacion:hover {
+  background: #333;
+}
+
+:host-context(body.dark-mode) .campo-info .btn-relacion .relacion-texto {
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .campo-info .btn-relacion .relacion-ver {
+  color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .titulo-parcial {
+  color: #e0e0e0;
+}
+
+:host-context(body.dark-mode) .skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 37%, #2a2a2a 63%);
+  background-size: 400% 100%;
 }

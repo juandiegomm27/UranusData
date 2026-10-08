@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PrestamoActivo, PrestamosActivosService } from '../../../prestamos/services/prestamos-activos.service';
@@ -16,6 +16,7 @@ export class ModalDetallesPrestamoComponent implements OnInit {
   @Output() actualizarPrestamo = new EventEmitter<void>();
 
   private prestamosService = inject(PrestamosActivosService);
+  private cdr = inject(ChangeDetectorRef);
 
   cargando = false;
   actualizando = false;
@@ -38,6 +39,18 @@ export class ModalDetallesPrestamoComponent implements OnInit {
     }
   }
 
+  /**
+   * Mientras el préstamo sigue "Solicitado" (aún no se entregó físicamente),
+   * lo único que tiene sentido es entregarlo: no existe todavía un equipo en
+   * manos del docente que se pueda marcar como devuelto/perdido/dañado.
+   */
+  get opcionesEstado() {
+    if (this.prestamo?.cod_estado_prestamo === 1) {
+      return this.estadosDisponibles.filter(e => e.cod === 2);
+    }
+    return this.estadosDisponibles;
+  }
+
   obtenerNombreEstado(cod: number): string {
     const estado = this.estadosDisponibles.find(e => e.cod === cod);
     return estado ? estado.nombre : 'Desconocido';
@@ -55,20 +68,25 @@ export class ModalDetallesPrestamoComponent implements OnInit {
     this.mensajeExito = '';
     this.actualizando = true;
 
-    this.prestamosService.actualizarEstadoPrestamo(
-      this.prestamo.id_reserva,
-      this.nuevoEstado,
-      this.observaciones
-    ).subscribe({
+    // De "Solicitado" a "Entregado" hay que pasar por el endpoint real de
+    // entrega: es el único que descuenta stock y marca el equipo en préstamo.
+    // El PUT genérico solo cambiaría la etiqueta sin esos efectos.
+    const accion = this.prestamo.cod_estado_prestamo === 1 && this.nuevoEstado === 2
+      ? this.prestamosService.entregarPrestamo(this.prestamo.id_Reserva)
+      : this.prestamosService.actualizarEstadoPrestamo(this.prestamo.id_Reserva, this.nuevoEstado, this.observaciones);
+
+    accion.subscribe({
       next: () => {
         this.actualizando = false;
         this.mensajeExito = '✓ Estado actualizado correctamente';
         this.actualizarPrestamo.emit();
+        this.cdr.detectChanges();
         setTimeout(() => this.cerrar(), 1500);
       },
       error: (error: any) => {
         this.actualizando = false;
         this.mensajeError = error.error?.mensaje || 'Error al actualizar el estado.';
+        this.cdr.detectChanges();
       }
     });
   }

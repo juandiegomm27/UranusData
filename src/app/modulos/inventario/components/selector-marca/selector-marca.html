@@ -1,0 +1,43 @@
+<div class="grupo-input-flex">
+  <select class="select-flex" [ngModel]="valor" (ngModelChange)="seleccionar($event)" [ngModelOptions]="{ standalone: true }">
+    <option [ngValue]="null">Sin marca</option>
+    @for (m of marcas; track m.cod_marca) {
+      <option [ngValue]="m.cod_marca">{{ m.marca }}</option>
+    }
+  </select>
+  <button type="button" class="btn-accion btn-success" (click)="abrirModal()" title="Agregar nueva marca">
+    <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
+  </button>
+  <button type="button" class="btn-accion btn-danger" [disabled]="!valor" (click)="eliminar()" title="Eliminar la marca seleccionada">
+    <img src="icons/papelera.svg" alt="Eliminar" class="icono-btn">
+  </button>
+</div>
+
+@if (mensaje) {
+  <small class="error-selector">{{ mensaje }}</small>
+}
+
+@if (mostrarModal) {
+<div class="modal-overlay z-alto" (click)="cerrarModal()">
+  <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nueva Marca</h2>
+      <button type="button" class="btn-cerrar-modal" (click)="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      @if (mensajeModal) {
+        <small class="error-selector">{{ mensajeModal }}</small>
+      }
+      <div class="grupo-campo">
+        <label>Nombre *</label>
+        <input type="text" class="input-full" placeholder="Ej: Dell" [(ngModel)]="nuevaMarca"
+          [ngModelOptions]="{ standalone: true }" (keyup.enter)="guardarMarca()" maxlength="100">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-modal-primary" [disabled]="guardando" (click)="guardarMarca()">{{ guardando ? 'Guardando...' : 'Guardar' }}</button>
+      <button type="button" class="btn-modal-secondary" [disabled]="guardando" (click)="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}

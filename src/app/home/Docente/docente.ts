@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ReservaService } from '../../modulos/reserva/services/reserva.service';
 
 @Component({
   selector: 'app-docente',
@@ -10,11 +11,13 @@ import { RouterModule } from '@angular/router';
   styleUrl: './docente.css'
 })
 export class Docente implements OnInit {
+  private reservaService = inject(ReservaService);
+
   // Datos del usuario
   nombreUsuario = signal<string>('');
   rolUsuario = signal<string>('Docente');
 
-  // Métricas (Puedes conectarlas a tu servicio más adelante)
+  // Métricas del docente
   reservasActivas = signal<number | null>(null);
   solicitudesPendientes = signal<number | null>(null);
   prestamosActuales = signal<number | null>(null);
@@ -60,6 +63,22 @@ export class Docente implements OnInit {
         console.error('Error parseando usuario', e);
       }
     }
+
+    this.cargarMetricasReservas();
+  }
+
+  private cargarMetricasReservas(): void {
+    this.reservaService.obtenerMisReservas().subscribe({
+      next: (res) => {
+        const reservas = res.data || [];
+        this.reservasActivas.set(reservas.filter((r: any) => r.estado_calculado === 'activa').length);
+        this.prestamosActuales.set(reservas.filter((r: any) => r.estado_calculado === 'en_prestamo').length);
+      },
+      error: () => {
+        this.reservasActivas.set(0);
+        this.prestamosActuales.set(0);
+      }
+    });
   }
 
   mesAnterior(): void {

@@ -1,0 +1,107 @@
+<div class="modulo-container">
+  <div class="modulo-header">
+    <h2>{{ modoEdicion ? 'EDITAR RESERVA' : 'MIS RESERVAS' }}</h2>
+  </div>
+
+  <div class="pestanas-reserva">
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'activa'" (click)="cambiarPestana('activa')">
+      Activas ({{ contar('activa') }})
+    </button>
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'no_recogida'" (click)="cambiarPestana('no_recogida')">
+      No recogidas ({{ contar('no_recogida') }})
+    </button>
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'en_prestamo'" (click)="cambiarPestana('en_prestamo')">
+      En préstamo ({{ contar('en_prestamo') }})
+    </button>
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'rechazada'" (click)="cambiarPestana('rechazada')">
+      Rechazadas ({{ contar('rechazada') }})
+    </button>
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'todas'" (click)="cambiarPestana('todas')">
+      Todas
+    </button>
+  </div>
+
+  @if (cargando()) {
+    <div class="cargando">Cargando tus reservas...</div>
+  } @else if (reservasFiltradas.length === 0) {
+    <div class="sin-datos">No tienes reservas en esta categoría.</div>
+  } @else {
+    <div class="modulo-tabla-wrapper">
+      <table class="modulo-tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Elementos</th>
+            <th>Fecha reserva</th>
+            <th>Plazo</th>
+            <th>Estado</th>
+            @if (modoEdicion) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (reserva of reservasFiltradas; track reserva.id_Reserva) {
+            <tr>
+              <td><strong>#{{ reserva.id_Reserva }}</strong></td>
+              <td>{{ nombresDetalles(reserva) }}</td>
+              <td>{{ reserva.fecha | date:'shortDate' }}</td>
+              <td>{{ reserva.plazo ? (reserva.plazo | date:'shortDate') : 'Sin definir' }}</td>
+              <td>
+                <span class="estado-badge" [ngClass]="claseEstado(reserva)">{{ etiquetaEstado(reserva) }}</span>
+              </td>
+              @if (modoEdicion) {
+                <td>
+                  <div class="botones-accion-tabla">
+                    <button
+                      class="btn-icon btn-icon-ver"
+                      [disabled]="!puedeEditar(reserva)"
+                      (click)="abrirEdicion(reserva)">
+                      Editar
+                    </button>
+                    <button
+                      class="btn-icon btn-icon-danger"
+                      [disabled]="!puedeEditar(reserva)"
+                      (click)="cancelarReserva(reserva)">
+                      Cancelar
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (reservaEditando) {
+  <div class="modal-overlay" (click)="cerrarEdicion()">
+    <div class="modal-contenido" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Editar reserva #{{ reservaEditando.id_Reserva }}</h2>
+        <button class="btn-cerrar-modal" (click)="cerrarEdicion()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="grupo-campo">
+          <label>Fecha de la reserva</label>
+          <input type="date" [(ngModel)]="fechaEdicion" name="fechaEdicion">
+        </div>
+        <div class="grupo-campo">
+          <label>Fecha límite para recoger</label>
+          <input type="date" [(ngModel)]="plazoEdicion" name="plazoEdicion" [min]="fechaEdicion">
+        </div>
+        @if (mensajeErrorEdicion()) {
+          <p class="mensaje-error">{{ mensajeErrorEdicion() }}</p>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cerrar-modal-footer" (click)="cerrarEdicion()">Cancelar</button>
+        <button class="btn-guardar" [disabled]="guardandoEdicion()" (click)="guardarEdicion()">
+          {{ guardandoEdicion() ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

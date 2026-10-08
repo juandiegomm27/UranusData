@@ -11,19 +11,21 @@ class SearchService
 {
     public static function buscarGlobal(string $termino, ?string $tipo = null, int $limit = 10)
     {
+        $limit = min(max($limit, 1), 50);
         $resultados = [];
         if (!$tipo || $tipo === 'usuario') {
-            $usuario = VUsuariosCompletos::where('documento', 'like', "%$termino%")
-                ->orWhere('nombre', 'like', "%$termino%")
-                ->orWhere('apellido', 'like', "%$termino%")
-                ->orWhere('cargo', 'like', "%$termino%") 
+            $usuario = VUsuariosCompletos::where(function ($q) use ($termino) {
+                    $q->where('documento', 'like', "%$termino%")
+                      ->orWhere('nombre', 'like', "%$termino%")
+                      ->orWhere('apellido', 'like', "%$termino%")
+                      ->orWhere('rol', 'like', "%$termino%");
+                })
                 ->limit($limit)
                 ->get();
 
             $resultados['usuario'] = $usuario;
         }
 
-        // Búsqueda en correos
         if (!$tipo || $tipo === 'correo') {
             $correos = Correo::where('correo', 'like', "%$termino%")
                 ->with('usuario')
@@ -33,11 +35,14 @@ class SearchService
             $resultados['correos'] = $correos;
         }
 
-        // Búsqueda en equipos
         if (!$tipo || $tipo === 'inventario') {
-            $equipos = Inventario::where('nombre_elemento', 'like', "%$termino%")
-                ->orWhere('serial', 'like', "%$termino%")
-                ->orWhere('cod_elemento', 'like', "%$termino%")
+            $equipos = Inventario::visibles()
+                ->where(function ($q) use ($termino) {
+                    $q->where('nombre_elemento', 'like', "%$termino%")
+                      ->orWhere('serial', 'like', "%$termino%")
+                      ->orWhere('cod_elemento', 'like', "%$termino%")
+                      ->orWhereHas('marca', fn ($m) => $m->where('marca', 'like', "%$termino%"));
+                })
                 ->limit($limit)
                 ->get();
 

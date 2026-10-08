@@ -12,10 +12,16 @@ class CatalogosSeeder extends Seeder
         // 1. Estados de Elemento (Inventario)
         $estadosElemento = [
             ['cod_estado_elemento' => 1, 'estado' => 'Activo'],
-            ['cod_estado_elemento' => 2, 'estado' => 'Inactivo'],
+            ['cod_estado_elemento' => 2, 'estado' => 'En préstamo'],
             ['cod_estado_elemento' => 3, 'estado' => 'Mantenimiento'],
+            ['cod_estado_elemento' => 4, 'estado' => 'Baja'],
         ];
-        DB::table('estado_elemento')->insertOrIgnore($estadosElemento);
+        foreach ($estadosElemento as $estado) {
+            DB::table('estado_elemento')->updateOrInsert(
+                ['cod_estado_elemento' => $estado['cod_estado_elemento']],
+                ['estado' => $estado['estado']]
+            );
+        }
 
         // 2. Tipos de Elemento
         $tiposElemento = [
@@ -74,7 +80,14 @@ class CatalogosSeeder extends Seeder
             ['cod_estado_mantenimiento' => 1, 'estado' => 'Pendiente'],
             ['cod_estado_mantenimiento' => 2, 'estado' => 'En pausa'],
             ['cod_estado_mantenimiento' => 3, 'estado' => 'Finalizado'],
+            ['cod_estado_mantenimiento' => 4, 'estado' => 'Dado de baja'],
         ];
         DB::table('estado_mantenimiento')->insertOrIgnore($estadosMantenimiento);
+
+        // 8. Marcas
+        $marcas = ['Dell', 'HP', 'Lenovo', 'LG', 'Epson', 'Sony', 'Brother', 'Logitech', 'Samsung', 'Acer', 'Genérica'];
+        foreach ($marcas as $nombre) {
+            DB::table('marca')->insertOrIgnore(['marca' => $nombre]);
+        }
     }
 }

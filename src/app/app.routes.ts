@@ -136,23 +136,23 @@ export const routes: Routes = [
     data: { nombreModulo: 'Mantenimiento' },
     canActivate: [authGuard]
   },
-  { 
-    path: 'reserva/crear', 
-    component: EnConstruccion,
-    data: { nombreModulo: 'reserva' },
-    canActivate: [authGuard]
+  {
+    path: 'reserva/crear',
+    loadComponent: () => import('./modulos/reserva/pages/crear-reserva-page/crear-reserva-page').then(m => m.CrearReservaPageComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Docente'] }
   },
-  { 
-    path: 'reserva/consultar', 
-    component: EnConstruccion,
-    data: { nombreModulo: 'Consultar Reserva' },
-    canActivate: [authGuard]
+  {
+    path: 'reserva/consultar',
+    loadComponent: () => import('./modulos/reserva/pages/consultar-reserva-page/consultar-reserva-page').then(m => m.ConsultarReservaPageComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Docente'] }
   },
-  { 
-    path: 'reserva/editar', 
-    component: EnConstruccion,
-    data: { nombreModulo: 'Editar Reserva' },
-    canActivate: [authGuard]
+  {
+    path: 'reserva/editar',
+    loadComponent: () => import('./modulos/reserva/pages/editar-reserva-page/editar-reserva-page').then(m => m.EditarReservaPageComponent),
+    canActivate: [authGuard, rolesGuard],
+    data: { rolPermitidos: ['Docente'] }
   },
   { 
     path: 'reserva/ver', 

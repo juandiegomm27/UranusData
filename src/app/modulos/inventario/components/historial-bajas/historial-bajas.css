@@ -1,5 +1,6 @@
 @import '../../../styles/modules-modals.css';
 @import '../../../styles/modules-tables.css';
+@import '../../../styles/modules-layout.css';
 
 .modal-ancho-historial {
     max-width: 900px !important;

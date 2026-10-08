@@ -62,7 +62,7 @@ export class DetallesPrestamoComponent implements OnInit {
     this.actualizando = true;
 
     this.prestamosService.actualizarEstadoPrestamo(
-      this.prestamo.id_reserva,
+      this.prestamo.id_Reserva,
       this.nuevoEstado,
       this.observaciones
     ).subscribe({

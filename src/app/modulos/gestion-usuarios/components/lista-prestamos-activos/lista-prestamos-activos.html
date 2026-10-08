@@ -54,7 +54,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let prestamo of prestamos; trackBy: trackByIdReserva">
-          <td><strong>#{{ prestamo.id_reserva }}</strong></td>
+          <td><strong>#{{ prestamo.id_Reserva }}</strong></td>
           <td>{{ prestamo.documento }}</td>
           <td>{{ prestamo.nombre }}</td>
           <td>{{ prestamo.elemento }}</td>
@@ -79,8 +79,8 @@
                 <img src="icons/ojo.svg" alt="Ver" class="icon-tabla">
                 <span>Ver</span>
               </button>
-              <button class="btn-icon btn-icon-success" title="Entregar préstamo" (click)="entregarPrestamo(prestamo)" [disabled]="prestamo.cod_estado_prestamo !== 1">
-                <span>Entregar</span>
+              <button class="btn-icon btn-icon-success" title="Entregar préstamo" (click)="entregarPrestamo(prestamo)" [disabled]="prestamo.cod_estado_prestamo !== 1 || entregando === prestamo.id_Reserva">
+                <span>{{ entregando === prestamo.id_Reserva ? 'Entregando...' : 'Entregar' }}</span>
               </button>
             </div>
           </td>

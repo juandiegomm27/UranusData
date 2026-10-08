@@ -18,6 +18,8 @@ use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConfiguracionUsuarioController;
+use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\MarcaController;
 
 // AUTH 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
@@ -55,7 +57,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('gestion/usuario', UsuarioGestorController::class);
     });
 
-    // RESERVAS DEL USUARIO ACTUAL  
+    // CATÁLOGO DISPONIBLE PARA RESERVAR (cualquier usuario autenticado)
+    Route::get('/catalogo/tipos-elemento', [CatalogoController::class, 'tipos']);
+    Route::get('/catalogo/elementos-disponibles', [CatalogoController::class, 'elementosDisponibles']);
+    Route::get('/catalogo/accesorios-disponibles', [CatalogoController::class, 'accesoriosDisponibles']);
+
+    // RESERVAS DEL USUARIO ACTUAL
     Route::get('/mis-reserva', [ReservaUsuarioController::class, 'obtenerMisReservas']);
     Route::post('/mis-reserva', [ReservaUsuarioController::class, 'crearReserva']);
     Route::put('/mis-reserva/{id}', [ReservaUsuarioController::class, 'actualizarReserva']);
@@ -68,11 +75,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Nuevas rutas para el flujo de entregas y devoluciones parciales
         Route::post('/reserva/{id}/entregar', [ReservaController::class, 'entregarPrestamo']);
         Route::post('/prestamo/detalles/{idDetalle}/devolver-parcial', [ReservaController::class, 'devolverParcial']);
-        
+
         Route::apiResource('reserva', ReservaController::class);
 
         Route::post('/inventario-accesorios/trasladar', [InventarioAccesorioController::class, 'trasladar']);
-        Route::apiResource('inventario-accesorios', InventarioAccesorioController::class);
+        Route::apiResource('inventario-accesorios', InventarioAccesorioController::class)->except(['show', 'destroy']);
     });
 
     // INVENTARIO (Gerente/Técnico)  
@@ -80,7 +87,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/inventario/opciones', [InventarioController::class, 'getOpciones']);
         Route::get('/inventario/elementos-tipo/{tipo}', [InventarioController::class, 'obtenerElementosPorTipo']);
         Route::get('/inventario/exportar', [InventarioController::class, 'exportarInventario']);
-        
+
         // --- COLOCA ESTAS RUTAS AQUÍ ARRIBA (ANTES de apiResource) ---
         Route::get('/inventario/historial-bajas-general', [HistorialBajasController::class, 'index']);
         Route::post('/inventario/historial-bajas-general/{id}/restaurar', [HistorialBajasController::class, 'restaurar']);
@@ -89,24 +96,27 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/inventario/{id}/mantenimiento', [InventarioController::class, 'enviarMantenimiento']);
         Route::get('/inventario/{id}/historial', [App\Http\Controllers\InventarioController::class, 'historial']);
+        Route::get('/inventario/{id}/movimientos', [InventarioController::class, 'movimientos']);
         Route::post('/ubicaciones', [UbiElementoController::class, 'store']);
-        
+
+        Route::get('/marcas', [MarcaController::class, 'index']);
+        Route::post('/marcas', [MarcaController::class, 'store']);
+        Route::delete('/marcas/{id}', [MarcaController::class, 'destroy']);
+
         Route::post('/tipos-elemento', [TipoElementoController::class, 'store']);
         Route::put('/tipos-elemento/{id}', [TipoElementoController::class, 'update']);
         Route::delete('/tipos-elemento/{id}', [TipoElementoController::class, 'destroy']);
-        
+
         // El apiResource siempre debe ir debajo de las rutas fijas/personalizadas
-        Route::apiResource('inventario', InventarioController::class);
+        Route::apiResource('inventario', InventarioController::class)->except(['destroy']);
     });
 
     // MANTENIMIENTO (Gerente/Técnico)
     Route::middleware(['role:Gerente,Tecnico'])->group(function () {
         Route::get('/mantenimiento/opciones', [MantenimientoController::class, 'getOpciones']);
-        Route::get('/mantenimiento/tipos/list', [MantenimientoController::class, 'getTipos']); 
-        Route::get('/mantenimiento/activos', [MantenimientoController::class, 'obtenerMantenimientosActivos']);
         Route::put('/mantenimiento/{id}/completar', [MantenimientoController::class, 'completarMantenimiento']);
-        
-        Route::apiResource('mantenimiento', MantenimientoController::class);
+
+        Route::apiResource('mantenimiento', MantenimientoController::class)->only(['index']);
     });
 
     // DASHBOARD
@@ -124,5 +134,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/ajustes', [ConfiguracionUsuarioController::class, 'actualizarAjustes']);
     Route::get('/notificaciones', [ConfiguracionUsuarioController::class, 'obtenerNotificaciones']);
     Route::put('/notificaciones/{id}/leer', [ConfiguracionUsuarioController::class, 'marcarNotificacionLeida']);
-
 });

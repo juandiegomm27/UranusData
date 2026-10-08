@@ -83,9 +83,14 @@ class ReservaUsuarioController extends Controller
 
         $perPage = $request->get('per_page', 10);
         $reservas = Reserva::where('documento', $documento)
-            ->with(['estado', 'usuario'])
+            ->with(['estado', 'usuario', 'detalles.elemento', 'detalles.stock.accesorio', 'prestamo'])
             ->orderBy('fecha', 'desc')
             ->paginate($perPage);
+
+        $reservas->getCollection()->transform(function ($reserva) {
+            $reserva->estado_calculado = $this->calcularEstadoReserva($reserva);
+            return $reserva;
+        });
 
         return response()->json([
             'status' => 'success',
@@ -93,6 +98,33 @@ class ReservaUsuarioController extends Controller
             'total' => $reservas->total(),
             'last_page' => $reservas->lastPage()
         ]);
+    }
+
+    /**
+     * Deriva el estado real de la reserva sin necesidad de un nuevo estado en BD:
+     * - rechazada: Num_estado = 3
+     * - en_prestamo: ya existe un registro en Prestamo (fue entregada)
+     * - no_recogida: sigue pendiente y el plazo ya venció
+     * - activa: sigue pendiente, vigente (sin plazo o plazo futuro/hoy)
+     */
+    private function calcularEstadoReserva(Reserva $reserva): string
+    {
+        if ($reserva->Num_estado == 3) {
+            return 'rechazada';
+        }
+
+        // El registro en Prestamo se crea desde que se hace la reserva
+        // (para que Técnico/Gerente la vea como "Solicitado"); solo cuenta
+        // como préstamo real para el docente cuando ya se entregó (estado >= 2).
+        if ($reserva->prestamo && $reserva->prestamo->cod_estado_prestamo >= 2) {
+            return 'en_prestamo';
+        }
+
+        if ($reserva->plazo && \Illuminate\Support\Carbon::parse($reserva->plazo)->startOfDay()->isPast()) {
+            return 'no_recogida';
+        }
+
+        return 'activa';
     }
 
     public function crearReserva(Request $request)
@@ -141,13 +173,23 @@ class ReservaUsuarioController extends Controller
                     }
                 }
 
+                // Crear el registro de préstamo "Solicitado" para que
+                // Técnico/Gerente la vean de inmediato en su lista de préstamos.
+                \App\Models\Prestamo::create([
+                    'id_Reserva' => $reserva->id_Reserva,
+                    'cod_estado_prestamo' => 1, // Solicitado
+                    'fecha_entrega_original' => $validated['plazo'] ?? null,
+                    'fecha_limite_actual' => $validated['plazo'] ?? null,
+                    'extension_aprobada' => false,
+                ]);
+
                 return $reserva;
             });
 
             return response()->json([
                 'status' => 'success',
                 'mensaje' => 'Reserva creada exitosamente',
-                'data' => $reserva->load('detalles')
+                'data' => $reserva->load('detalles', 'prestamo')
             ], 201);
 
         } catch (\Exception $e) {
@@ -181,6 +223,17 @@ class ReservaUsuarioController extends Controller
             DB::transaction(function () use ($reserva, $validated, $request) {
                 // Actualizar cabecera
                 $reserva->update($request->only(['fecha', 'plazo']));
+
+                // Mantener sincronizada la fecha límite que ve Técnico/Gerente,
+                // mientras el préstamo siga "Solicitado" (aún no entregado).
+                if (array_key_exists('plazo', $validated)) {
+                    \App\Models\Prestamo::where('id_Reserva', $reserva->id_Reserva)
+                        ->where('cod_estado_prestamo', 1)
+                        ->update([
+                            'fecha_entrega_original' => $validated['plazo'],
+                            'fecha_limite_actual' => $validated['plazo'],
+                        ]);
+                }
 
                 // Si envían detalles, hay que devolver los viejos y descontar los nuevos
                 if (isset($validated['detalles'])) {

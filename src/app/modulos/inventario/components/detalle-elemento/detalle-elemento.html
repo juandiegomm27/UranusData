@@ -10,6 +10,12 @@
 
     <div class="modal-body">
 
+      @if (puedeVolver) {
+      <div class="barra-navegacion">
+        <button type="button" class="btn-volver" (click)="volver()">← Volver a {{ etiquetaAnterior }}</button>
+      </div>
+      }
+
       @if (mensaje) {
       <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensaje">
         <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
@@ -20,43 +26,128 @@
       @if (!editando) {
       <div class="seccion-info">
         <h3>Información del {{ tipoTab === 'activos' ? 'Elemento' : 'Accesorio' }}</h3>
+
+        @if (parcial) {
+        <p class="titulo-parcial">
+          {{ elemento.cod_elemento || ('#' + elemento.id_elemento) }} · {{ elemento.nombre_elemento }}
+        </p>
+        <div class="grid-info">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="campo-info">
+            <div class="skeleton skeleton-etiqueta"></div>
+            <div class="skeleton"></div>
+          </div>
+          }
+        </div>
+        } @else {
         <div class="grid-info">
           @if (tipoTab === 'activos') {
-          <div class="campo-info"><label>ID:</label><span>{{ elemento.id_elemento }}</span></div>
-          <div class="campo-info"><label>Código Interno:</label><span>{{ elemento.cod_elemento || 'N/A' }}</span></div>
-          <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre_elemento }}</span></div>
-          <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          <div class="campo-info"><label>ID:</label>
+            <span>{{ elemento.id_elemento }}</span>
           </div>
-          <div class="campo-info"><label>Ubicación:</label><span>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento)
-              }}</span></div>
+          <div class="campo-info"><label>Código Interno:</label>
+            <span>{{ elemento.cod_elemento || 'N/A' }}</span>
+          </div>
+          <div class="campo-info"><label>Nombre:</label>
+            <span>{{ elemento.nombre_elemento }}</span>
+          </div>
+          <div class="campo-info"><label>Tipo:</label>
+            <span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          </div>
+          <div class="campo-info"><label>Ubicación:</label>
+            <span>{{ obtenerNombreUbicacion(elemento.cod_ubi_elemento) 
+            }}</span>
+          </div>
           <div class="campo-info"><label>Estado:</label>
             <span class="estado-badge" [ngClass]="obtenerClaseEstado(elemento.cod_estado_elemento)">
               {{ obtenerNombreEstado(elemento.cod_estado_elemento) }}
             </span>
           </div>
-          <div class="campo-info"><label>Serial:</label><span>{{ elemento.serial || 'N/A' }}</span></div>
-          <div class="campo-info"><label>Modelo:</label><span>{{ elemento.modelo || 'N/A' }}</span></div>
-          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
-              descripción' }}</span></div>
-          } @else {
-          <div class="campo-info"><label>ID:</label><span>{{ elemento.id_accesorio }}</span></div>
-          <div class="campo-info"><label>Nombre:</label><span>{{ elemento.nombre }}</span></div>
-          <div class="campo-info"><label>Tipo:</label><span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          <div class="campo-info"><label>Serial:</label>
+            <span>{{ elemento.serial || 'N/A' }}</span>
           </div>
-          <div class="campo-info"><label>Cant. Global Total:</label><span>{{ elemento.cantidad_total }}</span></div>
-          <div class="campo-info"><label>Cant. Global Disp:</label><span class="fw-bold"
-              [ngClass]="elemento.cantidad_disponible > 0 ? 'text-success' : 'text-danger'">{{
-              elemento.cantidad_disponible }}</span></div>
-          <div class="campo-info campo-completo"><label>Descripción:</label><span>{{ elemento.descripcion || 'Sin
-              descripción' }}</span></div>
+          <div class="campo-info"><label>Modelo:</label>
+            <span>{{ elemento.modelo || 'N/A' }}</span>
+          </div>
+          <div class="campo-info"><label>Marca:</label>
+            <span>{{ elemento.marca?.marca || 'Sin marca' }}</span>
+          </div>
+          <div class="campo-info campo-completo"><label>Descripción:</label>
+            <span>{{ elemento.descripcion || 'Sin descripción' }}</span>
+          </div>
+
+          <div class="campo-info campo-completo">
+            <label>Pertenece a:</label>
+            @if (elemento.padre) {
+            <div class="lista-relacionados">
+              <button type="button" class="btn-relacion" (click)="verRelacionado(elemento.padre)"
+                title="Ver el elemento principal">
+                <span class="relacion-texto">{{ elemento.padre.cod_elemento || ('#' + elemento.padre.id_elemento) }} ·
+                  {{ elemento.padre.nombre_elemento }}</span>
+                <span class="relacion-ver">Ver →</span>
+              </button>
+            </div>
+            } @else {
+            <span>Elemento principal (no es componente de otro)</span>
+            }
+          </div>
+
+          @if (cargandoDetalle) {
+          @if (elemento.hijos_count > 0) {
+          <div class="campo-info campo-completo">
+            <label>Componentes ({{ elemento.hijos_count }}):</label>
+            <div class="skeleton skeleton-fila"></div>
+          </div>
+          }
+          } @else if (elemento.hijos?.length) {
+          <div class="campo-info campo-completo">
+            <label>Componentes ({{ elemento.hijos.length }}):</label>
+            <div class="lista-relacionados">
+              @for (h of elemento.hijos; track h.id_elemento) {
+              <button type="button" class="btn-relacion" (click)="verRelacionado(h)" title="Ver este componente">
+                <span class="relacion-texto">{{ h.cod_elemento || ('#' + h.id_elemento) }} · {{ h.nombre_elemento
+                  }}</span>
+                <span class="relacion-ver">Ver →</span>
+              </button>
+              }
+            </div>
+          </div>
+          }
+          } @else {
+          <div class="campo-info"><label>ID:</label>
+            <span>{{ elemento.id_accesorio }}</span>
+          </div>
+          <div class="campo-info"><label>Nombre:</label>
+            <span>{{ elemento.nombre }}</span>
+          </div>
+          <div class="campo-info"><label>Tipo:</label>
+            <span>{{ obtenerNombreTipo(elemento.cod_tipo_elemento) }}</span>
+          </div>
+          <div class="campo-info"><label>Marca:</label>
+            <span>{{ elemento.marca?.marca || 'Sin marca' }}</span>
+          </div>
+          <div class="campo-info"><label>Modelo:</label>
+            <span>{{ elemento.modelo || 'N/A' }}</span>
+          </div>
+          <div class="campo-info"><label>Cant. Global Total:</label>
+            <span>{{ elemento.cantidad_total }}</span>
+          </div>
+          <div class="campo-info"><label>Cant. Global Disp:</label>
+            <span class="fw-bold" [ngClass]="elemento.cantidad_disponible >
+           0 ? 'text-success' : 'text-danger'">{{ elemento.cantidad_disponible }}
+            </span>
+          </div>
+          <div class="campo-info campo-completo"><label>Descripción:</label>
+            <span>{{ elemento.descripcion || 'Sin descripción' }}</span>
+          </div>
           }
         </div>
+        }
       </div>
       } @else {
       <form class="modulo-form" (submit)="$event.preventDefault()">
         @if (tipoTab === 'activos') {
 
-        <!-- CORRECCIÓN: Fila plana sin anidamientos que rompan la rejilla -->
         <div class="fila-formulario">
           <div class="grupo-campo">
             <label>ID del Elemento</label>
@@ -66,14 +157,15 @@
             <label>Código Interno</label>
             <input type="text" [(ngModel)]="formulario.cod_elemento" name="cod_elemento">
           </div>
-          <div class="grupo-campo">
-            <label>Nombre del Elemento *</label>
-            <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
-          </div>
+        </div>
+
+        <div class="grupo-campo">
+          <label>Nombre del Elemento *</label>
+          <input type="text" [(ngModel)]="formulario.nombre_elemento" name="nombre">
         </div>
 
         <div class="grupo-campo campo-completo">
-          <label>Tipo de Elemento *</label>
+          <label>Tipo de Elemento</label>
           <div class="grupo-input-flex">
             <select [(ngModel)]="formulario.cod_tipo_elemento" name="tipo" class="select-flex">
               @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [ngValue]="tipo.cod_tipo_elemento">{{
@@ -88,8 +180,15 @@
             </button>
           </div>
         </div>
+
         <div class="grupo-campo campo-completo">
-          <label>Ubicación *</label>
+          <label>Marca</label>
+          <app-selector-marca [valor]="formulario.cod_marca" (cambio)="formulario.cod_marca = $event"
+            (catalogoCambio)="actualizado.emit()"></app-selector-marca>
+        </div>
+
+        <div class="grupo-campo campo-completo">
+          <label>Ubicación</label>
           <div class="grupo-input-flex">
             <select [(ngModel)]="formulario.cod_ubi_elemento" name="ubicacion" class="select-flex">
               @for (ubicacion of ubicaciones; track ubicacion.cod_ubi_elemento) { <option
@@ -105,23 +204,26 @@
             </button>
           </div>
         </div>
+
+        <div class="grupo-campo campo-completo">
+          <label>Pertenece a (elemento principal)</label>
+          @if (elemento.hijos?.length) {
+          <small style="color: #6c757d;">Este elemento tiene componentes, por eso no puede ser componente de
+            otro.</small>
+          } @else {
+          <app-selector-padre [padreInicial]="elemento.padre" [excluirId]="elemento.id_elemento"
+            (cambio)="formulario.id_elemento_padre = $event">
+          </app-selector-padre>
+          }
+        </div>
+
         <div class="fila-formulario">
-          <div class="grupo-campo">
-            <label>Estado *</label>
-            <select [(ngModel)]="formulario.cod_estado_elemento" name="estado">
-              @for (estado of estados; track estado.cod_estado_elemento) { <option [value]="estado.cod_estado_elemento">
-                {{ estado.estado }}</option> }
-            </select>
-          </div>
           <div class="grupo-campo"><label>Serial</label><input type="text" [(ngModel)]="formulario.serial"
               name="serial"></div>
-        </div>
-        <div class="fila-formulario">
           <div class="grupo-campo"><label>Modelo</label><input type="text" [(ngModel)]="formulario.modelo"
               name="modelo"></div>
         </div>
 
-        <!-- CORRECCIÓN: Agregado .grupo-campo para reparar el label y la alineación -->
         <div class="grupo-campo campo-completo">
           <label>Descripción</label>
           <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
@@ -130,18 +232,21 @@
         } @else {
 
         <div class="fila-formulario">
-          <div class="grupo-campo"><label>ID del Accesorio</label><input type="text" [value]="formulario.id_accesorio"
-              disabled class="input-deshabilitado"></div>
-          <div class="grupo-campo"><label>Nombre del Accesorio *</label><input type="text"
-              [(ngModel)]="formulario.nombre" name="nombre"></div>
+          <div class="grupo-campo"><label>ID del Accesorio</label>
+          <input type="text" [value]="formulario.id_accesorio" disabled class="input-deshabilitado">
+          </div>
+            <div class="grupo-campo"><label>Nombre del Accesorio *</label>
+            <input type="text" [(ngModel)]="formulario.nombre" name="nombre">
+          </div>
         </div>
         <div class="grupo-campo campo-completo">
           <label>Tipo de Accesorio *</label>
           <div class="grupo-input-flex">
             <select [(ngModel)]="formulario.cod_tipo_elemento" name="tipo" class="select-flex">
               <option value="">Seleccionar tipo...</option>
-              @for (tipo of tipos; track tipo.cod_tipo_elemento) { <option [ngValue]="tipo.cod_tipo_elemento">{{
-                tipo.tipo }}</option> }
+              @for (tipo of tipos; track tipo.cod_tipo_elemento) { 
+                <option [ngValue]="tipo.cod_tipo_elemento">{{ tipo.tipo }}</option> 
+              }
             </select>
             <button type="button" class="btn-accion btn-success" (click)="abrirModalTipo()" title="Crear nuevo tipo">
               <img src="icons/mas.svg" alt="Agregar" class="icono-btn">
@@ -153,7 +258,17 @@
           </div>
         </div>
 
-        <!-- CORRECCIÓN: Agregado .grupo-campo -->
+        <div class="grupo-campo campo-completo">
+          <label>Marca</label>
+          <app-selector-marca [valor]="formulario.cod_marca" (cambio)="formulario.cod_marca = $event"
+            (catalogoCambio)="actualizado.emit()"></app-selector-marca>
+        </div>
+
+        <div class="grupo-campo campo-completo">
+          <label>Modelo</label>
+          <input type="text" [(ngModel)]="formulario.modelo" name="modelo_acc">
+        </div>
+
         <div class="grupo-campo campo-completo">
           <label>Descripción General</label>
           <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
@@ -163,13 +278,17 @@
       </form>
       }
     </div>
+
     <div class="modal-footer">
       @if (editando) {
       <button class="btn-modal-success" (click)="guardarCambios()" [disabled]="cargando">Guardar Cambios</button>
       <button class="btn-modal-secondary" (click)="cancelarEdicion()" [disabled]="cargando">Cancelar</button>
       } @else {
-      <button class="btn-modal-primary" (click)="abrirEdicion()">Editar</button>
-      @if (tipoTab === 'activos') { <button class="btn-modal-info" (click)="abrirHistorial()">Ver Historial</button> }
+      <button class="btn-modal-primary" (click)="abrirEdicion()" [disabled]="cargandoDetalle">Editar</button>
+      @if (tipoTab === 'activos') {
+      <button class="btn-modal-info" (click)="abrirHistorial()">Mantenimientos</button>
+      <button class="btn-modal-info" (click)="abrirMovimientos()">Movimientos</button>
+      }
       <button class="btn-modal-secondary" (click)="cerrarModal()">Cerrar</button>
       }
     </div>
@@ -180,15 +299,18 @@
 <div class="modal-overlay z-alto" (click)="cerrarModalUbicacion()">
   <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Nueva Ubicación</h2><button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
+      <h2>Nueva Ubicación</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModalUbicacion()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevaUbicacionNombre"
-          class="input-full"></div>
+      <div class="grupo-campo"><label>Nombre *</label>
+        <input type="text" [(ngModel)]="nuevaUbicacionNombre" class="input-full">
+      </div>
     </div>
-    <div class="modal-footer"><button class="btn-modal-primary"
-        (click)="guardarNuevaUbicacion()">Guardar</button><button class="btn-modal-secondary"
-        (click)="cerrarModalUbicacion()">Cancelar</button></div>
+    <div class="modal-footer">
+      <button class="btn-modal-primary" (click)="guardarNuevaUbicacion()">Guardar</button>
+      <button class="btn-modal-secondary" (click)="cerrarModalUbicacion()">Cancelar</button>
+    </div>
   </div>
 </div>
 }
@@ -197,20 +319,25 @@
 <div class="modal-overlay z-alto" (click)="cerrarModalTipo()">
   <div class="modal-contenido modal-pequeno" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>{{ editandoTipo ? 'Editar Tipo' : 'Nuevo Tipo' }}</h2><button class="btn-cerrar-modal"
-        (click)="cerrarModalTipo()">✕</button>
+      <h2>{{ editandoTipo ? 'Editar Tipo' : 'Nuevo Tipo' }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrarModalTipo()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="grupo-campo"><label>Nombre *</label><input type="text" [(ngModel)]="nuevoTipoNombre"
-          class="input-full"></div>
+      <div class="grupo-campo"><label>Nombre *</label>
+        <input type="text" [(ngModel)]="nuevoTipoNombre" class="input-full"></div>
     </div>
-    <div class="modal-footer"><button class="btn-modal-primary" (click)="guardarTipo()">Guardar</button><button
-        class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>
+    <div class="modal-footer">
+      <button class="btn-modal-primary" (click)="guardarTipo()">Guardar</button>
+      <button class="btn-modal-secondary" (click)="cerrarModalTipo()">Cancelar</button></div>
   </div>
 </div>
 }
 
 @if (mostrarHistorial && tipoTab === 'activos') {
-<app-historial-mantenimiento [mostrar]="mostrarHistorial" [elemento]="elemento"
-  (cerrar)="cerrarHistorial()"></app-historial-mantenimiento>
-}}
+<app-historial-mantenimiento [mostrar]="mostrarHistorial" [elemento]="elemento" (cerrar)="cerrarHistorial()"></app-historial-mantenimiento>
+}
+
+@if (mostrarMovimientos && tipoTab === 'activos') {
+<app-historial-movimientos [elemento]="elemento" (cerrar)="cerrarMovimientos()"></app-historial-movimientos>
+}
+}

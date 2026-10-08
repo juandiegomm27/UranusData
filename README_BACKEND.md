@@ -65,8 +65,8 @@ docker-compose exec app php artisan migrate
 | POST | `/api/login` | Iniciar sesión |
 | POST | `/api/register` | Registrar usuario |
 | POST | `/api/logout` | Cerrar sesión |
-| GET | `/api/gestion/usuarios` | Listar usuarios |
-| GET | `/api/gestion/usuarios/prestamos-activos` | Préstamos activos |
+| GET | `/api/gestion/usuario` | Listar usuarios |
+| GET | `/api/gestion/usuario/prestamos-activos` | Préstamos activos |
 | GET | `/api/perfil/{doc}` | Obtener perfil |
 | PUT | `/api/perfil/{doc}` | Actualizar perfil |
 
@@ -79,7 +79,7 @@ docker-compose exec app php artisan migrate
 Usa `Authorization: Bearer {token}` en headers de peticiones autenticadas.
 
 ```bash
-curl http://localhost:8000/api/gestion/usuarios \
+curl http://localhost:8000/api/gestion/usuario \
   -H "Authorization: Bearer eyJ..."
 ```
 
@@ -87,9 +87,9 @@ curl http://localhost:8000/api/gestion/usuarios \
 
 ## 👥 Roles
 
-- **Gerente (2)**: Gestión completa
-- **Técnico (3)**: Gestión de inventario
 - **Docente (1)**: Reservas personales
+- **Técnico (2)**: Gestión de inventario, mantenimiento y préstamos
+- **Gerente (3)**: Gestión completa
 
 ---
 

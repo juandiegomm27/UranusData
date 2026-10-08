@@ -2,11 +2,14 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
+import { extraerMensajeError } from '../../../shared/utils/api-error.helper';
+import { SelectorPadreComponent } from '../selector-padre/selector-padre';
+import { SelectorMarcaComponent } from '../selector-marca/selector-marca';
 
 @Component({
   selector: 'app-crear-elemento',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectorPadreComponent, SelectorMarcaComponent],
   templateUrl: './crear-elemento.html',
   styleUrls: ['./crear-elemento.css']
 })
@@ -41,6 +44,8 @@ export class CrearElementoComponent implements OnInit {
   mostrarModalTipo = false;
   nuevoTipoNombre = '';
   cod_elemento = '';
+  id_elemento_padre: number | null = null;
+  cod_marca: number | null = null;
 
   constructor(
     private inventarioService: InventarioService,
@@ -104,6 +109,7 @@ export class CrearElementoComponent implements OnInit {
       this.cod_tipo_elemento = acc.cod_tipo_elemento;
     }
     this.descripcion = acc.descripcion || '';
+    this.cod_marca = acc.cod_marca ?? null;
     this.sugerenciasAccesorios = [];
     this.cdr.detectChanges();
   }
@@ -123,7 +129,9 @@ export class CrearElementoComponent implements OnInit {
         cod_estado_elemento: this.cod_estado_elemento,
         serial: this.serial || null,
         modelo: this.modelo || null,
-        descripcion: this.descripcion || null
+        descripcion: this.descripcion || null,
+        cod_marca: this.cod_marca,
+        id_elemento_padre: this.id_elemento_padre
       };
 
       this.inventarioService.crearElemento(datos).subscribe({
@@ -139,20 +147,19 @@ export class CrearElementoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Error al crear:', err);
-          this.mensaje = err.error?.mensaje || 'Error al crear el elemento';
+          this.mensaje = extraerMensajeError(err, 'Error al crear el elemento');
           this.tipoMensaje = 'error';
           this.cargando = false;
           this.cdr.detectChanges();
         }
       });
     } else {
-      // TRAYECTO DE ACCESORIOS (NUEVO STOCK)
-      // Si `this.accesorioSeleccionado` existe, enviamos su `id_accesorio`. 
-      // El backend entenderá que debe agregar el stock a ese ID en lugar de crear un duplicado global.
       const datosAccesorio = {
         id_accesorio: this.accesorioSeleccionado ? this.accesorioSeleccionado.id_accesorio : null,
         nombre: this.nombre_elemento,
         cod_tipo_elemento: this.cod_tipo_elemento || null,
+        cod_marca: this.cod_marca,
+        modelo: this.modelo || null,
         descripcion: this.descripcion || null,
         cantidad_total: this.cantidad_total,
         cantidad_disponible: this.cantidad_total,
@@ -174,7 +181,7 @@ export class CrearElementoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Error al guardar accesorio:', err);
-          this.mensaje = err.error?.mensaje || 'Error al procesar el accesorio';
+          this.mensaje = extraerMensajeError(err, 'Error al procesar el accesorio');
           this.tipoMensaje = 'error';
           this.cargando = false;
           this.cdr.detectChanges();
@@ -275,7 +282,9 @@ export class CrearElementoComponent implements OnInit {
     this.cantidad_total = 1;
     this.sugerenciasAccesorios = [];
     this.accesorioSeleccionado = null;
+    this.cod_marca = null;
     this.mensaje = '';
+    this.id_elemento_padre = null;
   }
 
   cerrarModal(): void {
