@@ -64,7 +64,13 @@
 
       <div class="seccion-edicion">
         <h3>Actualizar Estado</h3>
-        <div class="grid-info">
+
+        <div *ngIf="esSolicitadoSinEntregar" class="mensaje-alerta mensaje-info">
+          Este préstamo todavía no se entrega. Ciérrala y usa el botón "Entregar" de la tabla:
+          ahí eliges qué unidad física le corresponde antes de cambiar el estado.
+        </div>
+
+        <div *ngIf="!esSolicitadoSinEntregar" class="grid-info">
           <div class="campo-edicion">
             <label for="nuevoEstado">Nuevo Estado:</label>
             <select id="nuevoEstado" [(ngModel)]="nuevoEstado" class="select-estado" [disabled]="actualizando">
@@ -91,7 +97,7 @@
 
     <div class="modal-footer">
       <button class="btn-modal-secondary" (click)="cerrar()" [disabled]="actualizando">Cancelar</button>
-      <button class="btn-modal-primary" (click)="guardarCambios()" [disabled]="!nuevoEstado || actualizando">
+      <button *ngIf="!esSolicitadoSinEntregar" class="btn-modal-primary" (click)="guardarCambios()" [disabled]="!nuevoEstado || actualizando">
         {{ actualizando ? 'Guardando...' : 'Guardar Cambios' }}
       </button>
     </div>

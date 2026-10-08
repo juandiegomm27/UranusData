@@ -1,0 +1,57 @@
+<div class="modal-overlay" (click)="cerrar()">
+  <div class="modal-contenido" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>Entregar préstamo #{{ prestamo.id_Reserva }}</h2>
+      <button class="btn-cerrar-modal" (click)="cerrar()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (cargando()) {
+        <p class="text-center">⏳ Cargando unidades disponibles...</p>
+      } @else {
+        <p>
+          Elige qué unidad física concreta le vas a entregar a
+          <strong>{{ prestamo.nombre }}</strong> para cada equipo pedido.
+        </p>
+
+        @if (detallesPendientes().length === 0) {
+          <p class="sin-datos">Esta reserva no tiene equipos por asignar (solo accesorios).</p>
+        }
+
+        @for (detalle of detallesPendientes(); track detalle.id_detalle) {
+          <div class="grupo-campo asignacion-fila">
+            <label>{{ detalle.tipo }}</label>
+            <select [(ngModel)]="seleccion[detalle.id_detalle]">
+              <option [ngValue]="null">Selecciona una unidad...</option>
+              @for (candidato of candidatosDe(detalle.cod_tipo_elemento); track candidato.id_elemento) {
+                <option
+                  [ngValue]="candidato.id_elemento"
+                  [disabled]="yaElegidoEnOtro(detalle.id_detalle, candidato.id_elemento)">
+                  {{ candidato.nombre_elemento }}
+                  {{ candidato.serial ? '· ' + candidato.serial : '' }}
+                  {{ candidato.ubicacion?.ubicacion ? '· ' + candidato.ubicacion?.ubicacion : '' }}
+                </option>
+              }
+            </select>
+          </div>
+        }
+
+        @if (mensajeError()) {
+          <div class="mensaje-alerta mensaje-error mt-2">{{ mensajeError() }}</div>
+        }
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-secondary" (click)="cerrar()" [disabled]="entregando()">Cancelar</button>
+      <button
+        class="btn-modal-primary"
+        [disabled]="cargando() || faltanAsignaciones || entregando()"
+        (click)="confirmarEntrega()">
+        {{ entregando() ? 'Entregando...' : 'Confirmar entrega' }}
+      </button>
+    </div>
+
+  </div>
+</div>

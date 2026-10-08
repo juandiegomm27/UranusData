@@ -214,11 +214,15 @@ public function update(Request $request, $documento)
         $page = $request->get('page', 1);
         $query = VHistorialPrestamos::query();
 
-        // Filtro por estado activo si existe la columna cod_estado_prestamo
+        // Filtro por estado. Por defecto se oculta "Devuelto" (3) para que la
+        // vista quede enfocada en lo pendiente/activo, pero si piden
+        // explícitamente ese estado (o cualquier otro) se respeta la
+        // búsqueda: la reserva nunca se borra de esta lista, solo se filtra.
         if (\Illuminate\Support\Facades\Schema::hasColumn('v_historial_prestamos', 'cod_estado_prestamo')) {
-            $query->where('cod_estado_prestamo', '<>', 3);
             if ($request->filled('estado')) {
                 $query->where('cod_estado_prestamo', $request->estado);
+            } else {
+                $query->where('cod_estado_prestamo', '<>', 3);
             }
         } elseif ($request->filled('estado')) {
             $query->where('estado_prestamo', 'like', '%' . $request->estado . '%');

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Usuario;
 use App\Models\Inventario;
+use App\Models\ReservaDetalle;
 
 class ReservaVisibleEnPrestamosTest extends TestCase
 {
@@ -48,7 +49,7 @@ class ReservaVisibleEnPrestamosTest extends TestCase
         $respReserva = $this->postJson('/api/mis-reserva', [
             'fecha' => now()->toDateString(),
             'plazo' => now()->addDays(2)->toDateString(),
-            'detalles' => [['id_elemento' => $equipo->id_elemento, 'cantidad' => 1]]
+            'detalles' => [['cod_tipo_elemento' => $equipo->cod_tipo_elemento, 'cantidad' => 1]]
         ]);
         $respReserva->assertStatus(201);
         $idReserva = $respReserva->json('data.id_Reserva');
@@ -73,8 +74,14 @@ class ReservaVisibleEnPrestamosTest extends TestCase
         $this->assertNotNull($filaTecnico, 'La reserva del docente no aparece en la lista de préstamos del técnico');
         $this->assertEquals(1, $filaTecnico['cod_estado_prestamo']);
 
-        // 3. El técnico la entrega
-        $respEntrega = $this->postJson("/api/reserva/{$idReserva}/entregar");
+        // 3. El técnico la entrega, asignando él mismo la unidad física
+        $idDetalle = ReservaDetalle::where('id_Reserva', $idReserva)->first()->id_detalle;
+
+        $respEntrega = $this->postJson("/api/reserva/{$idReserva}/entregar", [
+            'asignaciones' => [
+                ['id_detalle' => $idDetalle, 'id_elemento' => $equipo->id_elemento]
+            ]
+        ]);
         $respEntrega->assertStatus(200);
 
         $this->assertDatabaseHas('prestamo', [
@@ -85,12 +92,36 @@ class ReservaVisibleEnPrestamosTest extends TestCase
             'id_elemento' => $equipo->id_elemento,
             'cod_estado_elemento' => 2
         ]);
+        $this->assertDatabaseHas('reserva_detalles', [
+            'id_detalle' => $idDetalle,
+            'id_elemento' => $equipo->id_elemento
+        ]);
 
-        // 4. Ahora sí, para el docente pasa a "en_prestamo"
+        // 4. Ahora sí, para el docente pasa a "en_prestamo" (Activo)
         $this->actingAs($docente);
         $misReservasFinal = $this->getJson('/api/mis-reserva');
         $estadoFinal = collect($misReservasFinal->json('data'))
             ->firstWhere('id_Reserva', $idReserva)['estado_calculado'];
         $this->assertEquals('en_prestamo', $estadoFinal);
+
+        // 5. El técnico marca la devolución: para el docente pasa a "historial"
+        //    y sigue viéndose tanto en préstamos (técnico) como en mis reservas (docente).
+        $this->actingAs($tecnico);
+        $this->postJson("/api/prestamo/detalles/{$idDetalle}/devolver-parcial", [
+            'cantidad_a_devolver' => 1,
+            'estado_devolucion' => 1
+        ])->assertStatus(200);
+
+        $respPrestamosFinal = $this->getJson('/api/gestion/usuario/prestamos-activos?estado=3');
+        $this->assertNotNull(
+            collect($respPrestamosFinal->json('data'))->firstWhere('id_Reserva', $idReserva),
+            'La reserva devuelta desapareció de la lista de préstamos del técnico'
+        );
+
+        $this->actingAs($docente);
+        $misReservasHistorial = $this->getJson('/api/mis-reserva');
+        $filaHistorial = collect($misReservasHistorial->json('data'))->firstWhere('id_Reserva', $idReserva);
+        $this->assertNotNull($filaHistorial, 'La reserva devuelta desapareció de Mis Reservas del docente');
+        $this->assertEquals('historial', $filaHistorial['estado_calculado']);
     }
 }

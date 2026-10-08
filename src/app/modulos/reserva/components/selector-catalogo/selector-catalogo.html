@@ -40,21 +40,21 @@
     <div class="catalogo-columnas">
       <div class="catalogo-columna">
         <h4>Equipos disponibles</h4>
-        @if (elementos().length === 0) {
+        @if (tiposDisponibles().length === 0) {
           <p class="sin-datos">No hay equipos disponibles por ahora.</p>
         }
-        @for (elemento of elementos(); track elemento.id_elemento) {
-          <div class="catalogo-item" [class.catalogo-item-seleccionado]="estaSeleccionadoElemento(elemento.id_elemento)">
+        @for (tipo of tiposDisponibles(); track tipo.cod_tipo_elemento) {
+          <div class="catalogo-item" [class.catalogo-item-seleccionado]="estaSeleccionadoTipo(tipo.cod_tipo_elemento)">
             <div class="catalogo-item-info">
-              <strong>{{ elemento.nombre_elemento }}</strong>
-              <span>{{ elemento.tipo?.tipo }} · {{ elemento.ubicacion?.ubicacion }}</span>
+              <strong>{{ tipo.tipo }}</strong>
+              <span>{{ tipo.cantidad_disponible }} disponible{{ tipo.cantidad_disponible === 1 ? '' : 's' }}</span>
             </div>
             <button
               type="button"
               class="btn-agregar"
-              [disabled]="estaSeleccionadoElemento(elemento.id_elemento)"
-              (click)="agregarElemento(elemento)">
-              {{ estaSeleccionadoElemento(elemento.id_elemento) ? 'Agregado' : '+ Agregar' }}
+              [disabled]="estaSeleccionadoTipo(tipo.cod_tipo_elemento)"
+              (click)="agregarTipo(tipo)">
+              {{ estaSeleccionadoTipo(tipo.cod_tipo_elemento) ? 'Agregado' : '+ Agregar' }}
             </button>
           </div>
         }

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {
   AccesorioDisponible,
   DetalleReservaPayload,
-  ElementoDisponible,
+  TipoElementoDisponible,
   ReservaService
 } from '../../services/reserva.service';
 
@@ -34,7 +34,7 @@ export class SelectorCatalogoComponent implements OnInit {
   // desde respuestas HTTP (asíncronas) debe ser un signal para que la
   // vista se vuelva a pintar; una propiedad normal mutada en un
   // subscribe() no dispara change detection.
-  elementos = signal<ElementoDisponible[]>([]);
+  tiposDisponibles = signal<TipoElementoDisponible[]>([]);
   accesorios = signal<AccesorioDisponible[]>([]);
   tipos = signal<TipoElemento[]>([]);
   cargando = signal(false);
@@ -54,7 +54,7 @@ export class SelectorCatalogoComponent implements OnInit {
     this.cargando.set(true);
     this.reservaService.obtenerElementosDisponibles(this.busqueda, this.tipoSeleccionado).subscribe({
       next: (res) => {
-        this.elementos.set(res.data || []);
+        this.tiposDisponibles.set(res.data || []);
         this.cargando.set(false);
       },
       error: () => this.cargando.set(false)
@@ -69,21 +69,21 @@ export class SelectorCatalogoComponent implements OnInit {
     this.cargarCatalogo();
   }
 
-  estaSeleccionadoElemento(idElemento: number): boolean {
-    return this.seleccionados().some(s => s.id_elemento === idElemento);
+  estaSeleccionadoTipo(codTipoElemento: number): boolean {
+    return this.seleccionados().some(s => s.cod_tipo_elemento === codTipoElemento);
   }
 
   estaSeleccionadoAccesorio(idStock: number): boolean {
     return this.seleccionados().some(s => s.id_stock === idStock);
   }
 
-  agregarElemento(elemento: ElementoDisponible): void {
-    if (this.estaSeleccionadoElemento(elemento.id_elemento)) return;
+  agregarTipo(tipo: TipoElementoDisponible): void {
+    if (this.estaSeleccionadoTipo(tipo.cod_tipo_elemento)) return;
     this.seleccionados.update(actual => [...actual, {
-      id_elemento: elemento.id_elemento,
+      cod_tipo_elemento: tipo.cod_tipo_elemento,
       cantidad: 1,
-      nombre: elemento.nombre_elemento,
-      maxCantidad: 1
+      nombre: tipo.tipo,
+      maxCantidad: tipo.cantidad_disponible
     }]);
     this.emitirCambio();
   }
@@ -114,7 +114,7 @@ export class SelectorCatalogoComponent implements OnInit {
 
   private emitirCambio(): void {
     const detalles: DetalleReservaPayload[] = this.seleccionados().map(s => ({
-      id_elemento: s.id_elemento,
+      cod_tipo_elemento: s.cod_tipo_elemento,
       id_stock: s.id_stock,
       cantidad: s.cantidad
     }));

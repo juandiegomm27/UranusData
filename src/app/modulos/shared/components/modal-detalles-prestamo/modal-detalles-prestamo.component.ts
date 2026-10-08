@@ -40,15 +40,21 @@ export class ModalDetallesPrestamoComponent implements OnInit {
   }
 
   /**
-   * Mientras el préstamo sigue "Solicitado" (aún no se entregó físicamente),
-   * lo único que tiene sentido es entregarlo: no existe todavía un equipo en
-   * manos del docente que se pueda marcar como devuelto/perdido/dañado.
+   * Mientras el préstamo sigue "Solicitado" (aún no se entregó físicamente)
+   * la entrega se hace desde el botón "Entregar" de la tabla, que abre la
+   * modal donde se asigna la unidad concreta — aquí no hay nada más que
+   * cambiar todavía (no hay un equipo en manos del docente que marcar como
+   * devuelto/perdido/dañado).
    */
   get opcionesEstado() {
     if (this.prestamo?.cod_estado_prestamo === 1) {
-      return this.estadosDisponibles.filter(e => e.cod === 2);
+      return [];
     }
     return this.estadosDisponibles;
+  }
+
+  get esSolicitadoSinEntregar(): boolean {
+    return this.prestamo?.cod_estado_prestamo === 1;
   }
 
   obtenerNombreEstado(cod: number): string {
@@ -68,14 +74,7 @@ export class ModalDetallesPrestamoComponent implements OnInit {
     this.mensajeExito = '';
     this.actualizando = true;
 
-    // De "Solicitado" a "Entregado" hay que pasar por el endpoint real de
-    // entrega: es el único que descuenta stock y marca el equipo en préstamo.
-    // El PUT genérico solo cambiaría la etiqueta sin esos efectos.
-    const accion = this.prestamo.cod_estado_prestamo === 1 && this.nuevoEstado === 2
-      ? this.prestamosService.entregarPrestamo(this.prestamo.id_Reserva)
-      : this.prestamosService.actualizarEstadoPrestamo(this.prestamo.id_Reserva, this.nuevoEstado, this.observaciones);
-
-    accion.subscribe({
+    this.prestamosService.actualizarEstadoPrestamo(this.prestamo.id_Reserva, this.nuevoEstado, this.observaciones).subscribe({
       next: () => {
         this.actualizando = false;
         this.mensajeExito = '✓ Estado actualizado correctamente';

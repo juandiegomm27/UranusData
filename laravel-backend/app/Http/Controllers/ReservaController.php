@@ -115,6 +115,51 @@ class ReservaController extends Controller
         }
     }
 
+    /**
+     * GET /api/reserva/{id}/elementos-para-asignar
+     * Para cada detalle pendiente de asignar (el docente pidió un tipo, sin
+     * elegir unidad), da la lista de unidades físicas disponibles de ese
+     * tipo para que el técnico/gerente elija cuál entregar. Aquí sí se
+     * puede mostrar marca/modelo/serial — quien decide es personal técnico.
+     */
+    public function elementosParaAsignar($idReserva)
+    {
+        $reserva = Reserva::with('detalles.tipo')->find($idReserva);
+        if (!$reserva) {
+            return $this->notFoundResponse('Reserva');
+        }
+
+        $pendientes = $reserva->detalles
+            ->whereNull('id_elemento')
+            ->whereNotNull('cod_tipo_elemento')
+            ->values();
+
+        $tiposNecesarios = $pendientes->pluck('cod_tipo_elemento')->unique();
+
+        $candidatosPorTipo = \App\Models\Inventario::where('cod_estado_elemento', 1)
+            ->whereIn('cod_tipo_elemento', $tiposNecesarios)
+            ->with('ubicacion')
+            ->orderBy('nombre_elemento')
+            ->get()
+            ->groupBy('cod_tipo_elemento');
+
+        return $this->successResponse([
+            'detalles_pendientes' => $pendientes->map(fn ($d) => [
+                'id_detalle' => $d->id_detalle,
+                'cod_tipo_elemento' => $d->cod_tipo_elemento,
+                'tipo' => $d->tipo->tipo ?? null,
+            ]),
+            'candidatos' => $candidatosPorTipo,
+        ], 'Unidades disponibles para asignar obtenidas correctamente');
+    }
+
+    /**
+     * POST /api/reserva/{id}/entregar
+     * Pasa la reserva a préstamo entregado. Si tiene detalles de equipos
+     * pendientes de asignar (id_elemento null), el técnico/gerente debe
+     * mandar en "asignaciones" qué unidad concreta corresponde a cada uno
+     * — el sistema ya no la elige solo.
+     */
     public function entregarPrestamo(Request $request, $idReserva)
     {
         $reserva = Reserva::with('detalles')->find($idReserva);
@@ -122,8 +167,35 @@ class ReservaController extends Controller
             return $this->notFoundResponse('Reserva');
         }
 
+        $pendientes = $reserva->detalles->whereNull('id_elemento')->whereNotNull('cod_tipo_elemento');
+
+        if ($pendientes->count() > 0) {
+            $validated = $request->validate([
+                'asignaciones' => 'required|array|size:' . $pendientes->count(),
+                'asignaciones.*.id_detalle' => 'required|integer|distinct',
+                'asignaciones.*.id_elemento' => 'required|integer|distinct|exists:inventario,id_elemento',
+            ]);
+            $asignaciones = collect($validated['asignaciones']);
+        } else {
+            $asignaciones = collect();
+        }
+
         try {
-            DB::transaction(function () use ($reserva) {
+            DB::transaction(function () use ($reserva, $pendientes, $asignaciones) {
+                foreach ($pendientes as $detalle) {
+                    $asignacion = $asignaciones->firstWhere('id_detalle', $detalle->id_detalle);
+                    if (!$asignacion) {
+                        throw new \Exception("Falta asignar una unidad para el detalle #{$detalle->id_detalle}.");
+                    }
+
+                    $elemento = \App\Models\Inventario::find($asignacion['id_elemento']);
+                    if (!$elemento || $elemento->cod_estado_elemento != 1 || $elemento->cod_tipo_elemento != $detalle->cod_tipo_elemento) {
+                        throw new \Exception("La unidad elegida para el detalle #{$detalle->id_detalle} ya no está disponible o no corresponde al tipo pedido.");
+                    }
+
+                    $detalle->update(['id_elemento' => $elemento->id_elemento]);
+                }
+
                 \App\Models\Prestamo::updateOrCreate(
                     ['id_Reserva' => $reserva->id_Reserva],
                     [
@@ -144,7 +216,7 @@ class ReservaController extends Controller
 
                     if ($detalle->id_elemento) {
                         \App\Models\Inventario::where('id_elemento', $detalle->id_elemento)
-                            ->update(['cod_estado_elemento' => 2]); 
+                            ->update(['cod_estado_elemento' => 2]);
                     }
                 }
             });

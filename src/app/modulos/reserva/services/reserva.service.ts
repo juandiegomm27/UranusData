@@ -3,14 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-export interface ElementoDisponible {
-  id_elemento: number;
-  cod_elemento?: string;
-  nombre_elemento: string;
-  modelo?: string;
-  descripcion?: string;
-  tipo?: { tipo: string };
-  ubicacion?: { ubicacion: string };
+/**
+ * El docente no elige marca/modelo/serial de un equipo concreto, solo el
+ * tipo y cuántos necesita — la unidad física se asigna sola al confirmar.
+ */
+export interface TipoElementoDisponible {
+  cod_tipo_elemento: number;
+  tipo: string;
+  cantidad_disponible: number;
 }
 
 export interface AccesorioDisponible {
@@ -22,7 +22,7 @@ export interface AccesorioDisponible {
 }
 
 export interface DetalleReservaPayload {
-  id_elemento?: number;
+  cod_tipo_elemento?: number;
   id_stock?: number;
   cantidad: number;
 }
@@ -31,14 +31,16 @@ export interface ReservaDetalle {
   id_detalle: number;
   id_elemento: number | null;
   id_stock: number | null;
+  cod_tipo_elemento: number | null;
   cantidad_solicitada: number;
   cantidad_entregada: number;
   cantidad_devuelta: number;
   elemento?: { nombre_elemento: string };
   stock?: { accesorio?: { nombre: string } };
+  tipo?: { tipo: string };
 }
 
-export type EstadoCalculadoReserva = 'activa' | 'no_recogida' | 'en_prestamo' | 'rechazada';
+export type EstadoCalculadoReserva = 'activa' | 'no_recogida' | 'en_prestamo' | 'historial' | 'rechazada';
 
 export interface Reserva {
   id_Reserva: number;

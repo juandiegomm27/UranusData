@@ -47,7 +47,7 @@ class FlujoReservaTest extends TestCase
             'plazo' => now()->addDays(3)->toDateString(),
             'detalles' => [
                 [
-                    'id_elemento' => $equipo->id_elemento,
+                    'cod_tipo_elemento' => $equipo->cod_tipo_elemento,
                     'cantidad' => 1
                 ]
             ]
@@ -74,7 +74,21 @@ class FlujoReservaTest extends TestCase
 
         $this->actingAs($tecnico);
 
-        $responseEntrega = $this->postJson("/api/reserva/{$idReserva}/entregar");
+        // El técnico consulta qué unidades concretas puede asignar
+        $responseCandidatos = $this->getJson("/api/reserva/{$idReserva}/elementos-para-asignar");
+        $responseCandidatos->assertStatus(200);
+        $candidatos = collect($responseCandidatos->json('data.candidatos.' . $equipo->cod_tipo_elemento));
+        $this->assertTrue($candidatos->contains('id_elemento', $equipo->id_elemento));
+
+        // El sistema ya no asigna solo: el técnico debe elegir la unidad
+        $responseEntregaSinAsignar = $this->postJson("/api/reserva/{$idReserva}/entregar");
+        $responseEntregaSinAsignar->assertStatus(422);
+
+        $responseEntrega = $this->postJson("/api/reserva/{$idReserva}/entregar", [
+            'asignaciones' => [
+                ['id_detalle' => $idDetalle, 'id_elemento' => $equipo->id_elemento]
+            ]
+        ]);
         $responseEntrega->assertStatus(200);
 
         // Verificar que el equipo cambió a estado en préstamo (2)

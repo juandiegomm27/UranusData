@@ -1,0 +1,39 @@
+@import '../../../styles/modules-modals.css';
+@import '../../../styles/modules-forms.css';
+
+.text-center {
+  text-align: center;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.asignacion-fila {
+  margin-bottom: 14px;
+}
+
+.asignacion-fila select {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f8f9fa;
+  width: 100%;
+}
+
+.sin-datos {
+  color: #888;
+  font-size: 13px;
+}
+
+.mensaje-alerta {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.mensaje-error {
+  color: #721c24;
+  background: #f8d7da;
+}

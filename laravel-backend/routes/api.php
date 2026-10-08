@@ -72,6 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // RESERVAS GENERALES Y PRÉSTAMOS (Gerente/Técnico)  
     Route::middleware(['role:Gerente,Tecnico'])->group(function () {
         // Nuevas rutas para el flujo de entregas y devoluciones parciales
+        Route::get('/reserva/{id}/elementos-para-asignar', [ReservaController::class, 'elementosParaAsignar']);
         Route::post('/reserva/{id}/entregar', [ReservaController::class, 'entregarPrestamo']);
         Route::post('/prestamo/detalles/{idDetalle}/devolver-parcial', [ReservaController::class, 'devolverParcial']);
         

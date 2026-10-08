@@ -24,6 +24,26 @@ export interface PrestamoActivo {
   cod_estado_prestamo: number;
 }
 
+export interface DetallePendiente {
+  id_detalle: number;
+  cod_tipo_elemento: number;
+  tipo: string | null;
+}
+
+export interface CandidatoElemento {
+  id_elemento: number;
+  nombre_elemento: string;
+  cod_elemento?: string;
+  serial?: string;
+  modelo?: string;
+  ubicacion?: { ubicacion: string };
+}
+
+export interface AsignacionElemento {
+  id_detalle: number;
+  id_elemento: number;
+}
+
 export interface PrestamosResponse {
   success: boolean;
   data: PrestamoActivo[];
@@ -119,12 +139,23 @@ export class PrestamosActivosService {
   }
 
   /**
-   * Pasar una reserva "Solicitada" a préstamo entregado de verdad:
-   * marca los equipos como en préstamo, descuenta stock y crea/actualiza
-   * el registro de Prestamo. A diferencia de actualizarEstadoPrestamo,
-   * esto sí aplica los efectos reales de la entrega.
+   * El sistema ya no asigna la unidad física sola: para cada detalle
+   * pendiente (el docente pidió un tipo, sin elegir unidad) da la lista de
+   * unidades disponibles de ese tipo para que el técnico/gerente elija.
    */
-  entregarPrestamo(idReserva: number): Observable<any> {
-    return this.http.post<any>(`${this.reservaUrl}/${idReserva}/entregar`, {});
+  obtenerElementosParaAsignar(idReserva: number): Observable<any> {
+    return this.http.get<any>(`${this.reservaUrl}/${idReserva}/elementos-para-asignar`);
+  }
+
+  /**
+   * Pasar una reserva "Solicitada" a préstamo entregado de verdad:
+   * asigna la unidad concreta a cada detalle pendiente, marca los equipos
+   * como en préstamo y crea/actualiza el registro de Prestamo. A diferencia
+   * de actualizarEstadoPrestamo, esto sí aplica los efectos reales de la
+   * entrega. `asignaciones` es obligatorio solo si la reserva tenía
+   * detalles pendientes de asignar.
+   */
+  entregarPrestamo(idReserva: number, asignaciones: AsignacionElemento[] = []): Observable<any> {
+    return this.http.post<any>(`${this.reservaUrl}/${idReserva}/entregar`, { asignaciones });
   }
 }

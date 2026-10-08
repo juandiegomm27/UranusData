@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use App\Models\VHistorialPrestamos;
 use App\Models\VHistorialReservas;
+use App\Services\DisponibilidadElementosService;
 use Illuminate\Support\Facades\DB;
 
 class ReservaUsuarioController extends Controller
@@ -83,7 +84,7 @@ class ReservaUsuarioController extends Controller
 
         $perPage = $request->get('per_page', 10);
         $reservas = Reserva::where('documento', $documento)
-            ->with(['estado', 'usuario', 'detalles.elemento', 'detalles.stock.accesorio', 'prestamo'])
+            ->with(['estado', 'usuario', 'detalles.elemento', 'detalles.stock.accesorio', 'detalles.tipo', 'prestamo'])
             ->orderBy('fecha', 'desc')
             ->paginate($perPage);
 
@@ -103,8 +104,9 @@ class ReservaUsuarioController extends Controller
     /**
      * Deriva el estado real de la reserva sin necesidad de un nuevo estado en BD:
      * - rechazada: Num_estado = 3
-     * - en_prestamo: ya existe un registro en Prestamo (fue entregada)
-     * - no_recogida: sigue pendiente y el plazo ya venció
+     * - historial: el préstamo ya se cerró (Devuelto/Perdido/Dañado, estado >= 3)
+     * - en_prestamo: el técnico ya entregó el equipo (préstamo en estado 2)
+     * - no_recogida: sigue pendiente (sin asignar/entregar) y el plazo ya venció
      * - activa: sigue pendiente, vigente (sin plazo o plazo futuro/hoy)
      */
     private function calcularEstadoReserva(Reserva $reserva): string
@@ -116,7 +118,11 @@ class ReservaUsuarioController extends Controller
         // El registro en Prestamo se crea desde que se hace la reserva
         // (para que Técnico/Gerente la vea como "Solicitado"); solo cuenta
         // como préstamo real para el docente cuando ya se entregó (estado >= 2).
-        if ($reserva->prestamo && $reserva->prestamo->cod_estado_prestamo >= 2) {
+        if ($reserva->prestamo && $reserva->prestamo->cod_estado_prestamo >= 3) {
+            return 'historial';
+        }
+
+        if ($reserva->prestamo && $reserva->prestamo->cod_estado_prestamo == 2) {
             return 'en_prestamo';
         }
 
@@ -127,16 +133,81 @@ class ReservaUsuarioController extends Controller
         return 'activa';
     }
 
+    /**
+     * Crea los ReservaDetalle de una reserva a partir de lo que pidió el
+     * docente. Para accesorios (id_stock) descuenta directamente esa
+     * cantidad, como siempre. Para equipos (cod_tipo_elemento) el docente
+     * no elige marca ni unidad concreta — solo el tipo y cuántos — y
+     * tampoco se asigna sola: el detalle queda con id_elemento = null hasta
+     * que el técnico/gerente asigna una unidad física al entregar el
+     * préstamo. Aquí solo se valida que existan suficientes unidades de ese
+     * tipo (descontando lo que ya está comprometido en otras solicitudes
+     * pendientes) para no dejar pedir más de lo que hay.
+     */
+    private function crearDetallesReserva(Reserva $reserva, array $detalles): void
+    {
+        $comprometidos = DisponibilidadElementosService::cantidadesComprometidasPorTipo();
+
+        foreach ($detalles as $item) {
+            if (!empty($item['id_stock'])) {
+                \App\Models\ReservaDetalle::create([
+                    'id_Reserva' => $reserva->id_Reserva,
+                    'id_stock' => $item['id_stock'],
+                    'cantidad_solicitada' => $item['cantidad'],
+                    'cantidad_entregada' => 0,
+                    'cantidad_devuelta' => 0
+                ]);
+
+                $stock = \App\Models\StockAccesorio::find($item['id_stock']);
+                if ($stock) {
+                    $stock->decrement('cantidad_disponible', $item['cantidad']);
+                    \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
+                        ->decrement('cantidad_disponible', $item['cantidad']);
+                }
+                continue;
+            }
+
+            $codTipo = $item['cod_tipo_elemento'];
+            $totalTipo = \App\Models\Inventario::where('cod_estado_elemento', 1)
+                ->where('cod_tipo_elemento', $codTipo)
+                ->count();
+            $disponible = $totalTipo - ($comprometidos[$codTipo] ?? 0);
+
+            if ($disponible < $item['cantidad']) {
+                $tipo = \App\Models\TipoElemento::find($codTipo);
+                throw new \Exception(
+                    'No hay suficientes unidades disponibles de "' . ($tipo->tipo ?? 'ese tipo') . '": '
+                    . 'quedan ' . max(0, $disponible) . ' y se pidieron ' . $item['cantidad'] . '.'
+                );
+            }
+
+            // Se cuenta como comprometido de inmediato para que, si el mismo
+            // request pide el mismo tipo dos veces, no se pase de la cuenta.
+            $comprometidos[$codTipo] = ($comprometidos[$codTipo] ?? 0) + $item['cantidad'];
+
+            for ($i = 0; $i < $item['cantidad']; $i++) {
+                \App\Models\ReservaDetalle::create([
+                    'id_Reserva' => $reserva->id_Reserva,
+                    'id_elemento' => null,
+                    'cod_tipo_elemento' => $codTipo,
+                    'cantidad_solicitada' => 1,
+                    'cantidad_entregada' => 0,
+                    'cantidad_devuelta' => 0
+                ]);
+            }
+        }
+    }
+
     public function crearReserva(Request $request)
     {
         $documento = $request->user()?->documento;
-        
+
         $validated = $request->validate([
             'fecha' => 'required|date',
             'plazo' => 'nullable|date',
             'detalles' => 'required|array|min:1',
-            'detalles.*.id_elemento' => 'nullable|exists:inventario,id_elemento',
-            'detalles.*.id_stock' => 'nullable|exists:stock_accesorios,id_stock',
+            'detalles.*.cod_tipo_elemento' => 'nullable|required_without:detalles.*.id_stock|exists:tipo_elemento,cod_tipo_elemento',
+            'detalles.*.id_stock' => 'nullable|required_without:detalles.*.cod_tipo_elemento|exists:stock_accesorios,id_stock',
             'detalles.*.cantidad' => 'required|integer|min:1'
         ]);
 
@@ -150,28 +221,8 @@ class ReservaUsuarioController extends Controller
                     'plazo' => $validated['plazo'] ?? null,
                 ]);
 
-                // 2. Crear los detalles y descontar stock
-                foreach ($validated['detalles'] as $item) {
-                    \App\Models\ReservaDetalle::create([
-                        'id_Reserva' => $reserva->id_Reserva,
-                        'id_elemento' => $item['id_elemento'] ?? null,
-                        'id_stock' => $item['id_stock'] ?? null,
-                        'cantidad_solicitada' => $item['cantidad'],
-                        'cantidad_entregada' => 0,
-                        'cantidad_devuelta' => 0
-                    ]);
-
-                    // Descontar la cantidad_disponible física del stock si es un accesorio
-                    if (!empty($item['id_stock'])) {
-                        $stock = \App\Models\StockAccesorio::find($item['id_stock']);
-                        if ($stock) {
-                            $stock->decrement('cantidad_disponible', $item['cantidad']);
-                            // Descontar también del catálogo global
-                            \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
-                                ->decrement('cantidad_disponible', $item['cantidad']);
-                        }
-                    }
-                }
+                // 2. Crear los detalles (asignando unidades por tipo automáticamente)
+                $this->crearDetallesReserva($reserva, $validated['detalles']);
 
                 // Crear el registro de préstamo "Solicitado" para que
                 // Técnico/Gerente la vean de inmediato en su lista de préstamos.
@@ -214,8 +265,8 @@ class ReservaUsuarioController extends Controller
             'fecha' => 'sometimes|date',
             'plazo' => 'nullable|date',
             'detalles' => 'sometimes|array|min:1',
-            'detalles.*.id_elemento' => 'nullable|exists:inventario,id_elemento',
-            'detalles.*.id_stock' => 'nullable|exists:stock_accesorios,id_stock',
+            'detalles.*.cod_tipo_elemento' => 'nullable|required_without:detalles.*.id_stock|exists:tipo_elemento,cod_tipo_elemento',
+            'detalles.*.id_stock' => 'nullable|required_without:detalles.*.cod_tipo_elemento|exists:stock_accesorios,id_stock',
             'detalles.*.cantidad' => 'required_with:detalles|integer|min:1'
         ]);
 
@@ -253,26 +304,8 @@ class ReservaUsuarioController extends Controller
                     // 2. Eliminar los detalles viejos
                     $reserva->detalles()->delete();
 
-                    // 3. Crear los nuevos detalles y descontar el nuevo stock
-                    foreach ($validated['detalles'] as $item) {
-                        \App\Models\ReservaDetalle::create([
-                            'id_Reserva' => $reserva->id_Reserva,
-                            'id_elemento' => $item['id_elemento'] ?? null,
-                            'id_stock' => $item['id_stock'] ?? null,
-                            'cantidad_solicitada' => $item['cantidad'],
-                            'cantidad_entregada' => 0,
-                            'cantidad_devuelta' => 0
-                        ]);
-
-                        if (!empty($item['id_stock'])) {
-                            $stock = \App\Models\StockAccesorio::find($item['id_stock']);
-                            if ($stock) {
-                                $stock->decrement('cantidad_disponible', $item['cantidad']);
-                                \App\Models\InventarioAccesorio::where('id_accesorio', $stock->id_accesorio)
-                                    ->decrement('cantidad_disponible', $item['cantidad']);
-                            }
-                        }
-                    }
+                    // 3. Crear los nuevos detalles (asignando unidades por tipo automáticamente)
+                    $this->crearDetallesReserva($reserva, $validated['detalles']);
                 }
             });
 

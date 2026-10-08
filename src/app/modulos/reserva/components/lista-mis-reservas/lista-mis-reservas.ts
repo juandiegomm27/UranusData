@@ -63,7 +63,10 @@ export class ListaMisReservasComponent implements OnInit {
     if (!reserva.detalles || reserva.detalles.length === 0) return 'Sin elementos';
     return reserva.detalles
       .map(d => {
-        const nombre = d.elemento?.nombre_elemento || d.stock?.accesorio?.nombre || 'Elemento';
+        // Mientras el técnico no asigne una unidad concreta, el detalle
+        // solo tiene el tipo pedido (id_elemento sigue en null).
+        const nombre = d.elemento?.nombre_elemento || d.stock?.accesorio?.nombre
+          || (d.tipo?.tipo ? `${d.tipo.tipo} (por asignar)` : 'Elemento');
         return `${nombre} (${d.cantidad_solicitada})`;
       })
       .join(', ');
@@ -71,9 +74,10 @@ export class ListaMisReservasComponent implements OnInit {
 
   etiquetaEstado(reserva: Reserva): string {
     const etiquetas: Record<EstadoCalculadoReserva, string> = {
-      activa: 'Activa',
+      activa: 'Pendiente',
       no_recogida: 'No recogida',
-      en_prestamo: 'En préstamo',
+      en_prestamo: 'Activo',
+      historial: 'Historial',
       rechazada: 'Rechazada'
     };
     return reserva.estado_calculado ? etiquetas[reserva.estado_calculado] : 'Desconocido';
@@ -81,9 +85,10 @@ export class ListaMisReservasComponent implements OnInit {
 
   claseEstado(reserva: Reserva): string {
     const clases: Record<EstadoCalculadoReserva, string> = {
-      activa: 'estado-activo',
+      activa: 'estado-pendiente',
       no_recogida: 'estado-pendiente',
-      en_prestamo: 'estado-aprobada',
+      en_prestamo: 'estado-activo',
+      historial: 'estado-devuelto',
       rechazada: 'estado-rechazada'
     };
     return reserva.estado_calculado ? clases[reserva.estado_calculado] : '';

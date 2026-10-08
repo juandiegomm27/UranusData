@@ -5,13 +5,16 @@
 
   <div class="pestanas-reserva">
     <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'activa'" (click)="cambiarPestana('activa')">
-      Activas ({{ contar('activa') }})
+      Pendientes ({{ contar('activa') }})
     </button>
     <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'no_recogida'" (click)="cambiarPestana('no_recogida')">
       No recogidas ({{ contar('no_recogida') }})
     </button>
     <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'en_prestamo'" (click)="cambiarPestana('en_prestamo')">
-      En préstamo ({{ contar('en_prestamo') }})
+      Activo ({{ contar('en_prestamo') }})
+    </button>
+    <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'historial'" (click)="cambiarPestana('historial')">
+      Historial ({{ contar('historial') }})
     </button>
     <button class="pestana-btn" [class.pestana-activa]="pestanaActiva === 'rechazada'" (click)="cambiarPestana('rechazada')">
       Rechazadas ({{ contar('rechazada') }})

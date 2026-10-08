@@ -14,3 +14,25 @@
 .text-center {
   text-align: center;
 }
+
+.mensaje-alerta {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.mensaje-error {
+  color: #721c24;
+  background: #f8d7da;
+}
+
+.mensaje-success {
+  color: #155724;
+  background: #d4edda;
+}
+
+.mensaje-info {
+  color: #856404;
+  background: #fff3cd;
+}

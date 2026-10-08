@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PrestamosActivosService, PrestamoActivo } from '../../../prestamos/services/prestamos-activos.service';
 import { ModalDetallesPrestamoComponent } from '../../../shared/components/modal-detalles-prestamo/modal-detalles-prestamo.component';
+import { AsignarEntregaModalComponent } from '../../../shared/components/asignar-entrega-modal/asignar-entrega-modal.component';
 import { PaginationHelper } from '../../../shared/utils/pagination.helper';
 
 @Component({
   selector: 'app-lista-prestamos-activos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalDetallesPrestamoComponent],
+  imports: [CommonModule, FormsModule, ModalDetallesPrestamoComponent, AsignarEntregaModalComponent],
   templateUrl: './lista-prestamos-activos.html',
   styleUrls: ['./lista-prestamos-activos.css']
 })
@@ -20,7 +21,8 @@ export class ListaPrestamosActivosComponent extends PaginationHelper implements 
   sinDatos = false;
   mostrarModal = false;
   prestamoSeleccionado: PrestamoActivo | null = null;
-  entregando: number | null = null;
+  mostrarModalEntrega = false;
+  prestamoParaEntregar: PrestamoActivo | null = null;
   
   estadoSeleccionado: number | null = null;
   tipoSeleccionado: number | null = null;
@@ -104,22 +106,18 @@ export class ListaPrestamosActivosComponent extends PaginationHelper implements 
 
   entregarPrestamo(prestamo: PrestamoActivo): void {
     if (prestamo.cod_estado_prestamo !== 1) return;
-    if (!confirm(`¿Confirmas la entrega del préstamo #${prestamo.id_Reserva} a ${prestamo.nombre}?`)) return;
+    this.prestamoParaEntregar = prestamo;
+    this.mostrarModalEntrega = true;
+  }
 
-    this.entregando = prestamo.id_Reserva;
-    this.cdr.detectChanges();
+  cerrarModalEntrega(): void {
+    this.mostrarModalEntrega = false;
+    this.prestamoParaEntregar = null;
+  }
 
-    this.prestamosService.entregarPrestamo(prestamo.id_Reserva).subscribe({
-      next: () => {
-        this.entregando = null;
-        this.cargarDatos();
-      },
-      error: (error) => {
-        this.entregando = null;
-        this.cdr.detectChanges();
-        alert(error.error?.mensaje || 'No se pudo entregar el préstamo.');
-      }
-    });
+  onEntregaConfirmada(): void {
+    this.cerrarModalEntrega();
+    this.cargarDatos();
   }
 
   cerrarModal(): void {
