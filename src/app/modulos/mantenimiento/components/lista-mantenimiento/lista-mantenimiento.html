@@ -9,6 +9,7 @@
       <div class="modal-body">
         @if (mensajeModal) {
           <div class="mensaje-alerta" [ngClass]="'mensaje-' + tipoMensajeModal">
+            <img src="icons/alerta.svg" alt="Alerta" class="icono-alerta">
             <span>{{ mensajeModal }}</span>
           </div>
         }
@@ -27,9 +28,6 @@
                 </div>
               }
             </div>
-            @if (equipoSeleccionadoNombre) {
-              <small style="color: #28a745; font-weight: 600; margin-top: 4px; display: block;">✓ Seleccionado: {{ equipoSeleccionadoNombre }}</small>
-            }
           </div>
           <div class="grupo-campo">
             <label>Tipo de Mantenimiento *</label>

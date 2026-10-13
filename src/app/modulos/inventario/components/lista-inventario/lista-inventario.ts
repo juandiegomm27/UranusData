@@ -10,7 +10,7 @@ import { BajaActivoModalComponent } from '../baja-activo-modal/baja-activo-modal
 import { BajaAccesorioModalComponent } from '../baja-accesorio-modal/baja-accesorio-modal';
 import { TrasladoStockModalComponent } from '../traslado-stock-modal/traslado-stock-modal';
 import { PaginationHelper } from '../../../shared/utils/pagination.helper';
-import { ESTADO_ELEMENTO, claseEstadoElemento } from '../../inventario.constants';
+import { ESTADO_ELEMENTO, claseEstadoElemento } from '../../services/inventario.constants';
 
 @Component({
   selector: 'app-lista-inventario',

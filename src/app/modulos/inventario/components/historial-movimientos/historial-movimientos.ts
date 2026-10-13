@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef, inje
 import { CommonModule } from '@angular/common';
 import { InventarioService } from '../../services/inventario.service';
 import { PaginationHelper } from '../../../shared/utils/pagination.helper';
-import { etiquetaTipoMovimiento, claseTipoMovimiento } from '../../inventario.constants';
+import { etiquetaTipoMovimiento, claseTipoMovimiento } from '../../services/inventario.constants';
 
 @Component({
   selector: 'app-historial-movimientos',

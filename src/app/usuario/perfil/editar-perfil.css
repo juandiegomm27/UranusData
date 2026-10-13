@@ -49,12 +49,11 @@
 }
 
 .profile-avatar {
+  display: block;
   width: 90px;
   height: 90px;
-  border-radius: 50%;
-  border: 3px solid #1C74A0;
-  object-fit: cover;
-  box-shadow: 0 4px 15px rgba(28, 116, 160, 0.2);
+  margin: 0 auto;
+  color: #1C74A0;
   transition: transform 0.3s ease;
 }
 
@@ -193,9 +192,7 @@
   transform: none;
 }
 
-/* ==========================================
-   MODO OSCURO (DARK MODE)
-   ========================================== */
+/*MODO OSCURO*/
 :host-context(body.dark-mode) .perfil-card {
   background: #1e1e1e;
   border-color: #444;
@@ -207,8 +204,7 @@
 }
 
 :host-context(body.dark-mode) .profile-avatar {
-  border-color: #FF9F13;
-  box-shadow: 0 4px 15px rgba(255, 159, 19, 0.2);
+  color: #FF9F13;
 }
 
 :host-context(body.dark-mode) .avatar-text,
