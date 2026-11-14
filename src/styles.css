@@ -73,3 +73,25 @@ app-root {
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
+
+/* ICONOS SVG MONOCROMOS (máscara): toman el color del texto (currentColor) */
+.icono-mascara {
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.icono-mascara--usuario {
+  -webkit-mask-image: url('/icon-usuario.svg');
+  mask-image: url('/icon-usuario.svg');
+}
+
+.icono-mascara--ajustes {
+  -webkit-mask-image: url('/icons/settings.svg');
+  mask-image: url('/icons/settings.svg');
+}

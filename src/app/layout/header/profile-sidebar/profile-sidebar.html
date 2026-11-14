@@ -3,9 +3,13 @@
   type="button" 
   class="usuario-trigger" 
   (click)="toggleSidebar()"
-  title="Mi Perfil"
+  title="Abrir menú de perfil"
+  aria-label="Abrir menú de perfil"
+  aria-haspopup="dialog"
+  aria-controls="panel-perfil"
+  [attr.aria-expanded]="mostrarSidebar()"
   [class.active]="mostrarSidebar()">
-  <img src="icon-usuario.svg" alt="Usuario" class="avatar-img">
+  <img src="icon-usuario.svg" alt="" class="avatar-img" aria-hidden="true">
 </button>
 
 <!-- Overlay (Fondo oscuro que cierra el sidebar) -->
@@ -14,7 +18,7 @@
 }
 
 <!-- Sidebar Lateral -->
-<div class="profile-sidebar" [class.open]="mostrarSidebar()">
+<div class="profile-sidebar" id="panel-perfil" role="dialog" aria-label="Mi perfil" [class.open]="mostrarSidebar()">
   
   <!-- Header del Sidebar -->
   <div class="sidebar-header">
@@ -30,10 +34,9 @@
 
   <!-- Información del Usuario -->
   <div class="sidebar-user-info">
-    <img 
-      src="icon-usuario.svg" 
-      alt="Avatar Usuario" 
-      class="sidebar-avatar">
+    <div class="sidebar-avatar" aria-hidden="true">
+      <span class="icono-mascara icono-mascara--usuario sidebar-avatar-icono"></span>
+    </div>
     <div class="user-details">
       <p class="user-name">{{ nombre() }} {{ apellido() }}</p>
       <p class="user-role">{{ rol() }}</p>
@@ -58,7 +61,7 @@
       type="button" 
       class="menu-item"
       (click)="irAAjustes()">
-      <img src="icons/settings.svg" alt="Ajustes" class="menu-icon">
+      <span class="menu-icon icono-mascara icono-mascara--ajustes" aria-hidden="true"></span>
       <span class="menu-text">Ajustes</span>
     </button>
 

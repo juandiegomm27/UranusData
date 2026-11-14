@@ -1,19 +1,21 @@
 <header class="main-header">
   <div class="header-container">
-    
-    <!-- Logo -->
-    <a (click)="irAlInicio()" class="logo" title="UranusData">
-      <img src="logo-blanco-largo.svg" alt="Logo UranusData" class="logo-img">
-    </a>
 
     <!-- Hamburguesa (solo móvil) -->
     <button 
       type="button" 
       class="menu-hamburger" 
       (click)="toggleMenu()"
-      title="Menú">
-      <img src="icons/menu.svg" alt="Menú" class="hamburger-icon">
+      title="Menú"
+      aria-label="Abrir menú de navegación"
+      [attr.aria-expanded]="menuAbierto">
+      <img src="icons/menu.svg" alt="" class="hamburger-icon" aria-hidden="true">
     </button>
+
+    <!-- Logo -->
+    <a (click)="irAlInicio()" class="logo" title="UranusData">
+      <img src="logo-blanco-largo.svg" alt="Logo UranusData" class="logo-img">
+    </a>
 
     <!-- Navegación -->
     <nav class="navbar" [class.open]="menuAbierto">
@@ -30,9 +32,11 @@
       </ul>
     </nav>
 
+    <div class="header-spacer"></div>
+
     <!-- Acciones Derecha -->
     <div class="header-actions">
-      
+
       <!-- Switch Modo Oscuro -->
       <label class="switch-modo" title="Cambiar modo oscuro">
         <input 

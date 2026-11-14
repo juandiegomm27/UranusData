@@ -5,7 +5,7 @@ import { InventarioService } from '../../services/inventario.service';
 import { HistorialMantenimientoComponent } from '../historial-mantenimiento/historial-mantenimiento';
 import { HistorialMovimientosComponent } from '../historial-movimientos/historial-movimientos';
 import { SelectorPadreComponent } from '../selector-padre/selector-padre';
-import { claseEstadoElemento } from '../../inventario.constants';
+import { claseEstadoElemento } from '../../services/inventario.constants';
 import { extraerMensajeError } from '../../../shared/utils/api-error.helper';
 import { SelectorMarcaComponent } from '../selector-marca/selector-marca';
 

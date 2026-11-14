@@ -1,22 +1,62 @@
 .usuario-trigger {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  padding: 6px;
+  padding: 3px 10px 3px 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  gap: 8px;
+  border-radius: 999px;
   transition: all 0.2s ease;
 }
 
+/* Flecha que indica que es un menú desplegable */
+.usuario-trigger::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
 .usuario-trigger:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  transform: scale(1.05);
+  border-color: #ffffff;
 }
 
 .usuario-trigger.active {
-  background-color: rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
+}
+
+.usuario-trigger.active::after {
+  transform: rotate(-135deg);
+  margin-top: 3px;
+}
+
+/* Foco visible solo con teclado */
+.usuario-trigger:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+:host-context(body.dark-mode) .usuario-trigger {
+  border-color: rgba(255, 159, 19, 0.5);
+}
+
+:host-context(body.dark-mode) .usuario-trigger::after {
+  border-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .usuario-trigger:hover,
+:host-context(body.dark-mode) .usuario-trigger.active {
+  border-color: #FF9F13;
+}
+
+:host-context(body.dark-mode) .usuario-trigger:focus-visible {
+  outline-color: #FF9F13;
 }
 
 .avatar-img {
@@ -120,19 +160,26 @@
 .sidebar-avatar {
   width: 80px;
   height: 80px;
-  object-fit: contain;
+  margin: 0 auto 16px;
+  padding: 12px;
   border-radius: 50%;
   background: #ffffff;
-  padding: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: #1C74A0;
+}
+
+.sidebar-avatar-icono {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 :host-context(body.dark-mode) .sidebar-avatar {
   background: #2a2a2a;
   border-color: #444;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #FF9F13;
 }
 
 .user-details {
@@ -227,6 +274,15 @@
 
 .menu-item:hover .menu-icon {
   opacity: 1;
+}
+
+/* Ícono de Ajustes (SVG blanco recoloreado con máscara) */
+.menu-icon.icono-mascara {
+  color: #1C74A0;
+}
+
+:host-context(body.dark-mode) .menu-icon.icono-mascara {
+  color: #FF9F13;
 }
 
 .menu-text {
