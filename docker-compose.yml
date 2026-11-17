@@ -1,9 +1,82 @@
 services:
-  # 1. CONTENEDOR DEL BACKEND (LARAVEL)
+  # 1. BASE DE DATOS (POSTGRESQL)
+  postgres:
+    image: postgres:17-alpine
+    container_name: uranusdata-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-uranusdata}
+      POSTGRES_USER: ${POSTGRES_USER:-uranusdata_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-uranusdata_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - uranusdata
+
+  # 1.1 BACKEND (SPRING BOOT)
+  spring-backend:
+    build:
+      context: ./spring-backend
+    container_name: uranusdata-spring
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-uranusdata}
+      DB_USERNAME: ${POSTGRES_USER:-uranusdata_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-uranusdata_password}
+      JWT_SECRET: ${JWT_SECRET:-cambia-este-secreto-por-uno-de-minimo-32-bytes-aleatorios}
+      FRONTEND_URL: http://localhost:4200
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - uranusdata
+
+  # 2. FRONTEND (ANGULAR)
+  frontend:
+    build:
+      context: .
+    container_name: uranusdata-frontend
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/laravel-backend
+      - /app/spring-backend
+    ports:
+      - "4200:4200"
+    networks:
+      - uranusdata
+
+  # 3. PGADMIN (OPCIONAL)  ->  docker compose --profile tools up -d pgadmin
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: uranusdata-pgadmin
+    profiles: ["tools"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@uranusdata.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - uranusdata
+
+  # 4. LEGACY (LARAVEL + MYSQL)  ->  docker compose --profile legacy up -d
   backend:
-    build: 
+    build:
       context: ./laravel-backend
     container_name: uranusdata-backend
+    profiles: ["legacy"]
     volumes:
       - ./laravel-backend:/app
       - backend_vendor:/app/vendor
@@ -20,24 +93,10 @@ services:
     networks:
       - uranusdata
 
-  # 2. CONTENEDOR DEL FRONTEND (ANGULAR)
-  frontend:
-    build: 
-      context: .
-    container_name: uranusdata-frontend
-    volumes:
-      - ./:/app
-      - /app/node_modules
-      - /app/laravel-backend
-    ports:
-      - "4200:4200"
-    networks:
-      - uranusdata
-
-  # 3. CONTENEDOR DE BASE DE DATOS (MYSQL)
   mysql:
     image: mysql:8.0
     container_name: uranusdata-mysql
+    profiles: ["legacy"]
     command: --skip-name-resolve
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -52,6 +111,7 @@ services:
       - uranusdata
 
 volumes:
+  postgres_data:
   mysql_data:
   backend_vendor:
 
