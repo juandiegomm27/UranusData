@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,44 +20,27 @@ export class AuthService {
     private router: Router
   ) { }
 
-  private obtenerCsrfToken(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/../sanctum/csrf-cookie`, {
-      withCredentials: true
-    });
-  }
-
   login(documento: string, password: string): Observable<any> {
-    return this.obtenerCsrfToken().pipe(
-      switchMap(() => 
-        this.http.post(`${this.apiUrl}/login`, {
-          documento,
-          password
-        }, {
-          withCredentials: true
-        })
-      )
-    );
+    return this.http.post(`${this.apiUrl}/login`, { documento, password });
   }
 
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {});
   }
 
+  cerrarSesionLocal(): void {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('usuario');
+    this.limpiarDatos();
+  }
+
   logoutRemoto() {
-    this.logout().subscribe({
-      next: () => {
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('usuario');
-        this.limpiarDatos();
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('usuario');
-        this.limpiarDatos();
-        this.router.navigate(['/login']);
-      }
-    });
+    const finalizar = () => {
+      this.cerrarSesionLocal();
+      this.router.navigate(['/login']);
+    };
+
+    this.logout().subscribe({ next: finalizar, error: finalizar });
   }
 
   obtenerPerfil(documento: string): Observable<any> {

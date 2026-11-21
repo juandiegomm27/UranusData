@@ -12,14 +12,14 @@
 
 /* Tarjeta Central Flotante (Más limpia y moderna) */
 .auth-card {
-  background-color: rgba(255, 255, 255, 0.98);
+  background-color: rgba(239, 239, 239, 0.98);
   backdrop-filter: blur(12px); 
   width: 100%;
-  max-width: 580px; /* Un poco más estilizada */
+  max-width: 580px;
   padding: 50px 40px;
-  border-radius: 20px; /* Bordes más suaves */
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(20, 20, 20, 0.3); 
+  border: 1px solid rgba(0, 59, 160, 0.3);
   text-align: center;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }

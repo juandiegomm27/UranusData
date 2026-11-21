@@ -1,0 +1,11 @@
+node_modules
+.angular
+dist
+out-tsc
+coverage
+.git
+.vscode
+.idea
+laravel-backend
+spring-backend
+*.log

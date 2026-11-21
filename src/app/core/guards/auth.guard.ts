@@ -6,7 +6,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // 1. Verificar si tiene token
+  // Verificasion de token
   if (!authService.isAutenticado()) {
     router.navigate(['/login']);
     return false;
@@ -33,10 +33,8 @@ function validarTokenEnBackground(authService: AuthService, router: Router): voi
         console.log('✓ Token validado exitosamente');
       },
       error: () => {
-        // Token inválido, forzar logout
         console.warn('✗ Token inválido o expirado');
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('usuario');
+        authService.cerrarSesionLocal();
         router.navigate(['/login']);
       }
     });

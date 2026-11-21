@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualización de Perfil</title>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h2>Actualización de Perfil</h2>
+        </div>
+
+        <div class="email-body">
+            <p class="email-message">Hola <strong th:text="${nombre}">Nombre</strong>,</p>
+
+            <div class="success-box">
+                ✅ Tu información de perfil ha sido actualizada correctamente en UranusData.
+            </div>
+
+            <div class="email-warning">
+                <strong>⚠️ Aviso:</strong> Si no realizaste esta acción, contacta inmediatamente
+                con el administrador del sistema.
+            </div>
+        </div>
+
+        <div class="email-footer">
+            <p>© 2026 UranusData - Institución Educativa Santa Isabel de Hungría</p>
+        </div>
+    </div>
+</body>
+</html>

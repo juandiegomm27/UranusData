@@ -3,14 +3,12 @@
  # UranusData API - Documentación Completa
 
 **Versión:** 1.0.0  
-**Base URL:** `http://localhost:8000/api`  
-**Autenticación:** Sanctum Bearer Token
+**Base URL:** http://localhost:8000/api 
 
----
 
 ## 🔐 Autenticación
 
-Todos los endpoints excepto `login`, `register`, `activar/*` y `recuperar-contrasena/*` requieren:
+Todos los endpoints excepto login, register, activar/ y recuperar-contrasena/ requieren:
 
 Authorization: Bearer {token}
 
@@ -176,11 +174,11 @@ curl "http://localhost:8000/api/gestion/usuario?page=1&per_page=10&busqueda=juan
 ```
 
 **Parámetros:**
-- `page` (int): Página actual
-- `per_page` (int): Registros por página (máx 100)
-- `busqueda` (string): Búsqueda por documento/nombre/apellido
-- `rol` (int): Filtrar por ID de rol
-- `estado` (int): Filtrar por ID de estado
+- **page** (int): Página actual
+- **per_page** (int): Registros por página (máx 100)
+- **busqueda** (string): Búsqueda por documento/nombre/apellido
+- **rol** (int): Filtrar por ID de rol
+- **estado** (int): Filtrar por ID de estado
 
 #### GET /gestion/usuario/{documento}
 Obtener usuario específico
@@ -253,11 +251,11 @@ curl "http://localhost:8000/api/gestion/usuario/prestamos-activos?page=1&per_pag
 ```
 
 **Parámetros:**
-- `page` (int): Página actual
-- `per_page` (int): Registros por página
-- `busqueda` (string): Búsqueda por documento/nombre/elemento
-- `estado` (int): Filtrar por estado (1=Solicitado, 2=Entregado, 3=Devuelto, 4=Perdido, 5=Dañado)
-- `tipo` (int): Filtrar por tipo de elemento
+- **page** (int): Página actual
+- **per_page** (int): Registros por página
+- **busqueda** (string): Búsqueda por documento/nombre/elemento
+- **estado** (int): Filtrar por estado (1=Solicitado, 2=Entregado, 3=Devuelto, 4=Perdido, 5=Dañado)
+- **tipo** (int): Filtrar por tipo de elemento
 
 #### PUT /gestion/usuario/prestamos-activos/{id}
 Actualizar estado de préstamo
@@ -272,11 +270,11 @@ curl -X PUT http://localhost:8000/api/gestion/usuario/prestamos-activos/15 \
 ```
 
 **Estados válidos:**
-- `1`: Solicitado
-- `2`: Entregado
-- `3`: Devuelto
-- `4`: Perdido
-- `5`: Dañado
+- **1**: Solicitado
+- **2**: Entregado
+- **3**: Devuelto
+- **4**: Perdido
+- **5**: Dañado
 
 #### GET /gestion/usuario/prestamos-activos/exportar
 Exporta los préstamos activos en CSV (UTF-8 con BOM)
@@ -290,61 +288,61 @@ curl "http://localhost:8000/api/gestion/usuario/prestamos-activos/exportar" \
 
 ### 📦 INVENTARIO (Gerente/Técnico)
 
-**Estados de elemento:** `1` Activo, `2` En préstamo, `3` Mantenimiento, `4` Baja.
+**Estados de elemento:** **1** Activo, **2** En préstamo, **3** Mantenimiento, **4** Baja.
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET | `/inventario/opciones` | Tipos, marcas, ubicaciones, estados y tipos de mantenimiento |
-| GET | `/inventario` | Lista paginada. Filtros: `search`, `tipo`, `marca`, `estado`, `ubicacion`, `principales`, `per_page`, `page`. No incluye bajas |
-| GET | `/inventario/{id}` | Detalle con padre y componentes |
-| POST | `/inventario` | Crea elemento (siempre nace Activo). Genera código si no se envía |
-| PUT | `/inventario/{id}` | Edita datos (el estado NO se edita aquí) |
-| GET | `/inventario/elementos-tipo/{tipo}` | Elementos por tipo |
-| GET | `/inventario/exportar` | Exporta CSV |
-| GET | `/inventario/{id}/historial` | Historial de mantenimientos del elemento |
-| GET | `/inventario/{id}/movimientos` | Historial de movimientos (alta, edición, traslado, vínculo, baja, restauración) |
-| POST | `/inventario/{id}/mantenimiento` | Envía a mantenimiento |
-| PATCH | `/inventario/activos/{id}/dar-de-baja` | Baja de un equipo. Body: `motivo` (máx. 255) |
-| POST | `/inventario/accesorios/{id_stock}/dar-de-baja` | Baja de unidades de un lote. Body: `cantidad`, `motivo` |
-| GET | `/inventario/historial-bajas-general` | Historial paginado (15). Filtro `tipo=activo\|accesorio`. Incluye `resumen` con `registros` y `unidades` de todo el historial |
-| POST | `/inventario/historial-bajas-general/{id}/restaurar` | Restaura una baja |
+| GET | **/inventario/opciones** | Tipos, marcas, ubicaciones, estados y tipos de mantenimiento |
+| GET | **/inventario** | Lista paginada. Filtros: **search**, **tipo**, **marca**, **estado**, **ubicacion**, **principales**, **per_page**, **page**. No incluye bajas |
+| GET | **/inventario/{id}** | Detalle con padre y componentes |
+| POST | **/inventario** | Crea elemento (siempre nace Activo). Genera código si no se envía |
+| PUT | **/inventario/{id}** | Edita datos (el estado NO se edita aquí) |
+| GET | **/inventario/elementos-tipo/{tipo}** | Elementos por tipo |
+| GET | **/inventario/exportar** | Exporta CSV |
+| GET | **/inventario/{id}/historial** | Historial de mantenimientos del elemento |
+| GET | **/inventario/{id}/movimientos** | Historial de movimientos (alta, edición, traslado, vínculo, baja, restauración) |
+| POST | **/inventario/{id}/mantenimiento** | Envía a mantenimiento |
+| PATCH | **/inventario/activos/{id}/dar-de-baja** | Baja de un equipo. Body: **motivo** (máx. 255) |
+| POST | **/inventario/accesorios/{id_stock}/dar-de-baja** | Baja de unidades de un lote. Body: **cantidad**, **motivo** |
+| GET | **/inventario/historial-bajas-general** | Historial paginado (15). Filtro **tipo=activo\|accesorio**. Incluye **resumen** con **registros** y **unidades** de todo el historial |
+| POST | **/inventario/historial-bajas-general/{id}/restaurar** | Restaura una baja |
 
 **Reglas:**
 - Un equipo solo se envía a mantenimiento si está Activo.
 - No se da de baja un equipo En préstamo ni en Mantenimiento.
 - Un equipo con una reserva pendiente de entrega no puede enviarse a mantenimiento ni darse de baja (422 con el número de la reserva).
 - Un elemento solo puede ser componente de un elemento principal que no sea componente de otro (un solo nivel). Al dar de baja el principal, sus componentes quedan independientes.
-- `serial` y `cod_elemento` son únicos.
+- serial y cod_elemento son únicos.
 
 ### 🔩 ACCESORIOS / STOCK POR LOTES (Gerente/Técnico)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET | `/inventario-accesorios` | Lista paginada con stock por ubicación. Filtros: `search`, `tipo`, `marca`, `ubicacion` |
-| POST | `/inventario-accesorios` | Crea accesorio + stock inicial. Si se envía `id_accesorio`, suma stock al existente. El nombre no puede repetirse (422) |
-| PUT | `/inventario-accesorios/{id}` | Edita datos globales (`nombre` máx. 100, `modelo`, `descripcion`, `cod_tipo_elemento`, `cod_marca`) |
-| POST | `/inventario-accesorios/trasladar` | Traslada unidades entre ubicaciones. Body: `id_stock_origen`, `cod_ubi_destino`, `cantidad` |
+| GET | **/inventario-accesorios** | Lista paginada con stock por ubicación. Filtros: **search**, **tipo**, **marca**, **ubicacion** |
+| POST | **/inventario-accesorios** | Crea accesorio + stock inicial. Si se envía **id_accesorio**, suma stock al existente. El nombre no puede repetirse (422) |
+| PUT | **/inventario-accesorios/{id}** | Edita datos globales (**nombre** máx. 100, **modelo**, **descripcion**, **cod_tipo_elemento**, **cod_marca**) |
+| POST | **/inventario-accesorios/trasladar** | Traslada unidades entre ubicaciones. Body: **id_stock_origen**, **cod_ubi_destino**, **cantidad** |
 
 ### 🏷️ CATÁLOGOS (Gerente/Técnico)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET | `/marcas` | Lista de marcas |
-| POST | `/marcas` | Crea marca (nombre único) |
-| DELETE | `/marcas/{id}` | Elimina marca (400 si está en uso) |
-| POST | `/tipos-elemento` | Crea tipo |
-| PUT | `/tipos-elemento/{id}` | Edita tipo |
-| DELETE | `/tipos-elemento/{id}` | Elimina tipo (400 si está en uso) |
-| POST | `/ubicaciones` | Crea ubicación (si ya existe, la devuelve) |
-| DELETE | `/ubicaciones/{id}` | Elimina ubicación (400 si tiene equipos o accesorios) |
+| GET | **/marcas** | Lista de marcas |
+| POST | **/marcas** | Crea marca (nombre único) |
+| DELETE | **/marcas/{id}** | Elimina marca (400 si está en uso) |
+| POST | **/tipos-elemento** | Crea tipo |
+| PUT | **/tipos-elemento/{id}** | Edita tipo |
+| DELETE | **/tipos-elemento/{id}** | Elimina tipo (400 si está en uso) |
+| POST | **/ubicaciones** | Crea ubicación (si ya existe, la devuelve) |
+| DELETE | **/ubicaciones/{id}** | Elimina ubicación (400 si tiene equipos o accesorios) |
 
 ### 🛠️ MANTENIMIENTO (Gerente/Técnico)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET | `/mantenimiento` | Lista paginada. Filtros: `busqueda`, `tipo`, `estado`, `fecha` |
-| GET | `/mantenimiento/opciones` | Tipos y estados de mantenimiento |
-| PUT | `/mantenimiento/{id}/completar` | Body: `observaciones`, `cod_estado_mantenimiento` (`2` pausa, `3` finalizado, `4` baja) |
+| GET | **/mantenimiento** | Lista paginada. Filtros: **busqueda**, **tipo**, **estado**, **fecha** |
+| GET | **/mantenimiento/opciones** | Tipos y estados de mantenimiento |
+| PUT | **/mantenimiento/{id}/completar** | Body: **observaciones**, **cod_estado_mantenimiento** (**2** pausa, **3** finalizado, **4** baja) |
 
 ---
 
@@ -423,7 +421,7 @@ curl "http://localhost:8000/api/gestion/usuario/prestamos-activos/exportar" \
 |-----|----|----|
 | Docente | 1 | Ver perfil, catálogo y crear/consultar/editar sus reservas |
 | Técnico | 2 | Inventario, mantenimiento, préstamos y reservas generales |
-| Gerente | 3 | Todo lo del Técnico, más gestión de usuarios y registro (`/register`) |
+| Gerente | 3 | Todo lo del Técnico, más gestión de usuarios y registro (**/register**) |
 
 ---
 

@@ -125,8 +125,8 @@ export class EditarPerfil implements OnInit {
         if (response.success) {
           if (requiereReinicioSesion) {
             window.alert('Credenciales actualizadas exitosamente. Redirigiendo al login...');
-            localStorage.removeItem('token');
-            localStorage.removeItem('usuario');
+            // La sesión vive en sessionStorage, no en localStorage.
+            this.authService.cerrarSesionLocal();
             this.router.navigate(['/login']);
             return;
           }
