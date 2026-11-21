@@ -70,9 +70,9 @@ git clone https://github.com/juandiegomm27/UranusData.git
 cd UranusData
 ```
 
-Crea el archivo `.env` en la raíz con el secreto de los tokens:
+Crea el archivo **.env** en la raíz con el secreto de los tokens:
 
-```bash
+**``bash
 printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 48)" > .env
 ```
 
@@ -109,15 +109,15 @@ npm start
 
 | Script | Qué levanta |
 | --- | --- |
-| `npm start` | Angular + Spring Boot, el stack actual |
-| `npm run start:frontend` | solo Angular, en el 4200 |
-| `npm run start:backend` | solo Spring Boot, en el 8000 |
-| `npm run start:db` | PostgreSQL y Mailpit en Docker |
-| `npm run start:laravel` | Angular + Laravel, el stack heredado |
-| `npm run start:backend:laravel` | solo Laravel, en el 8000 |
+| **npm start** | Angular + Spring Boot, el stack actual |
+| **npm run start:frontend** | solo Angular, en el 4200 |
+| **npm run start:backend** | solo Spring Boot, en el 8000 |
+| **npm run start:db** | PostgreSQL y Mailpit en Docker |
+| **npm run start:laravel** | Angular + Laravel, el stack heredado |
+| **npm run start:backend:laravel** | solo Laravel, en el 8000 |
 
-Los dos backends usan el 8000, así que `npm start` y `npm run start:laravel` **no
-pueden correr a la vez**.
+Los dos backends usan el 8000, así que **npm start** y **npm run start:laravel** no
+pueden correr a la vez.
 
 ---
 
@@ -146,14 +146,14 @@ UranusData/
 
 ### Guías completas
 
-| Guía | Para qué |
+| Guía | |
 | --- | --- |
-| ☕ [Spring Boot con Docker](./spring-backend/instalacion_docker.md) | levantar el sistema actual en contenedores |
-| ☕ [Spring Boot sin Docker](./spring-backend/depuracion_local.md) | compilar, ejecutar y depurar en tu máquina |
-| 📘 [README del backend Spring Boot](./spring-backend/README_BACKEND_SPRING-BOOT.md) | arquitectura, módulos, base de datos y usuarios de prueba |
-| 🐘 [Laravel con Docker](./laravel-backend/instalacion_docker.md) | levantar el backend heredado en contenedores |
-| 🐘 [Laravel con XAMPP](./laravel-backend/instalacion_xampp.md) | instalar y depurar el heredado sin Docker |
-| 📖 [Documentación de la API REST](./DOCUMENTATION.md) | endpoints, formatos de respuesta y códigos de estado |
+| [Spring Boot con Docker](./spring-backend/instalacion_docker.md) | levantar el sistema actual en contenedores |
+| [Spring Boot sin Docker](./spring-backend/depuracion_local.md) | compilar, ejecutar y depurar en tu máquina |
+| [README del backend Spring Boot](./spring-backend/README_BACKEND_SPRING-BOOT.md) | arquitectura, módulos, base de datos y usuarios de prueba |
+| [Laravel con Docker](./laravel-backend/instalacion_docker.md) | levantar el backend heredado en contenedores |
+| [Laravel con XAMPP](./laravel-backend/instalacion_xampp.md) | instalar y depurar el heredado sin Docker |
+| [Documentación de la API REST](./DOCUMENTATION.md) | endpoints, formatos de respuesta y códigos de estado |
 
 ### Los dos comandos de Docker
 
@@ -161,9 +161,7 @@ Los dos backends publican el puerto 8000, así que **no pueden correr a la vez**
 
 ```bash
 docker compose up -d postgres mailpit spring-backend frontend
-```
 
-```bash
 docker compose --profile legacy up -d mysql backend frontend
 ```
 
@@ -171,7 +169,7 @@ docker compose --profile legacy up -d mysql backend frontend
 
 ## 🔑 Roles y funcionalidades
 
-| Rol | Funcionalidades principales |
+| Rol |  |
 | --- | --- |
 | Docente | Consultar disponibilidad, solicitar reservas y seguir sus préstamos |
 | Técnico | Registrar inventario, enviar y cerrar mantenimientos, entregar y recibir equipos |
@@ -179,7 +177,7 @@ docker compose --profile legacy up -d mysql backend frontend
 
 ## 👤 Credenciales de prueba
 
-Todos los usuarios de prueba comparten la contraseña `1234567890`.
+Todos los usuarios de prueba comparten la contraseña **1234567890**.
 
 | Documento | Nombre | Rol |
 | --- | --- | --- |
