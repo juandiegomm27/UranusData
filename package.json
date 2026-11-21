@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start": "concurrently -n angular,spring -c cyan,green \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "ng serve --open",
-    "start:backend": "cd laravel-backend && php artisan serve --host=127.0.0.1 --port=8000",
+    "start:backend": "cd spring-backend && .\\mvnw.cmd spring-boot:run",
+    "start:db": "docker compose up -d postgres mailpit",
+    "start:laravel": "concurrently -n angular,laravel -c cyan,magenta \"npm run start:frontend\" \"npm run start:backend:laravel\"",
+    "start:backend:laravel": "cd laravel-backend && php artisan serve --host=127.0.0.1 --port=8000",
     "setup": "npm install && cd laravel-backend && php -r \"is_dir('bootstrap/cache') || mkdir('bootstrap/cache', 0755, true);\" && composer install && php -r \"file_exists('.env') || copy('.env.example', '.env');\" && php artisan key:generate && php artisan migrate:fresh --seed && php artisan config:clear && php artisan route:clear && php artisan storage:link && cd .."
   },
   "private": true,
@@ -19,7 +22,7 @@
     "@angular/forms": "^22.1.7",
     "@angular/platform-browser": "^22.1.7",
     "@angular/router": "^22.1.7",
-    "@swimlane/ngx-charts": "^25.0.2",
+    "@swimlane/ngx-charts": "^25.0.3",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

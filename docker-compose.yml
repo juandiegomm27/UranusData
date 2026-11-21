@@ -32,11 +32,24 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:-uranusdata_password}
       JWT_SECRET: ${JWT_SECRET:-cambia-este-secreto-por-uno-de-minimo-32-bytes-aleatorios}
       FRONTEND_URL: http://localhost:4200
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_started
+    networks:
+      - uranusdata
+
+  mailpit:
+    image: axllent/mailpit:v1.34.0
+    container_name: uranusdata-mailpit
+    ports:
+      - "2525:1025"
+      - "8025:8025"
     networks:
       - uranusdata
 
@@ -55,7 +68,7 @@ services:
     networks:
       - uranusdata
 
-  # 3. PGADMIN (OPCIONAL)  ->  docker compose --profile tools up -d pgadmin
+  # 3. PGADMIN (POSTGRSQL)
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: uranusdata-pgadmin
@@ -71,7 +84,7 @@ services:
     networks:
       - uranusdata
 
-  # 4. LEGACY (LARAVEL + MYSQL)  ->  docker compose --profile legacy up -d
+  # 4. LEGACY 
   backend:
     build:
       context: ./laravel-backend

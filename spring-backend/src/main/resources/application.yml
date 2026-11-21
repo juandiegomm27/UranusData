@@ -32,3 +32,17 @@ app:
   jwt:
     secret: ${JWT_SECRET:cambia-este-secreto-por-uno-de-minimo-32-bytes-aleatorios}
     expiration-minutes: ${JWT_EXPIRATION_MINUTES:480}
+  login:
+    max-intentos: ${LOGIN_MAX_INTENTOS:5}
+    bloqueo-minutos: ${LOGIN_BLOQUEO_MINUTOS:15}
+    max-fallos-ip-minuto: ${LOGIN_MAX_FALLOS_IP_MINUTO:20}
+  recuperacion:
+    expiracion-minutos: ${RECUPERACION_EXPIRACION_MINUTOS:60}
+    max-solicitudes-minuto: ${RECUPERACION_MAX_SOLICITUDES_MINUTO:5}
+    max-verificaciones-minuto: ${RECUPERACION_MAX_VERIFICACIONES_MINUTO:10}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
