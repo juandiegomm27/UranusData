@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colegio Santa Isabel de Hungría</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* EDITAR: colores y tipografía del colegio */
+:root{
+  --rojo:#B3122B;
+  --verde:#A8DCB2;
+  --texto:#3a3a3f;
+  --gris:#6b6b73;
+  --linea:#e7e7ec;
+  --fuente:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fuente);color:var(--texto);background:#fff;line-height:1.6}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:14px;font-weight:600;font-size:1rem;border:2px solid var(--rojo);cursor:pointer;transition:.2s}
+.btn-rojo{background:var(--rojo);color:#fff}
+.btn-rojo:hover{background:#8f0e22;border-color:#8f0e22}
+.btn-borde{background:#fff;color:var(--rojo)}
+.btn-borde:hover{background:var(--rojo);color:#fff}
+.btn svg{width:20px;height:20px}
+.barra{display:block;width:56px;height:5px;border-radius:3px;background:var(--verde);margin-bottom:28px}
+
+/* Encabezado */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 5%}
+.marca{display:flex;align-items:center;gap:14px;color:var(--rojo);font-weight:700;font-size:1.3rem}
+.marca img{height:56px;width:auto}
+nav{display:flex;align-items:center;gap:40px}
+nav a.enlace{font-size:.95rem;font-weight:500;padding-bottom:6px;border-bottom:3px solid transparent}
+nav a.activo{color:var(--rojo);border-color:var(--verde)}
+nav .btn{padding:14px 34px}
+
+/* Portada */
+.hero{position:relative;max-width:1500px;margin:10px auto 0;padding:0 5%;min-height:600px;display:flex;align-items:center}
+.hero-foto{position:absolute;right:5%;top:0;bottom:0;width:62%;border-radius:28px;overflow:hidden;background:#eee}
+.hero-foto img{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+.hero-foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.85) 18%,rgba(255,255,255,0) 55%)}
+.hero-texto{position:relative;z-index:2;max-width:660px;padding:40px 0 40px 0}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.7rem);line-height:1.1;color:var(--rojo);margin:0 0 28px}
+.hero p{font-size:1.15rem;color:var(--gris);max-width:520px;margin:0 0 36px}
+.botones{display:flex;gap:16px;flex-wrap:wrap}
+.miniaturas{position:absolute;right:calc(5% + 28px);bottom:28px;z-index:3;display:flex;gap:12px}
+.miniaturas button{padding:0;border:3px solid #fff;border-radius:12px;overflow:hidden;width:82px;height:58px;cursor:pointer;background:none;opacity:.75;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.miniaturas button.activa{opacity:1;outline:3px solid var(--verde)}
+.miniaturas img{width:100%;height:100%;object-fit:cover}
+
+/* Sobre el colegio */
+.contenedor{max-width:1300px;margin:0 auto;padding:0 5%}
+.sobre{display:grid;grid-template-columns:1fr 1.5fr;gap:60px;padding:90px 0 60px}
+.sobre h2{font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.15;color:var(--rojo);margin:0}
+.sobre .destacado{font-size:1.45rem;font-weight:500;color:#2e3a33;margin:0 0 20px}
+.sobre .detalle{font-size:1.1rem;color:var(--gris);margin:0}
+
+/* Tarjetas */
+.tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-bottom:90px}
+.tarjeta{border:1px solid var(--linea);border-radius:28px;padding:34px 40px;min-height:230px;position:relative}
+.tarjeta .numero{font-size:3.6rem;font-weight:700;color:var(--rojo);line-height:1.1}
+.tarjeta .texto{font-size:1.15rem;color:var(--gris);margin-top:18px}
+.tarjeta .icono{position:absolute;top:36px;right:40px;width:64px;height:64px;border-radius:16px;background:var(--verde);display:grid;place-items:center;color:var(--rojo)}
+.tarjeta .icono svg{width:26px;height:26px}
+
+/* Pie de página */
+footer{background:var(--rojo);color:#fff;padding:60px 0 50px}
+footer .logo{display:flex;align-items:center;gap:22px;font-size:1.7rem;font-weight:600;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,.3)}
+footer .logo img{height:68px;width:auto;background:#fff;padding:2px}
+.contacto{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:36px}
+.contacto div{display:flex;align-items:center;gap:14px;font-size:1.05rem}
+.contacto svg{width:24px;height:24px;flex:none}
+
+/* Celular */
+@media(max-width:820px){
+  nav .enlace{display:none}
+  .marca{font-size:1rem}.marca img{height:44px}
+  nav .btn{padding:12px 20px}
+  .hero{display:block;min-height:0;padding:0 5%}
+  .hero-foto{position:relative;width:100%;right:0;height:280px;margin-bottom:28px}
+  .hero-foto::after{display:none}
+  .miniaturas{right:50%;transform:translateX(50%);bottom:14px}
+  .miniaturas button{width:60px;height:44px}
+  .sobre{grid-template-columns:1fr;gap:24px;padding:60px 0 40px}
+  .tarjetas{grid-template-columns:1fr;padding-bottom:60px}
+  footer .logo{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ENCABEZADO -->
+<header>
+  <a class="marca" href="#">
+    <img src="images/escudo.png" alt="Escudo del colegio">
+    <span>Colegio Santa Isabel de Hungría</span>
+  </a>
+  <nav>
+    <a class="enlace activo" href="#">Inicio</a>
+    <a class="enlace" href="#nosotros">Nosotros</a>
+    <a class="enlace" href="#contacto">Contacto</a>
+    <!-- EDITAR: aquí va la dirección de la página de inicio de sesión -->
+    <a class="btn btn-rojo" href="/login">Iniciar sesión</a>
+  </nav>
+</header>
+
+<!-- PORTADA -->
+<section class="hero">
+  <div class="hero-foto"><img id="foto" src="images/colegio/sede.png" alt="Sede campestre del colegio"></div>
+  <div class="hero-texto">
+    <span class="barra"></span>
+    <!-- EDITAR: título y subtítulo de la portada -->
+    <h1>Educación con propósito, en un campus sin límites</h1>
+    <p>Una nueva sede campestre a solo 30 minutos del norte de Bogotá.</p>
+    <div class="botones">
+      <a class="btn btn-rojo" href="#contacto">Cupos disponibles
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <!-- EDITAR: aquí también va la dirección del inicio de sesión -->
+      <a class="btn btn-borde" href="/login">Ingresar al portal</a>
+    </div>
+  </div>
+  <!-- EDITAR: miniaturas del carrusel (misma foto que en data-foto) -->
+  <div class="miniaturas" id="miniaturas">
+    <button class="activa" data-foto="images/colegio/sede.png"><img src="images/colegio/sede.png" alt="Sede"></button>
+    <button data-foto="images/colegio/estudiantes1.png"><img src="images/colegio/estudiantes1.png" alt="Estudiantes"></button>
+    <button data-foto="images/colegio/estudiantes2.png"><img src="images/colegio/estudiantes2.png" alt="Estudiantes"></button>
+    <button data-foto="images/colegio/sendero.png"><img src="images/colegio/sendero.png" alt="Sendero"></button>
+  </div>
+</section>
+
+<!-- SOBRE EL COLEGIO -->
+<main class="contenedor" id="nosotros">
+  <section class="sobre">
+    <div><span class="barra"></span><h2>Sobre nuestro colegio</h2></div>
+    <div>
+      <!-- EDITAR: textos de la introducción -->
+      <p class="destacado">Llevamos 75 años formando generaciones con valores, excelencia y sentido humano.</p>
+      <p class="detalle">Hoy damos el paso más grande de nuestra historia: una nueva sede campestre cinco veces más grande, rodeada de naturaleza, con espacios deportivos, culturales, científicos y creativos.</p>
+    </div>
+  </section>
+
+  <!-- EDITAR: cifras de las tarjetas -->
+  <section class="tarjetas">
+    <div class="tarjeta">
+      <div class="numero">75</div><div class="texto">años de trayectoria</div>
+      <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.5 7 22l5-3 5 3-1.5-8.5"/></svg></div>
+    </div>
+    <div class="tarjeta">
+      <div class="numero">560</div><div class="texto">estudiantes</div>
+      <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5.500-5-6.500"/></svg></div>
+    </div>
+    <div class="tarjeta">
+      <div class="numero">80</div><div class="texto">cupos disponibles</div>
+      <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+  </section>
+</main>
+
+<!-- PIE DE PÁGINA -->
+<footer id="contacto">
+  <div class="contenedor">
+    <div class="logo"><img src="images/escudo.png" alt="Escudo"> Colegio Santa Isabel de Hungría</div>
+    <!-- EDITAR: dirección, teléfono y correo -->
+    <div class="contacto">
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.500 7-12a7 7 0 0 0-14 0c0 5.500 7 12 7 12z"/><circle cx="12" cy="10" r="2.500"/></svg>Vereda Aurora Baja, Santa Inés, Bogotá</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.900v3a2 2 0 0 1-2.200 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.200a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg>317 717 8848</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>colegio@sih.edu.co</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Carrusel: cambia la foto con las miniaturas y solo cada 4 segundos */
+var foto = document.getElementById('foto');
+var botones = document.querySelectorAll('#miniaturas button');
+var actual = 0;
+
+function mostrar(i) {
+  actual = i;
+  foto.style.opacity = 0;
+  setTimeout(function () {
+    foto.src = botones[i].getAttribute('data-foto');
+    foto.style.opacity = 1;
+  }, 250);
+  botones.forEach(function (b, j) { b.classList.toggle('activa', j === i); });
+}
+
+botones.forEach(function (b, i) {
+  b.addEventListener('click', function () { mostrar(i); });
+});
+
+setInterval(function () { mostrar((actual + 1) % botones.length); }, 4000);
+</script>
+</body>
+</html>
