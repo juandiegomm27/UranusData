@@ -72,7 +72,7 @@ cd UranusData
 
 Crea el archivo **.env** en la raíz con el secreto de los tokens:
 
-**``bash
+```bash
 printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 48)" > .env
 ```
 
