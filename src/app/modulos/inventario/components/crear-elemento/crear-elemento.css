@@ -13,7 +13,7 @@
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--borde-input);
   border-radius: 0 0 6px 6px;
   max-height: 180px;
   overflow-y: auto;
@@ -29,35 +29,17 @@
 }
 
 .autocomplete-item:hover {
-  background-color: #f8f9fa;
+  background-color: var(--bg-input);
 }
 
 .autocomplete-item .acc-nombre {
   font-size: 13px;
-  color: #212529;
+  color: var(--texto-titulo);
 }
 
 .autocomplete-item .acc-info {
   font-size: 11px;
-  color: #6c757d;
-}
-
-/* Modo oscuro para el autocompletado */
-:host-context(body.dark-mode) .autocomplete-dropdown {
-  background: #2a2a2a;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .autocomplete-item {
-  border-bottom-color: #333;
-}
-
-:host-context(body.dark-mode) .autocomplete-item:hover {
-  background-color: #333;
-}
-
-:host-context(body.dark-mode) .autocomplete-item .acc-nombre {
-  color: #e0e0e0;
+  color: var(--texto-muted);
 }
 
 /* Resto de estilos originales intactos */
@@ -72,14 +54,14 @@
   flex: 1;
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
-  background: #fafafa;
+  background: var(--bg-input);
 }
 
 .select-flex:focus {
   outline: none;
-  border-color: #1C74A0;
+  border-color: var(--color-primario);
 }
 
 .btn-accion {
@@ -99,40 +81,29 @@
 }
 
 .btn-success {
-  background: #28a745;
+  background: var(--color-verde);
   color: white;
 }
 
 .btn-success:hover {
-  background: #218838;
+  background: var(--color-verde);
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: var(--color-rojo);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #c82333;
+  background: var(--color-rojo);
 }
 
 .input-full {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
   box-sizing: border-box;
-}
-
-:host-context(body.dark-mode) .select-flex,
-:host-context(body.dark-mode) .input-full {
-  background: #333;
-  border-color: #444;
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .select-flex:focus {
-  border-color: #FF9F13;
 }
 
 .icono-btn {

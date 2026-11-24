@@ -8,11 +8,11 @@
   flex-wrap: wrap;
   gap: 15px;
   align-items: flex-end;
-  background: #f8f9fa;
+  background: var(--bg-input);
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 24px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
 }
 
 .filtro-reserva-item {
@@ -26,17 +26,17 @@
 .filtro-reserva-item label {
   font-size: 12px;
   font-weight: 600;
-  color: #444;
+  color: var(--texto-cuerpo);
   text-transform: uppercase;
 }
 
 .filtro-reserva-item select,
 .input-filtro-reserva {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
   font-size: 14px;
-  background: #fff;
+  background: var(--bg-tarjeta);
   width: 100%;
   box-sizing: border-box;
 }
@@ -68,18 +68,18 @@
 }
 
 .estado-aprobada {
-  background: #d4edda;
-  color: #155724;
+  background: var(--color-verde-bg);
+  color: var(--color-verde);
 }
 
 .estado-pendiente {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--color-naranja-bg);
+  color: var(--color-naranja);
 }
 
 .estado-rechazada {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--color-rojo-bg);
+  color: var(--color-rojo);
 }
 
 /* TABLA Y ESTADOS DE CARGA */
@@ -87,7 +87,7 @@
 .sin-reserva {
   text-align: center;
   padding: 30px;
-  color: #666;
+  color: var(--texto-muted);
   font-size: 16px;
   font-weight: 500;
 }
@@ -96,17 +96,17 @@
   overflow-x: auto;
   margin-bottom: 20px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
 }
 
 .tabla-reserva {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  background: var(--bg-tarjeta);
 }
 
 .tabla-reserva th {
-  background: #1C74A0;
+  background: var(--color-primario);
   color: white;
   padding: 12px;
   text-align: left;
@@ -114,7 +114,7 @@
 
 .tabla-reserva td {
   padding: 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--borde-suave);
 }
 
 /* PAGINACIÓN */
@@ -156,36 +156,4 @@
 .btn-cerrar-modal-footer:hover {
   background: #5a6268;
   transform: translateY(-1px);
-}
-
-/* MODO OSCURO */
-:host-context(body.dark-mode) .filtros-reserva {
-  background: #2a2a2a;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .filtro-reserva-item label {
-  color: #aaa;
-}
-
-:host-context(body.dark-mode) .filtro-reserva-item select,
-:host-context(body.dark-mode) .input-filtro-reserva {
-  background: #333;
-  color: white;
-  border-color: #555;
-}
-
-:host-context(body.dark-mode) .tabla-reserva th {
-  background: #FF9F13;
-  color: black;
-}
-
-:host-context(body.dark-mode) .tabla-reserva td {
-  border-bottom-color: #444;
-  background: #2a2a2a;
-  color: white;
-}
-
-:host-context(body.dark-mode) .tabla-reserva-wrapper {
-  border-color: #444;
 }

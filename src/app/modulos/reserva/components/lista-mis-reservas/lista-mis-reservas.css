@@ -12,10 +12,10 @@
 
 .pestana-btn {
   padding: 8px 16px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
   border-radius: 20px;
-  background: #fff;
-  color: #555;
+  background: var(--bg-tarjeta);
+  color: var(--texto-cuerpo);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -23,13 +23,13 @@
 }
 
 .pestana-btn:hover {
-  border-color: #1C74A0;
+  border-color: var(--color-primario);
 }
 
 .pestana-activa {
-  background-color: #1C74A0;
+  background-color: var(--color-primario);
   color: #fff;
-  border-color: #1C74A0;
+  border-color: var(--color-primario);
 }
 
 .modal-body {
@@ -44,7 +44,7 @@
   justify-content: flex-end;
   gap: 10px;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--borde-suave);
 }
 
 .btn-cerrar-modal-footer {
@@ -58,7 +58,7 @@
 }
 
 .mensaje-error {
-  color: #dc3545;
+  color: var(--color-rojo);
   font-size: 13px;
   margin: 0;
 }

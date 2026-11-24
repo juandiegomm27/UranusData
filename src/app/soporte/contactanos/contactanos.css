@@ -7,31 +7,31 @@
 }
 
 .auth-card {
-  background-color: #ffffff;
+  background-color: var(--bg-tarjeta);
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   padding: 40px;
   width: 100%;
   max-width: 850px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--borde-suave);
 }
 
 .card-header {
   text-align: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--borde-suave);
 }
 
 .auth-title {
-  color: #1C74A0;
+  color: var(--color-primario);
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 10px 0;
 }
 
 .auth-subtitle {
-  color: #6c757d;
+  color: var(--texto-muted);
   font-size: 15px;
   margin: 0;
 }
@@ -41,7 +41,7 @@
 }
 
 .section-title {
-  color: #1C74A0;
+  color: var(--color-primario);
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
@@ -54,13 +54,13 @@
 
 .faq-item strong {
   display: block;
-  color: #333;
+  color: var(--texto-titulo);
   font-size: 15px;
   margin-bottom: 5px;
 }
 
 .faq-item p {
-  color: #555;
+  color: var(--texto-cuerpo);
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
@@ -68,11 +68,11 @@
 
 .faq-item span {
   font-weight: 600;
-  color: #1C74A0;
+  color: var(--color-primario);
 }
 
 .text-muted {
-  color: #555;
+  color: var(--texto-cuerpo);
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
@@ -85,16 +85,16 @@
 }
 
 .integrante-item {
-  background: #f8f9fa;
+  background: var(--bg-input);
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--borde-suave);
 }
 
 .integrante-item .rol {
   display: block;
   font-size: 12px;
-  color: #1C74A0;
+  color: var(--color-primario);
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -103,7 +103,7 @@
 .integrante-item .nombre {
   display: block;
   font-size: 15px;
-  color: #333;
+  color: var(--texto-titulo);
   font-weight: 600;
 }
 
@@ -111,11 +111,11 @@
   text-align: center;
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--borde-suave);
 }
 
 .btn-primary {
-  background-color: #1C74A0;
+  background-color: var(--color-primario);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -127,51 +127,5 @@
 }
 
 .btn-primary:hover {
-  background-color: #155b7f;
-}
-
-/* MODO OSCURO (ALTO CONTRASTE)*/
-:host-context(body.dark-mode) .auth-card {
-  background-color: #1e1e1e;
-  border-color: #333;
-}
-
-:host-context(body.dark-mode) .card-header {
-  border-bottom-color: #333;
-}
-
-:host-context(body.dark-mode) .auth-title,
-:host-context(body.dark-mode) .section-title,
-:host-context(body.dark-mode) .faq-item span,
-:host-context(body.dark-mode) .integrante-item .rol {
-  color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .auth-subtitle,
-:host-context(body.dark-mode) .text-muted,
-:host-context(body.dark-mode) .faq-item p {
-  color: #adb5bd;
-}
-
-:host-context(body.dark-mode) .faq-item strong,
-:host-context(body.dark-mode) .integrante-item .nombre {
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .integrante-item {
-  background-color: #2a2a2a;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .card-footer {
-  border-top-color: #333;
-}
-
-:host-context(body.dark-mode) .btn-primary {
-  background-color: #FF9F13;
-  color: #121212;
-}
-
-:host-context(body.dark-mode) .btn-primary:hover {
-  background-color: #e08b0f;
+  background-color: var(--color-primario-hover);
 }

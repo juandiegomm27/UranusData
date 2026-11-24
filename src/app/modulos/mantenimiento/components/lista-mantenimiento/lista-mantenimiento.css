@@ -1,46 +1,50 @@
-/* Heredar diseño global unificado */
 @import '../../../styles/modules-layout.css';
 @import '../../../styles/modules-tables.css';
 @import '../../../styles/modules-forms.css';
 @import '../../../styles/modules-modals.css';
 
-/* --- BADGES DE ESTADO (Específicos de Mantenimiento) --- */
 .estado-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: var(--radio-pill, 9999px);
   font-size: 12px;
   font-weight: 600;
   text-transform: capitalize;
 }
 
 .estado-aprobada {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--color-verde-bg, #E7F4EC);
+  color: var(--color-verde, #0B873F);
 }
 
 .estado-pendiente {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--color-naranja-bg, #FEF1E4);
+  color: var(--color-naranja, #C76400);
 }
 
 .estado-pausa {
-  background-color: #ffeeba;
-  color: #856404;
+  background-color: var(--color-naranja-bg, #FEF1E4);
+  color: var(--color-naranja, #C76400);
 }
 
-/* --- ESTILO PARA BOTON HISTORIAL BAJAS --- */
+.estado-baja {
+  background-color: var(--color-rojo-bg, #FDECEA);
+  color: var(--color-rojo, #B03A2E);
+}
+
 .btn-historial-bajas {
-  background-color: #6c757d;
-  margin-left: 10px;
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+  background-color: var(--bg-tarjeta, #fff);
+  color: var(--texto-cuerpo, #334155);
+  border: 1px solid var(--borde-input, #D0DCE7);
+  margin-left: 8px;
+  box-shadow: none;
 }
 
 .btn-historial-bajas:hover {
-  background-color: #5a6268;
+  background-color: var(--bg-cabecera-tabla, #F7F9FC);
 }
 
-/* --- BUSCADOR INTERACTIVO EN MODAL --- */
 .buscador-equipos-container {
   position: relative;
   width: 100%;
@@ -51,65 +55,33 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 0 0 6px 6px;
+  background: var(--bg-tarjeta, #fff);
+  border: 1px solid var(--borde-input, #D0DCE7);
+  border-radius: 0 0 var(--radio-md, 10px) var(--radio-md, 10px);
   max-height: 180px;
   overflow-y: auto;
   z-index: 1200;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--sombra-md);
 }
 
 .sugerencia-item {
   padding: 10px 12px;
   cursor: pointer;
   font-size: 13px;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--borde-fila, #EEF2F6);
+  color: var(--texto-cuerpo, #334155);
 }
 
 .sugerencia-item:hover {
-  background-color: #f8f9fa;
-  color: #1C74A0;
+  background-color: var(--bg-cabecera-tabla, #F7F9FC);
+  color: var(--color-primario, #024F82);
 }
 
-/* --- BOTÓN DE REPARAR (Tabla) --- */
 .btn-icon-success {
-  background-color: #28a745;
-  color: #ffffff;
+  color: var(--color-verde, #0B873F);
+  background: transparent;
 }
 
 .btn-icon-success:hover:not(:disabled) {
-  background-color: #218838;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* --- ESTADO DE BAJA EN TABLA --- */
-.estado-baja {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-/* --- MODO OSCURO (Solo para componentes específicos) --- */
-:host-context(body.dark-mode) .lista-sugerencias {
-  background: #333;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .sugerencia-item {
-  border-bottom-color: #444;
-}
-
-:host-context(body.dark-mode) .sugerencia-item:hover {
-  background-color: #444;
-  color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .btn-icon-success {
-  background-color: #2ea043;
-  color: #ffffff;
-}
-
-:host-context(body.dark-mode) .btn-icon-success:hover:not(:disabled) {
-  background-color: #3fb950;
+  background-color: var(--color-verde-bg, #E7F4EC);
 }

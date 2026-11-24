@@ -1,7 +1,6 @@
 <header class="main-header">
   <div class="header-container">
 
-    <!-- Hamburguesa: ahora abre/cierra el sidebar, no un menú -->
     <button
       type="button"
       class="menu-hamburger"
@@ -10,14 +9,13 @@
       <img src="icons/menu.svg" alt="Menú" class="hamburger-icon">
     </button>
 
-    <!-- Logo -->
-    <a (click)="irAlInicio()" class="logo" title="UranusData">
-      <img src="logo-blanco-largo.svg" alt="Logo UranusData" class="logo-img">
+    <!-- En el boceto el logo va en el sidebar; aquí lo dejamos solo en móvil -->
+    <a (click)="irAlInicio()" class="logo logo-header-mobile" title="UranusData">
+      <img src="logo-largo-color.svg" alt="Logo UranusData" class="logo-img">
     </a>
 
     <div class="header-spacer"></div>
 
-    <!-- Acciones Derecha -->
     <div class="header-actions">
 
       @if (nombre || rol) {
@@ -36,9 +34,16 @@
         <span class="switch-slider"></span>
       </label>
 
-      <app-profile-sidebar></app-profile-sidebar>
+      <!-- Donde antes estaba el avatar / panel de perfil -->
+      <button
+        type="button"
+        class="btn-salir-header"
+        (click)="salir()"
+        title="Salir de sesión">
+        <img src="icons/logout.svg" alt="" class="btn-salir-icon">
+        <span>Salir</span>
+      </button>
 
     </div>
-
   </div>
 </header>

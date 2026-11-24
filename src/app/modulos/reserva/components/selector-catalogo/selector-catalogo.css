@@ -14,18 +14,18 @@
 .selector-buscador input {
   flex: 1;
   padding: 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
   border-radius: 8px;
   font-size: 14px;
-  background: #f8f9fa;
+  background: var(--bg-input);
 }
 
 .selector-buscador select {
   padding: 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
   border-radius: 8px;
   font-size: 14px;
-  background: #f8f9fa;
+  background: var(--bg-input);
   min-width: 160px;
   cursor: pointer;
 }
@@ -34,7 +34,7 @@
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  background-color: #1C74A0;
+  background-color: var(--color-primario);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -48,7 +48,7 @@
 
 .catalogo-columna h4 {
   margin: 0 0 10px;
-  color: #1C74A0;
+  color: var(--color-primario);
   font-size: 14px;
   text-transform: uppercase;
 }
@@ -59,14 +59,14 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--borde-suave);
   border-radius: 10px;
   margin-bottom: 8px;
-  background: #fff;
+  background: var(--bg-tarjeta);
 }
 
 .catalogo-item-seleccionado {
-  border-color: #1C74A0;
+  border-color: var(--color-primario);
   background: #eef7fb;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .catalogo-item-info span {
-  color: #777;
+  color: var(--texto-muted);
   font-size: 12px;
 }
 
@@ -86,7 +86,7 @@
   padding: 6px 14px;
   border: none;
   border-radius: 8px;
-  background-color: #1C74A0;
+  background-color: var(--color-primario);
   color: #fff;
   font-size: 12px;
   font-weight: 600;
@@ -100,7 +100,7 @@
 }
 
 .seleccionados-panel {
-  border: 1px dashed #1C74A0;
+  border: 1px dashed var(--color-primario);
   border-radius: 10px;
   padding: 12px 14px;
   background: #f4faff;
@@ -109,7 +109,7 @@
 .seleccionados-panel h4 {
   margin: 0 0 10px;
   font-size: 13px;
-  color: #1C74A0;
+  color: var(--color-primario);
 }
 
 .seleccionado-fila {
@@ -127,25 +127,25 @@
 .seleccionado-cantidad {
   width: 60px;
   padding: 6px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
 }
 
 .seleccionado-max {
   font-size: 12px;
-  color: #777;
+  color: var(--texto-muted);
 }
 
 .btn-quitar {
   border: none;
   background: none;
-  color: #dc3545;
+  color: var(--color-rojo);
   cursor: pointer;
   font-weight: 700;
 }
 
 .sin-datos {
-  color: #888;
+  color: var(--texto-muted);
   font-size: 13px;
 }
 

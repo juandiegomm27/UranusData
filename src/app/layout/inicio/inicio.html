@@ -1,44 +1,73 @@
-<main class="auth-section">
-  <div class="auth-card inicio-card">
-    
-    <div class="brand-badge inicio-badge">
-      <img src="logo-largo-color.svg" alt="logo UranusData" class="badge-img">
+<main class="auth-split">
+
+  <!-- Panel izquierdo: marca (igual que login) -->
+  <section class="auth-brand">
+    <div class="auth-brand-inner">
+      <img src="logo-largo-color.svg" alt="UranusData" class="auth-brand-logo">
+
+      <p class="auth-brand-tagline">
+        Gestión, control y mantenimiento del inventario en un solo lugar.
+      </p>
+
+      <ul class="auth-features">
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--blue">
+            <img src="icons/inventario.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Equipos con serial y sus componentes</span>
+        </li>
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--green">
+            <img src="icons/prestamos.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Accesorios y repuestos por ubicación</span>
+        </li>
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--orange">
+            <img src="icons/mantenimiento.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Movimientos, mantenimientos y bajas</span>
+        </li>
+      </ul>
     </div>
+  </section>
 
-    <h1 class="auth-title inicio-title">
-      ¡Bienvenido a UranusData! <br>
-      Sistema de Gestión de Inventario Tecnológico
-    </h1>
-    
-    <p class="inicio-desc">
-      Plataforma tecnológica de la Institución Educativa Santa Isabel de Hungría para la administración 
-      de inventario, préstamos y mantenimiento preventivo de equipos tecnológicos.
-    </p>
-
-    <div class="inicio-grid">
-      <div class="inicio-feature-card">
-        <h3>📋 Inventario</h3>
-        <p>Control de ubicación, estado, disponibilidad y vida útil de los equipos tecnológicos institucionales.</p>
+  <!-- Panel derecho: bienvenida + CTA -->
+  <section class="auth-form-panel">
+    <div class="auth-form-card inicio-panel-card">
+      <div class="auth-form-logo">
+        <img src="logo-nada.svg" alt="UranusData" class="auth-form-logo-img">
       </div>
 
-      <div class="inicio-feature-card">
-        <h3>🛠️ Mantenimiento</h3>
-        <p>Reportes y control de mantenimiento preventivos y correctivos para asegurar la operatividad de los equipos.</p>
+      <h1 class="auth-title">¡Bienvenido a UranusData!</h1>
+      <p class="auth-subtitle">
+        Sistema de gestión de inventario tecnológico de la Institución Educativa Santa Isabel de Hungría.
+      </p>
+
+      <div class="inicio-bullets">
+        <div class="inicio-bullet">
+          <strong>Inventario</strong>
+          <span>Ubicación, estado y disponibilidad de equipos.</span>
+        </div>
+        <div class="inicio-bullet">
+          <strong>Mantenimiento</strong>
+          <span>Preventivo y correctivo en un solo flujo.</span>
+        </div>
+        <div class="inicio-bullet">
+          <strong>Préstamos</strong>
+          <span>Registro y seguimiento para uso pedagógico.</span>
+        </div>
       </div>
 
-      <div class="inicio-feature-card">
-        <h3>🔄 Préstamos</h3>
-        <p>Registro y seguimiento de préstamos de equipos para apoyar los procesos pedagógicos y administrativos.</p>
+      <button type="button" class="btn-submit" [routerLink]="['/login']">
+        Ingresar al sistema
+      </button>
+
+      <div class="auth-footer-links">
+        <p class="auth-help">
+          © 2026 UranusData · Acceso exclusivo para personal autorizado.
+        </p>
       </div>
     </div>
-
-    <button type="button" class="btn-submit btn-inicio" [routerLink]="['/login']">
-      Ingresar al Sistema
-    </button>
-
-    <div class="auth-footer-links inicio-footer">
-      <p>© 2026 UranusData - Todos los derechos reservados. Acceso exclusivo para personal autorizado.</p>
-    </div>
-    
-  </div>
+  </section>
 </main>

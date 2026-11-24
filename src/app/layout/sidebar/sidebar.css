@@ -1,88 +1,190 @@
 .app-sidebar {
-  width: 250px; /* Un poco más ancho para respirar mejor */
+  width: var(--sidebar-width, 240px);
   flex-shrink: 0;
-  background: #1C74A0;
-  border-right: 1px solid #155b7d;
-  padding: 28px 16px;
-  height: 100%;
+  background: var(--bg-tarjeta, #ffffff);
+  border-right: 1px solid var(--borde-sidebar, #E8EEF4);
+  padding: 18px 12px 14px;
+  min-height: calc(100vh - var(--topbar-height, 64px));
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Logo */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px 12px;
+  text-decoration: none;
+}
+
+.sidebar-logo-img {
+  max-width: 160px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--borde-suave, #E2E6EC);
+  margin: 8px 6px 12px;
+  border: none;
+}
+
+/* Usuario */
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 10px;
+}
+
+.sidebar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-primario, #024F82);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-avatar-initials {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--fuente-titulo, inherit);
+  letter-spacing: 0.3px;
+}
+
+.sidebar-user-meta {
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--texto-titulo, #0F2342);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texto-muted, #64748B);
+}
+
+.sidebar-user-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
 }
 
 .sidebar-seccion {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--texto-muted, #64748B);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin: 0 0 16px 12px;
+  letter-spacing: 0.7px;
+  margin: 4px 0 10px 10px;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
+  flex: 1;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radio-md, 10px);
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  color: var(--texto-titulo, #0F2342);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--fuente-cuerpo, inherit);
+  transition: background-color 0.15s ease, color 0.15s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
 }
 
+/* Iconos SVG: se colorean con filter (funcionan aunque el SVG tenga fill fijo) */
 .sidebar-icono {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  opacity: 0.75;
-  transition: opacity 0.2s ease;
+  object-fit: contain;
+  opacity: 0.9;
+  /* Tinte azul oscuro / navy para modo claro */
+  filter: brightness(0) saturate(100%) invert(16%) sepia(35%) saturate(1400%) hue-rotate(180deg) brightness(95%);
+  transition: filter 0.15s ease, opacity 0.15s ease;
 }
 
 .sidebar-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: var(--color-primario-suave, #E6F0F7);
+  color: var(--color-primario, #024F82);
 }
 
 .sidebar-link:hover .sidebar-icono {
   opacity: 1;
+  filter: brightness(0) saturate(100%) invert(22%) sepia(70%) saturate(1200%) hue-rotate(175deg) brightness(90%);
 }
 
-/* CORRECCIÓN DE CONTRASTE AQUÍ */
 .sidebar-link.activo {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--color-primario, #024F82);
   color: #ffffff;
-  font-weight: 600;
-  box-shadow: inset 3px 0 0 #ffffff;
+  font-weight: 700;
 }
 
 .sidebar-link.activo .sidebar-icono {
   opacity: 1;
+  filter: brightness(0) invert(1);
 }
 
-:host-context(body.dark-mode) .app-sidebar {
-  background: #1e1e1e;
-  border-right-color: #333333;
+.sidebar-link--subtle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-cuerpo, #334155);
+  padding: 8px 12px;
 }
 
-:host-context(body.dark-mode) .sidebar-link {
-  color: #a3a3a3;
+/* Caja rol */
+.sidebar-rol {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-radius: var(--radio-md, 10px);
+  background: var(--bg-cabecera-tabla, #F7F9FC);
+  border: 1px solid var(--borde-suave, #E2E6EC);
+  font-size: 12.5px;
+  color: var(--texto-muted, #64748B);
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-:host-context(body.dark-mode) .sidebar-link:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #eeeeee;
+.sidebar-rol strong {
+  color: var(--texto-titulo, #0F2342);
+  font-weight: 700;
 }
 
-:host-context(body.dark-mode) .sidebar-link.activo {
-  background-color: rgba(255, 159, 19, 0.15);
-  color: #FF9F13;
-  box-shadow: inset 3px 0 0 #FF9F13;
+.sidebar-rol-desc {
+  font-size: 11.5px;
 }
 
 .sidebar-overlay {
@@ -93,10 +195,12 @@
   .app-sidebar {
     position: fixed;
     top: 0;
-    left: -270px;
+    left: calc(-1 * var(--sidebar-width, 240px) - 24px);
     z-index: 1200;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100vh;
+    min-height: 100vh;
+    box-shadow: 4px 0 24px rgba(15, 35, 66, 0.12);
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .app-sidebar.open {
@@ -107,8 +211,24 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(15, 35, 66, 0.35);
     backdrop-filter: blur(2px);
     z-index: 1150;
   }
+}
+
+/* Dark mode: iconos claros */
+:host-context(body.dark-mode) .sidebar-icono,
+body.dark-mode .sidebar-icono {
+  filter: brightness(0) invert(0.85);
+}
+
+:host-context(body.dark-mode) .sidebar-link:hover .sidebar-icono,
+body.dark-mode .sidebar-link:hover .sidebar-icono {
+  filter: brightness(0) invert(1);
+}
+
+:host-context(body.dark-mode) .sidebar-link.activo .sidebar-icono,
+body.dark-mode .sidebar-link.activo .sidebar-icono {
+  filter: brightness(0) invert(1);
 }

@@ -7,47 +7,47 @@
   box-sizing: border-box;
 }
 
-/* Contenedor principal con ancho y márgenes corregidos para evitar desbordamiento */
 .lista-usuarios-container {
-  padding: 24px;
-  background: #f8f9fa;
-  border-radius: 14px;
-  margin: 20px;
-  width: calc(100% - 40px);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  margin: 0;
+  width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: none;
 }
 
-/* Header específico del módulo de usuarios */
 .lista-usuarios-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #1C74A0;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  padding-bottom: 0;
+  border-bottom: none;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .lista-usuarios-header h2 {
   margin: 0;
-  color: #1C74A0;
-  font-size: 24px;
+  color: var(--texto-titulo, #0F2342);
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.3px;
+  font-family: var(--fuente-titulo, inherit);
 }
 
-/* Botón Crear Usuario unificado con el estilo verde moderno */
 .btn-crear {
-  background-color: #28a745;
+  background-color: var(--color-primario, #024F82);
   color: #ffffff;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: var(--radio-md, 10px);
+  font-size: 13.5px;
   font-weight: 600;
+  font-family: var(--fuente-cuerpo, inherit);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.15);
+  transition: background-color 0.15s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -55,86 +55,52 @@
 }
 
 .btn-crear:hover {
-  background-color: #218838;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+  background-color: var(--color-primario-hover, #013B62);
 }
 
-/* Panel de creación */
 .crear-usuario-panel {
   scroll-margin-top: 90px;
 }
 
-/* MODO OSCURO (Alineado con los estilos globales) */
-:host-context(body.dark-mode) .lista-usuarios-container {
-  background: #121212;
-  box-shadow: none;
-}
-
-:host-context(body.dark-mode) .lista-usuarios-header {
-  border-bottom-color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .lista-usuarios-header h2 {
-  color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .btn-crear {
-  background-color: #2ea043;
-  color: #ffffff;
-}
-
-:host-context(body.dark-mode) .btn-crear:hover {
-  background-color: #3fb950;
-}
-
-/* Contenedor Flex para separar los botones de acción */
 .botones-accion-tabla {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   align-items: center;
   flex-wrap: wrap;
 }
 
-/* Estilos base de los botones en la tabla */
 .btn-icon {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radio-sm, 6px);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s;
   white-space: nowrap;
+  background: transparent;
+  color: var(--texto-muted, #64748B);
 }
 
-/* Colores específicos de cada botón */
 .btn-icon-ver {
-  background-color: #1C74A0;
-  color: white;
+  color: var(--color-primario, #024F82);
 }
-
 .btn-icon-ver:hover {
-  background-color: #155b7f;
-  transform: translateY(-2px);
+  background-color: var(--color-primario-suave, #E6F0F7);
 }
 
 .btn-icon-bloquear {
-  background-color: #dc3545;
-  color: white;
+  color: var(--color-rojo, #B03A2E);
 }
-
 .btn-icon-bloquear:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
+  background-color: var(--color-rojo-bg, #FDECEA);
 }
 
-/* Ajuste para los iconos SVG (opcional, por si no son blancos por defecto) */
 .icon-tabla {
-  width: 14px;
-  height: 14px;
-  filter: brightness(0) invert(1); 
+  width: 16px;
+  height: 16px;
+  opacity: 0.9;
 }

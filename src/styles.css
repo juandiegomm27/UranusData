@@ -1,97 +1,103 @@
-/* styles.css */
-* {
-  margin: 0;
-  padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colores principales y estados */
+  --color-primario: #024F82;
+  --color-primario-hover: #013B62;
+  --color-primario-suave: #E6F0F7;
+
+  --color-verde: #0B873F;
+  --color-verde-bg: #E7F4EC;
+
+  --color-naranja: #C76400;
+  --color-naranja-bg: #FEF1E4;
+
+  --color-rojo: #B03A2E;
+  --color-rojo-bg: #FDECEA;
+
+  /* Superficies y bordes */
+  --bg-pagina: #F4F6FA;
+  --bg-tarjeta: #FFFFFF;
+  --bg-cabecera-tabla: #F7F9FC;
+  --bg-input: #F7F9FC;
+  --borde-suave: #E2E6EC;
+  --borde-fila: #EEF2F6;
+  --borde-input: #D0DCE7;
+  --borde-sidebar: #E8EEF4;
+
+  /* Texto */
+  --texto-titulo: #0F2342;
+  --texto-cuerpo: #334155;
+  --texto-muted: #64748B;
+  --texto-sobre-primario: #FFFFFF;
+
+  /* Tipografía */
+  --fuente-cuerpo: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --fuente-titulo: 'Lexend', 'Nunito', sans-serif;
+
+  /* Radios y sombras */
+  --radio-sm: 6px;
+  --radio-md: 10px;
+  --radio-lg: 14px;
+  --radio-pill: 9999px;
+  --sombra-sm: 0 1px 3px rgba(15, 35, 66, 0.06);
+  --sombra-md: 0 4px 12px rgba(15, 35, 66, 0.08);
+
+  /* Shell */
+  --sidebar-width: 240px;
+  --topbar-height: 64px;
+}
+
+/* Modo oscuro: solo redefinición de tokens */
+.dark-mode,
+[data-theme="dark"],
+body.dark-mode {
+  --color-primario: #2B8AC4;
+  --color-primario-hover: #3FA0DC;
+  --color-primario-suave: rgba(43, 138, 196, 0.16);
+
+  --color-verde: #34C771;
+  --color-verde-bg: rgba(11, 135, 63, 0.2);
+
+  --color-naranja: #F59E0B;
+  --color-naranja-bg: rgba(199, 100, 0, 0.22);
+
+  --color-rojo: #F87171;
+  --color-rojo-bg: rgba(176, 58, 46, 0.22);
+
+  --bg-pagina: #0F172A;
+  --bg-tarjeta: #1E293B;
+  --bg-cabecera-tabla: #162032;
+  --bg-input: #0F172A;
+  --borde-suave: #334155;
+  --borde-fila: #263349;
+  --borde-input: #3B4C63;
+  --borde-sidebar: #263349;
+
+  --texto-titulo: #F8FAFC;
+  --texto-cuerpo: #E2E8F0;
+  --texto-muted: #94A3B8;
+  --texto-sobre-primario: #FFFFFF;
+
+  --sombra-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --sombra-md: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-:root {
-  --primary-color: #2563eb; 
-  --primary-hover: #1d4ed8;
-  --bg-color: #f8fafc;
-  --surface-color: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --scrollbar-thumb: rgba(28, 116, 160, 0.5);
-  --scrollbar-thumb-hover: rgba(28, 116, 160, 0.8);
-}
-
-/* MODO OSCURO */
-body.dark-mode {
-  --primary-color: #ff9f13;
-  --primary-hover: #ff9900;
-  --bg-color: #232323;
-  --surface-color: #1e1e1e;
-  --text-main: #eeeeee;
-  --text-muted: #a0a0a0;
-  --border-color: #444444;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --scrollbar-thumb: rgba(255, 161, 19, 0.907);
-  --scrollbar-thumb-hover: rgb(255, 161, 19);
-}
-
-html, body {
-  width: 100%;
-  min-height: 100vh;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+body {
+  margin: 0;
+  font-family: var(--fuente-cuerpo);
+  background-color: var(--bg-pagina);
+  color: var(--texto-cuerpo);
   -webkit-font-smoothing: antialiased;
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  overflow-x: hidden;
-  overflow-y: auto;
-  transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
-app-root {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* DISEÑO GLOBAL PARA LAS BARRAS DE SCROLL*/
-::-webkit-scrollbar {
-  width: 10px; 
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-hover);
-}
-
-/* ICONOS SVG MONOCROMOS (máscara): toman el color del texto (currentColor) */
-.icono-mascara {
-  display: inline-block;
-  background-color: currentColor;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-.icono-mascara--usuario {
-  -webkit-mask-image: url('/icon-usuario.svg');
-  mask-image: url('/icon-usuario.svg');
-}
-
-.icono-mascara--ajustes {
-  -webkit-mask-image: url('/icons/settings.svg');
-  mask-image: url('/icons/settings.svg');
+h1, h2, h3, h4, .titulo-seccion {
+  font-family: var(--fuente-titulo);
+  color: var(--texto-titulo);
 }

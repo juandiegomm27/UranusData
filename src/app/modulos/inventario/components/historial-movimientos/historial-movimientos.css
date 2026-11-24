@@ -22,9 +22,9 @@
   gap: 14px;
   align-items: flex-start;
   padding: 12px 14px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--borde-suave);
   border-radius: 8px;
-  background: #f8f9fa;
+  background: var(--bg-input);
 }
 
 .movimiento-item .estado-badge {
@@ -36,24 +36,11 @@
   margin: 0 0 4px;
   font-size: 14px;
   line-height: 1.4;
-  color: #212529;
+  color: var(--texto-titulo);
   word-break: break-word;
 }
 
 .movimiento-meta {
   font-size: 12px;
-  color: #6c757d;
-}
-
-:host-context(body.dark-mode) .movimiento-item {
-  background: #2a2a2a;
-  border-color: #333;
-}
-
-:host-context(body.dark-mode) .movimiento-texto {
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .movimiento-meta {
-  color: #adb5bd;
+  color: var(--texto-muted);
 }

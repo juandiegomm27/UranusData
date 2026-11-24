@@ -3,6 +3,33 @@
 }
 
 <aside class="app-sidebar" [class.open]="sidebarService.abierto()">
+
+  <div class="sidebar-divider"></div>
+
+  <!-- Bloque de usuario (antes en el panel derecho) -->
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" aria-hidden="true">
+      <span class="sidebar-avatar-initials">{{ iniciales }}</span>
+    </div>
+    <div class="sidebar-user-meta">
+      <p class="sidebar-user-name">{{ nombre }}</p>
+      <p class="sidebar-user-role">{{ rol }}</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-user-links">
+    <a class="sidebar-link sidebar-link--subtle" [routerLink]="rutaPerfil" (click)="cerrarEnMobile()">
+      <img src="icons/user-info.svg" alt="" class="sidebar-icono">
+      <span>Mi información</span>
+    </a>
+    <a class="sidebar-link sidebar-link--subtle" [routerLink]="rutaAjustes" (click)="cerrarEnMobile()">
+      <img src="icons/settings.svg" alt="" class="sidebar-icono">
+      <span>Ajustes</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-divider"></div>
+
   <p class="sidebar-seccion">Módulos</p>
 
   <nav class="sidebar-nav">
@@ -19,4 +46,10 @@
       </a>
     }
   </nav>
+
+  <!-- Caja de rol abajo -->
+  <div class="sidebar-rol">
+    <span>Rol actual: <strong>{{ rol }}</strong></span>
+    <span class="sidebar-rol-desc">{{ descripcionRol }}</span>
+  </div>
 </aside>

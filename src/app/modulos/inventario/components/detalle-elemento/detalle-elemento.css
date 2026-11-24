@@ -15,23 +15,11 @@
   transition: background-color 0.2s;
 }
 
-:host-context(body.dark-mode) .btn-modal-info {
-  background-color: #138496;
-  border: 1px solid #117a8b;
-}
-
 .input-deshabilitado {
-  background-color: #e9ecef;
-  color: #666;
+  background-color: var(--bg-cabecera-tabla);
+  color: var(--texto-muted);
   font-weight: bold;
   cursor: not-allowed;
-}
-
-/* CORRECCIÓN: Input deshabilitado en modo oscuro */
-:host-context(body.dark-mode) .input-deshabilitado {
-  background-color: #2a2a2a;
-  color: #888;
-  border: 1px solid #444;
 }
 
 .campo-completo {
@@ -77,21 +65,21 @@
 }
 
 .btn-success {
-  background: #28a745;
+  background: var(--color-verde);
   color: white;
 }
 
 .btn-success:hover {
-  background: #218838;
+  background: var(--color-verde);
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: var(--color-rojo);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #c82333;
+  background: var(--color-rojo);
 }
 
 .z-alto {
@@ -105,15 +93,8 @@
 .input-full {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
-}
-
-/* CORRECCIÓN: Estilo de input-full para los sub-modales en modo oscuro */
-:host-context(body.dark-mode) .input-full {
-  background-color: #1a1a1a;
-  border-color: #444;
-  color: #fff;
 }
 /* --- NAVEGACIÓN PADRE / COMPONENTES --- */
 .barra-navegacion {
@@ -124,7 +105,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: #1C74A0;
+  color: var(--color-primario);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -147,9 +128,9 @@
   gap: 10px;
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid rgba(28, 116, 160, 0.35);
+  border: 1px solid rgba(2, 79, 130, 0.35);
   border-radius: 8px;
-  background: #eef6fb;
+  background: var(--color-primario-suave);
   text-align: left;
   cursor: pointer;
   transition: background-color 0.15s ease;
@@ -161,28 +142,28 @@
 
 .campo-info .btn-relacion .relacion-texto {
   font-size: 14px;
-  color: #212529;
+  color: var(--texto-titulo);
 }
 
 .campo-info .btn-relacion .relacion-ver {
   flex-shrink: 0;
   font-size: 12px;
   font-weight: 700;
-  color: #1C74A0;
+  color: var(--color-primario);
 }
 
 .titulo-parcial {
   margin: 0 0 12px;
   font-size: 15px;
   font-weight: 600;
-  color: #212529;
+  color: var(--texto-titulo);
 }
 
 /* --- ESQUELETO DE CARGA --- */
 .skeleton {
   height: 16px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #e9ecef 25%, #f8f9fa 37%, #e9ecef 63%);
+  background: linear-gradient(90deg, var(--bg-cabecera-tabla) 25%, var(--bg-input) 37%, var(--bg-cabecera-tabla) 63%);
   background-size: 400% 100%;
   animation: skeleton-brillo 1.4s ease infinite;
 }
@@ -200,35 +181,4 @@
 @keyframes skeleton-brillo {
   0% { background-position: 100% 50%; }
   100% { background-position: 0 50%; }
-}
-
-/* --- MODO OSCURO --- */
-:host-context(body.dark-mode) .btn-volver {
-  color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .btn-relacion {
-  background: #2a2a2a;
-  border-color: rgba(255, 159, 19, 0.4);
-}
-
-:host-context(body.dark-mode) .btn-relacion:hover {
-  background: #333;
-}
-
-:host-context(body.dark-mode) .campo-info .btn-relacion .relacion-texto {
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .campo-info .btn-relacion .relacion-ver {
-  color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .titulo-parcial {
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .skeleton {
-  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 37%, #2a2a2a 63%);
-  background-size: 400% 100%;
 }

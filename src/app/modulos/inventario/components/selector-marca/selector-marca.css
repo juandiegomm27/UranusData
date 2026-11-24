@@ -16,15 +16,15 @@
   flex: 1;
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
-  background: #fafafa;
+  background: var(--bg-input);
   font-size: 14px;
 }
 
 .select-flex:focus {
   outline: none;
-  border-color: #1C74A0;
+  border-color: var(--color-primario);
 }
 
 .btn-accion {
@@ -47,19 +47,19 @@
 }
 
 .btn-success {
-  background: #28a745;
+  background: var(--color-verde);
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #218838;
+  background: var(--color-verde);
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: var(--color-rojo);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #c82333;
+  background: var(--color-rojo);
 }
 
 .icono-btn {
@@ -72,7 +72,7 @@
   display: block;
   margin-top: 6px;
   font-size: 12px;
-  color: #dc3545;
+  color: var(--color-rojo);
 }
 
 .z-alto {
@@ -86,22 +86,7 @@
 .input-full {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
   box-sizing: border-box;
-}
-
-:host-context(body.dark-mode) .select-flex,
-:host-context(body.dark-mode) .input-full {
-  background: #333;
-  border-color: #444;
-  color: #e0e0e0;
-}
-
-:host-context(body.dark-mode) .select-flex:focus {
-  border-color: #FF9F13;
-}
-
-:host-context(body.dark-mode) .error-selector {
-  color: #ff6b6b;
 }

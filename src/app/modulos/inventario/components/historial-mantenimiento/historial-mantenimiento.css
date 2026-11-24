@@ -11,7 +11,7 @@
   gap: 12px;
   margin-bottom: 20px;
   padding: 15px;
-  background: #f9f9f9;
+  background: var(--bg-input);
   border-radius: 8px;
   align-items: flex-end;
 }
@@ -25,22 +25,22 @@
 .filtro-item label {
   font-size: 11px;
   font-weight: 600;
-  color: #666;
+  color: var(--texto-muted);
   text-transform: uppercase;
 }
 
 .input-filtro {
   padding: 8px 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borde-suave);
   border-radius: 6px;
   font-size: 13px;
-  background: #ffffff;
+  background: var(--bg-tarjeta);
 }
 
 .btn-limpiar {
   padding: 8px 12px;
   border-radius: 6px;
-  background-color: #6c757d;
+  background-color: var(--texto-muted);
   color: white;
   border: none;
   cursor: pointer;
@@ -49,33 +49,10 @@
 
 .sin-registros {
   text-align: center;
-  color: #999;
+  color: var(--texto-muted);
   padding: 30px;
   font-size: 14px;
-  background: #f9f9f9;
+  background: var(--bg-input);
   border-radius: 8px;
   margin-bottom: 15px;
-}
-
-/* --- MODO OSCURO PARA HISTORIAL --- */
-:host-context(body.dark-mode) .filtros-historial {
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-}
-
-:host-context(body.dark-mode) .filtro-item label {
-  color: #bbb;
-}
-
-:host-context(body.dark-mode) .input-filtro {
-  background-color: #333;
-  border: 1px solid #555;
-  color: #eee;
-  color-scheme: dark; 
-}
-
-:host-context(body.dark-mode) .sin-registros {
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  color: #bbb;
 }

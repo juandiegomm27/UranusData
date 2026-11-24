@@ -1,6 +1,5 @@
-<main class="auth-section">
+<main class="auth-split">
 
-  <!-- VENTANA DE CARGA (Overlay) -->
   @if (cargando()) {
     <div class="loading-overlay">
       <div class="spinner"></div>
@@ -8,87 +7,122 @@
     </div>
   }
 
-  <div class="auth-card">
-    
-    <!-- Imagen superior -->
-    <div class="brand-badge">
-      <img src="logo-nada.svg" alt="logo" class="badge-img">
+  <!-- Panel izquierdo: marca -->
+  <section class="auth-brand">
+    <div class="auth-brand-inner">
+      <img src="logo-largo-color.svg" alt="UranusData" class="auth-brand-logo">
+
+      <p class="auth-brand-tagline">
+        Gestión, control y mantenimiento del inventario en un solo lugar.
+      </p>
+
+      <ul class="auth-features">
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--blue">
+            <img src="icons/inventario.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Equipos con serial y sus componentes</span>
+        </li>
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--green">
+            <img src="icons/prestamos.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Accesorios y repuestos por ubicación</span>
+        </li>
+        <li class="auth-feature">
+          <span class="auth-feature-icon auth-feature-icon--orange">
+            <img src="icons/mantenimiento.svg" alt="" class="auth-feature-img">
+          </span>
+          <span>Movimientos, mantenimientos y bajas</span>
+        </li>
+      </ul>
     </div>
+  </section>
 
-    <!-- Título -->
-    <h1 class="auth-title">Iniciar sesión</h1>
-
-    <!-- CAJA DE ERROR GLOBAL (Diseño sutil con ícono propio) -->
-    @if (error()) {
-      <div class="global-error-msg">
-        <img src="/icons/alerta.svg" alt="Alerta" class="error-icon">
-        <span>{{ error() }}</span>
-      </div>
-    }
-
-    <!-- Formulario enlazado -->
-    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Documento -->
-      <div class="form-group">
-        <label for="documento" class="form-label">Documento</label>
-        <input 
-          type="text" 
-          id="documento" 
-          formControlName="documento" 
-          class="form-input" 
-          placeholder="Ingresa tu documento"
-          [class.input-error]="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched"
-          [disabled]="cargando()"
-        >
-        @if (loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched) {
-          <small class="error-msg">El documento es obligatorio (mínimo 10 caracteres).</small>
-        }
+  <!-- Panel derecho: formulario -->
+  <section class="auth-form-panel">
+    <div class="auth-form-card">
+      <div class="auth-form-logo">
+        <img src="logo-nada.svg" alt="UranusData" class="auth-form-logo-img">
       </div>
 
-      <!-- Contraseña -->
-      <div class="form-group">
-        <label for="password" class="form-label">Contraseña</label>
-        <input 
-          #passwordInput
-          type="password" 
-          id="password" 
-          formControlName="password" 
-          class="form-input" 
-          placeholder="Tu contraseña"
-          [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          [disabled]="cargando()"
-        >
-        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-          <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
-        }
+      <h1 class="auth-title">Iniciar sesión</h1>
+      <p class="auth-subtitle">Ingresa con tu número de documento.</p>
 
-        <!-- Checkbox -->
-        <label class="show-password-label">
-          <input 
-            type="checkbox" 
-            class="form-checkbox" 
-            #togglePass 
-            (change)="passwordInput.type = togglePass.checked ? 'text' : 'password'"
+      @if (error()) {
+        <div class="global-error-msg">
+          <img src="/icons/alerta.svg" alt="" class="error-icon">
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="documento" class="form-label">Documento</label>
+          <input
+            type="text"
+            id="documento"
+            formControlName="documento"
+            class="form-input"
+            placeholder="Ej. 1234567890"
+            [class.input-error]="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched"
             [disabled]="cargando()"
           >
-          <span class="custom-checkbox"></span>
-          <span class="checkbox-text-secondary">Mostrar contraseña</span>
-        </label>
+          @if (loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched) {
+            <small class="error-msg">El documento es obligatorio (mínimo 10 caracteres).</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Contraseña</label>
+          <div class="input-with-action">
+            <input
+              #passwordInput
+              type="password"
+              id="password"
+              formControlName="password"
+              class="form-input"
+              placeholder="Tu contraseña"
+              [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              [disabled]="cargando()"
+            >
+            <button
+              type="button"
+              class="btn-toggle-pass"
+              (click)="passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password'"
+              [disabled]="cargando()"
+              title="Mostrar u ocultar contraseña"
+            >
+              <img src="icons/ojo.svg" alt="Mostrar" class="icon-ojo">
+            </button>
+          </div>
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <small class="error-msg">La contraseña es obligatoria (mínimo 6 caracteres).</small>
+          }
+
+          <label class="show-password-label">
+            <input
+              type="checkbox"
+              class="form-checkbox"
+              #togglePass
+              (change)="passwordInput.type = togglePass.checked ? 'text' : 'password'"
+              [disabled]="cargando()"
+            >
+            <span class="custom-checkbox"></span>
+            <span class="checkbox-text-secondary">Mostrar contraseña</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="cargando()">
+          {{ cargando() ? 'Cargando...' : 'Ingresar' }}
+        </button>
+      </form>
+
+      <div class="auth-footer-links">
+        <a [routerLink]="['/recuperar-contrasena']" class="footer-link">¿Olvidaste tu contraseña?</a>
+        <a [routerLink]="['/activar-usuario']" class="footer-link">Activar usuario</a>
+        <p class="auth-help">¿Problemas para entrar? Contacta al gerente del inventario.</p>
       </div>
-
-      <!-- Botón Ingresar -->
-      <button type="submit" class="btn-submit" [disabled]="cargando()">
-        {{ cargando() ? 'Cargando...' : 'Ingresar' }}
-      </button>
-      
-    </form>
-
-    <!-- Enlaces Inferiores -->
-    <div class="auth-footer-links">
-      <a [routerLink]="['/recuperar-contrasena']" class="footer-link">¿Olvidaste tu contraseña?</a>
-      <a [routerLink]="['/activar-usuario']" class="footer-link">Activar usuario</a>
     </div>
-    
-  </div>
+  </section>
 </main>

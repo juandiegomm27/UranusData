@@ -4,19 +4,19 @@
 
 /* Estilos específicos para la sección de información del equipo */
 .seccion-info {
-  background-color: #f8f9fa;
+  background-color: var(--bg-input);
   padding: 15px;
   border-radius: 6px;
   margin-bottom: 20px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--borde-suave);
 }
 
 .seccion-info h3 {
   margin-top: 0;
   margin-bottom: 12px;
   font-size: 14px;
-  color: #1C74A0;
-  border-bottom: 1px solid #dee2e6;
+  color: var(--color-primario);
+  border-bottom: 1px solid var(--borde-suave);
   padding-bottom: 8px;
 }
 
@@ -29,7 +29,7 @@
 .campo-info label {
   font-weight: 600;
   font-size: 12px;
-  color: #6c757d;
+  color: var(--texto-muted);
   display: block;
   margin-bottom: 4px;
 }
@@ -37,7 +37,7 @@
 /* CORREGIDO: Se añade :not(.estado-badge) para proteger los estilos de los badges */
 .campo-info span:not(.estado-badge) {
   font-size: 14px;
-  color: #212529;
+  color: var(--texto-titulo);
   font-weight: 500;
 }
 
@@ -65,23 +65,4 @@
   max-height: 24px;
   object-fit: contain;
   flex-shrink: 0;
-}
-
-/* MODO OSCURO */
-:host-context(body.dark-mode) .seccion-info {
-  background-color: #2a2a2a;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .seccion-info h3 {
-  color: #FF9F13;
-  border-bottom-color: #444;
-}
-
-:host-context(body.dark-mode) .campo-info label {
-  color: #999;
-}
-
-:host-context(body.dark-mode) .campo-info span:not(.estado-badge) {
-  color: #e0e0e0;
 }

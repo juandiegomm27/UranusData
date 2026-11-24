@@ -2,88 +2,57 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: 5px 11px;
+  border-radius: var(--radio-pill, 9999px);
   font-size: 12px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.2;
   text-align: center;
   white-space: nowrap;
   text-transform: capitalize;
+  font-family: var(--fuente-cuerpo, inherit);
 }
 
-/* 1. ÉXITO (Verde) */
+/* Activo / éxito */
 .estado-entregado,
 .estado-activo,
 .estado-aprobada,
 .estado-completado {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--color-verde-bg, #E7F4EC);
+  color: var(--color-verde, #0B873F);
 }
 
-/* 2. INFORMACIÓN (Azul) */
-.estado-devuelto {
-  background-color: #cfe2ff;
-  color: #084298;
+/* En préstamo / info */
+.estado-devuelto,
+.estado-en-prestamo,
+.estado-prestamo {
+  background-color: var(--color-primario-suave, #E6F0F7);
+  color: var(--color-primario, #024F82);
 }
 
-/* 3. ADVERTENCIA (Amarillo) */
+/* Mantenimiento / pendiente */
 .estado-solicitado,
 .estado-pendiente,
-.estado-pausa {
-  background-color: #fff3cd;
-  color: #856404;
+.estado-pausa,
+.estado-mantenimiento {
+  background-color: var(--color-naranja-bg, #FEF1E4);
+  color: var(--color-naranja, #C76400);
 }
 
-/* 4. PELIGRO (Rojo) */
+/* Baja / peligro */
 .estado-perdido,
 .estado-danado,
 .estado-dañado,
 .estado-rechazada,
 .estado-bloqueado,
 .estado-baja {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--color-rojo-bg, #FDECEA);
+  color: var(--color-rojo, #B03A2E);
 }
 
-/* 5. NEUTRAL (Gris) */
+/* Neutral */
 .estado-inactivo {
-  background-color: #ffda6a;
-  color: #383d41;
-}
-
-/* MODO OSCURO*/
-:host-context(body.dark-mode) .estado-entregado,
-:host-context(body.dark-mode) .estado-activo,
-:host-context(body.dark-mode) .estado-aprobada,
-:host-context(body.dark-mode) .estado-completado {
-  background-color: #1a3c24;
-  color: #75b798;
-}
-
-:host-context(body.dark-mode) .estado-devuelto {
-  background-color: #03285c;
-  color: #6ea8fe;
-}
-
-:host-context(body.dark-mode) .estado-solicitado,
-:host-context(body.dark-mode) .estado-pendiente,
-:host-context(body.dark-mode) .estado-pausa {
-  background-color: #332701;
-  color: #ffda6a;
-}
-
-:host-context(body.dark-mode) .estado-perdido,
-:host-context(body.dark-mode) .estado-danado,
-:host-context(body.dark-mode) .estado-dañado,
-:host-context(body.dark-mode) .estado-rechazada,
-:host-context(body.dark-mode) .estado-bloqueado,
-:host-context(body.dark-mode) .estado-baja {
-  background-color: #491217;
-  color: #ea868f;
-}
-
-:host-context(body.dark-mode) .estado-inactivo {
-  background-color: #ffa113af;
-  color: #383d41;
+  background-color: var(--bg-cabecera-tabla, #F7F9FC);
+  color: var(--texto-muted, #64748B);
+  border: 1px solid var(--borde-suave, #E2E6EC);
 }

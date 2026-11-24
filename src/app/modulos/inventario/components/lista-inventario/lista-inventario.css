@@ -1,62 +1,65 @@
 @import '../../../styles/modules-layout.css';
 @import '../../../styles/modules-tables.css';
 
-/* --- PESTAÑAS --- */
+/* Pestañas / segment control (Todos | Principales | Componentes) */
 .inventario-tabs {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 12px;
+  gap: 0;
+  margin-bottom: 16px;
+  border: 1px solid var(--borde-input, #D0DCE7);
+  border-radius: var(--radio-md, 10px);
+  padding: 3px;
+  background: var(--bg-tarjeta, #fff);
   flex-wrap: wrap;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .btn-tab {
-  padding: 10px 22px;
-  background-color: #f8f9fa;
-  color: #495057;
-  border: 1px solid #ced4da;
+  padding: 9px 20px;
+  background-color: transparent;
+  color: var(--texto-muted, #64748B);
+  border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
-  transition: all 0.2s ease-in-out;
+  font-size: 13.5px;
+  font-family: var(--fuente-cuerpo, inherit);
+  transition: background-color 0.15s, color 0.15s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .btn-tab:hover {
-  background-color: #e2e6ea;
-  border-color: #adb5bd;
+  color: var(--texto-titulo, #0F2342);
+  background-color: var(--bg-cabecera-tabla, #F7F9FC);
 }
 
 .btn-tab.activo {
-  background-color: #1C74A0;
-  color: white;
-  border-color: #1C74A0;
-  box-shadow: 0 4px 10px rgba(28, 116, 160, 0.25);
+  background-color: var(--color-primario, #024F82);
+  color: #fff;
+  box-shadow: none;
 }
 
-/* --- TABLA --- */
 .btn-icon-traslado {
-  background-color: #28a745;
-  color: #ffffff;
+  color: var(--color-verde, #0B873F);
+  background: transparent;
 }
 
 .btn-icon-traslado:hover {
-  background-color: #218838;
+  background-color: var(--color-verde-bg, #E7F4EC);
 }
 
 .sub-linea {
   display: block;
-  font-size: 11px;
-  color: #6c757d;
+  font-size: 11.5px;
+  color: var(--texto-muted, #64748B);
   margin-top: 2px;
 }
 
 .celda-descripcion {
-  max-width: 150px;
+  max-width: 160px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,59 +67,17 @@
 
 .celda-sin-stock {
   text-align: center;
-  color: #6c757d;
+  color: var(--texto-muted, #64748B);
 }
 
-/* --- MODO OSCURO --- */
-:host-context(body.dark-mode) .inventario-tabs {
-  border-bottom-color: #333;
-}
-
-:host-context(body.dark-mode) .btn-tab {
-  background-color: #2a2a2a;
-  color: #b0b0b0;
-  border-color: #444;
-}
-
-:host-context(body.dark-mode) .btn-tab:hover {
-  background-color: #333;
-  color: #ffffff;
-  border-color: #555;
-}
-
-:host-context(body.dark-mode) .btn-tab.activo {
-  background-color: #FF9F13;
-  color: #1a1a1a;
-  border-color: #FF9F13;
-  box-shadow: 0 4px 10px rgba(255, 159, 19, 0.25);
-}
-
-:host-context(body.dark-mode) .btn-icon-traslado {
-  background-color: #2ea043;
-  color: #ffffff;
-}
-
-:host-context(body.dark-mode) .btn-icon-traslado:hover {
-  background-color: #3fb950;
-}
-
-:host-context(body.dark-mode) .sub-linea,
-:host-context(body.dark-mode) .celda-sin-stock {
-  color: #adb5bd;
-}
-
-/* --- ENLACES A PADRE / COMPONENTES --- */
 .enlace-relacion {
-  color: #1C74A0;
+  color: var(--color-primario, #024F82);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
+  font-size: 12.5px;
 }
 
 .enlace-relacion:hover {
   text-decoration: underline;
-}
-
-:host-context(body.dark-mode) .enlace-relacion {
-  color: #FF9F13;
 }
