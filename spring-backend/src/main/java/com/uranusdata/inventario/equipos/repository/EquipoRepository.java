@@ -28,4 +28,8 @@ public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
     boolean existsByCodElementoIgnoreCase(String codElemento);
 
     boolean existsBySerialIgnoreCase(String serial);
+
+    boolean existsByCodElementoIgnoreCaseAndIdElementoNot(String codElemento, Integer idElemento);
+
+    boolean existsBySerialIgnoreCaseAndIdElementoNot(String serial, Integer idElemento);
 }

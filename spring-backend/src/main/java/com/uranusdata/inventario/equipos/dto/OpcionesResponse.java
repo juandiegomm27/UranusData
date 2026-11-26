@@ -15,7 +15,8 @@ public record OpcionesResponse(
         List<Tipo> tipos,
         List<Marca> marcas,
         List<Estado> estados,
-        List<Ubicacion> ubicaciones) {
+        List<Ubicacion> ubicaciones,
+        @JsonProperty("tipos_mantenimiento") List<java.util.Map<String,Object>> tiposMantenimiento) {
 
     public record Tipo(@JsonProperty("cod_tipo_elemento") Integer cod, String tipo) {
     }
