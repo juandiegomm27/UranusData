@@ -47,12 +47,13 @@ public record FiltroEquipos(
 
     /** El predicado completo: solo se aplica lo que venga informado. */
     public Predicate<Equipo> comoPredicado() {
-        return porTexto()
-                .and(porTipo())
-                .and(porMarca())
-                .and(porUbicacion())
-                .and(porEstado())
-                .and(porRelacion());
+        return e -> e.getEstado().getCodEstadoElemento() != Equipo.BAJA
+                && porTexto().test(e)
+                && porTipo().test(e)
+                && porMarca().test(e)
+                && porUbicacion().test(e)
+                && porEstado().test(e)
+                && porRelacion().test(e);
     }
 
     /**

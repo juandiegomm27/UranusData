@@ -30,7 +30,10 @@ export class SelectorMarcaComponent implements OnInit {
   ngOnInit(): void {
     this.inventarioService.obtenerMarcas().subscribe({
       next: (res: any) => {
-        this.marcas = res?.data || [];
+        // Spring devuelve una lista directa; algunas respuestas del API vienen
+        // envueltas en { data: [...] }. Aceptamos ambos formatos.
+        const lista = Array.isArray(res) ? res : res?.data;
+        this.marcas = Array.isArray(lista) ? lista : [];
         this.cdr.detectChanges();
       },
       error: () => {

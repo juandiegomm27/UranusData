@@ -129,10 +129,11 @@
         @for (stock of acc.stocks; track stock.id_stock) {
         <tr>
           <td><strong>#{{ acc.id_accesorio }}</strong>
-            <br><small class="sub-linea">Stock Lote: {{ stock.id_stockm}}</small>
+            <br><small class="sub-linea">Stock Lote: {{ stock.id_stock }}</small>
           </td>
           <td>{{ acc.nombre }}</td>
           <td>{{ acc.marca?.marca || '-' }}</td>
+          <td>{{ acc.modelo || '-' }}</td>
           <td class="celda-descripcion">{{ acc.descripcion || '-' }}</td>
           <td>{{ stock.ubicacion?.ubicacion || 'N/A' }}</td>
           <td><strong>{{ stock.cantidad_total }}</strong></td>

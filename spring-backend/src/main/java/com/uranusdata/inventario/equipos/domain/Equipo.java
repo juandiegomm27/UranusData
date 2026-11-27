@@ -168,4 +168,14 @@ public class Equipo {
         this.modelo = modelo;
         this.descripcion = descripcion;
     }
+
+    public void cambiarClasificacion(TipoElemento tipo, Marca marca,
+                                     EstadoElemento estado, UbiElemento ubicacion,
+                                     Equipo padre) {
+        this.tipo = tipo;
+        this.marca = marca;
+        this.estado = estado;
+        this.ubicacion = ubicacion;
+        this.padre = padre;
+    }
 }

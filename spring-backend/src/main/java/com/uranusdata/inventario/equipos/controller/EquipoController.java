@@ -4,8 +4,18 @@ import com.uranusdata.inventario.equipos.dto.EquipoResponse;
 import com.uranusdata.inventario.equipos.dto.FiltroEquipos;
 import com.uranusdata.inventario.equipos.dto.OpcionesResponse;
 import com.uranusdata.inventario.equipos.dto.PaginaInventario;
+import com.uranusdata.inventario.equipos.dto.CrearEquipoRequest;
 import com.uranusdata.inventario.equipos.service.EquipoService;
 import java.util.List;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.Authentication;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +43,48 @@ public class EquipoController {
 
     public EquipoController(EquipoService equipos) {
         this.equipos = equipos;
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAnyRole('Tecnico','Gerente')")
+    @org.springframework.web.bind.annotation.ResponseStatus(HttpStatus.CREATED)
+    public EquipoResponse crear(@Valid @RequestBody CrearEquipoRequest datos, Authentication auth) {
+        return equipos.crear(datos, auth.getName());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Tecnico','Gerente')")
+    public EquipoResponse actualizar(@PathVariable Integer id, @Valid @RequestBody CrearEquipoRequest datos, Authentication auth) {
+        return equipos.actualizar(id, datos, auth.getName());
+    }
+
+    @PatchMapping("/activos/{id}/dar-de-baja")
+    @PreAuthorize("hasAnyRole('Tecnico','Gerente')")
+    public java.util.Map<String, Object> darDeBaja(@PathVariable Integer id, @Valid @RequestBody(required = false) MotivoRequest body, Authentication auth) {
+        equipos.darDeBaja(id, body == null ? null : body.motivo(), auth.getName());
+        return java.util.Map.of("success", true, "mensaje", "Activo fijo dado de baja correctamente.");
+    }
+
+    public record MotivoRequest(@Size(max=255) String motivo) {}
+
+    public record MantenimientoRequest(@NotNull @com.fasterxml.jackson.annotation.JsonProperty("cod_tipo_mantenimiento") Integer codTipoMantenimiento,
+                                       @NotNull @Size(max=2000) String descripcion) {}
+
+    @PostMapping("/{id}/mantenimiento")
+    @PreAuthorize("hasAnyRole('Tecnico','Gerente')")
+    @org.springframework.web.bind.annotation.ResponseStatus(HttpStatus.CREATED)
+    public java.util.Map<String,Object> mantenimiento(@PathVariable Integer id, @Valid @RequestBody MantenimientoRequest body, Authentication auth) {
+        return java.util.Map.of("success",true,"mensaje","Elemento enviado a mantenimiento exitosamente",
+                "data",equipos.enviarMantenimiento(id,body.codTipoMantenimiento(),body.descripcion(),auth.getName()));
+    }
+
+    @GetMapping("/{id}/historial")
+    public List<java.util.Map<String,Object>> historial(@PathVariable Integer id) { return equipos.historialMantenimiento(id); }
+
+    @GetMapping("/{id}/movimientos")
+    public java.util.Map<String,Object> movimientos(@PathVariable Integer id,
+            @RequestParam(required=false) Integer page, @RequestParam(name="per_page",required=false) Integer perPage) {
+        return equipos.movimientos(id,page,perPage);
     }
 
     /**

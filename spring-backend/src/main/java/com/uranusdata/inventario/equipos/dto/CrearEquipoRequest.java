@@ -10,9 +10,8 @@ import jakarta.validation.constraints.Size;
  * Lo que llega al registrar un equipo. Los campos marcados con asterisco en el
  * boceto son los que aquí llevan @NotBlank o @NotNull.
  *
- * El serial es obligatorio aunque la columna de la base lo permita nulo: un
- * equipo sin serial no se puede identificar en una auditoría. La regla vive
- * aquí porque es de negocio, no del motor.
+ * El serial es opcional, de acuerdo con el formulario de inventario y con el
+ * esquema de PostgreSQL.
  */
 public record CrearEquipoRequest(
 
@@ -27,7 +26,6 @@ public record CrearEquipoRequest(
         @JsonProperty("cod_elemento")
         String codElemento,
 
-        @NotBlank(message = "El serial es obligatorio")
         @Size(max = 100, message = "El serial no puede pasar de 100 caracteres")
         String serial,
 
