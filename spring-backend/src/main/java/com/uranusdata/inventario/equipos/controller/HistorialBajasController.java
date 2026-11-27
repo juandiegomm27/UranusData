@@ -13,19 +13,12 @@ import com.uranusdata.shared.web.ApiException;
 public class HistorialBajasController {
     private final JdbcTemplate jdbc;
     public HistorialBajasController(JdbcTemplate jdbc){this.jdbc=jdbc;}
-    public record BajaAccesorioRequest(Integer cantidad,@jakarta.validation.constraints.Size(max=255) String motivo){}
 
-    @PostMapping("/accesorios/{idStock}/dar-de-baja") @PreAuthorize("hasAnyRole('Tecnico','Gerente')") @Transactional
-    public Map<String,Object> bajaAccesorio(@PathVariable Integer idStock,@jakarta.validation.Valid @RequestBody BajaAccesorioRequest d){
-        if(d.cantidad()==null||d.cantidad()<1)throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"La cantidad debe ser al menos 1.");
-        Map<String,Object> s=jdbc.query("SELECT s.*,a.nombre,a.modelo,a.descripcion,a.cod_tipo_elemento,u.ubicacion FROM stock_accesorios s JOIN inventario_accesorios a USING(id_accesorio) JOIN ubi_elemento u USING(cod_ubi_elemento) WHERE id_stock=? FOR UPDATE",rs->{if(!rs.next())return null;Map<String,Object> m=new HashMap<>();for(String c:List.of("id_accesorio","cod_ubi_elemento","cantidad_total","cantidad_disponible","nombre","modelo","descripcion","cod_tipo_elemento","ubicacion"))m.put(c,rs.getObject(c));return m;},idStock);
-        if(s==null)throw new ApiException(HttpStatus.NOT_FOUND,"El lote de stock no existe.");
-        if(d.cantidad()>(Integer)s.get("cantidad_disponible"))throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"No puedes dar de baja más unidades de las disponibles.");
-        jdbc.update("INSERT INTO historial_bajas_general(tipo_item,id_original,id_accesorio,nombre,codigo_identificacion,modelo,descripcion,cantidad,cod_tipo_elemento,cod_ubi_elemento,ubicacion,motivo) VALUES('accesorio',?,?,?,?,?,?,?,?,?,?,?)",idStock,s.get("id_accesorio"),s.get("nombre"),"STOCK-"+idStock,s.get("modelo"),s.get("descripcion"),d.cantidad(),s.get("cod_tipo_elemento"),s.get("cod_ubi_elemento"),s.get("ubicacion"),d.motivo()==null?"Baja de unidades de accesorio":d.motivo());
-        jdbc.update("UPDATE stock_accesorios SET cantidad_total=cantidad_total-?,cantidad_disponible=cantidad_disponible-? WHERE id_stock=?",d.cantidad(),d.cantidad(),idStock);
-        jdbc.update("UPDATE inventario_accesorios SET cantidad_total=cantidad_total-?,cantidad_disponible=cantidad_disponible-? WHERE id_accesorio=?",d.cantidad(),d.cantidad(),s.get("id_accesorio"));
-        return Map.of("success",true,"mensaje","Unidades dadas de baja correctamente.");
-    }
+    // La baja de accesorios NO vive aquí: la sirve
+    // inventario/accesorios/controller/BajaAccesorioController, que usa el
+    // servicio y el repositorio del módulo de accesorios. Tener las dos
+    // declarando POST /inventario/accesorios/{idStock}/dar-de-baja impedía
+    // arrancar la aplicación con «Ambiguous mapping».
 
     @GetMapping("/historial-bajas-general")
     public Map<String,Object> historial(@RequestParam(required=false) String tipo,@RequestParam(required=false) Integer page){
