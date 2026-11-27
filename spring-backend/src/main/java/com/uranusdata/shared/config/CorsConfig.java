@@ -17,6 +17,11 @@ public class CorsConfig {
         config.setAllowedOrigins(origenes);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        // Sin esto el navegador le esconde a Angular la cabecera
+        // Content-Disposition, que es donde viaja el nombre del .xlsx que se
+        // descarga. «allowedHeaders» es lo que el navegador puede enviar;
+        // «exposedHeaders» es lo que puede leer de la respuesta.
+        config.setExposedHeaders(List.of("Content-Disposition"));
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

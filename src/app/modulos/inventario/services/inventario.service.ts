@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
@@ -26,6 +26,27 @@ export class InventarioService {
 
   obtenerElemento(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Descarga el inventario en Excel con los filtros que estén puestos.
+   *
+   * Va con responseType 'blob' porque lo que vuelve es un archivo binario, no
+   * JSON, y con observe 'response' para poder leer el nombre del archivo que
+   * manda el backend en la cabecera Content-Disposition.
+   */
+  exportarExcel(tab: 'activos' | 'accesorios', search: string = '', tipo: string = '', marca: string = '', ubicacion: string = '', estado: string = ''): Observable<HttpResponse<Blob>> {
+    let params = new HttpParams().set('tab', tab);
+    if (search) params = params.set('search', search);
+    if (tipo) params = params.set('tipo', tipo);
+    if (marca) params = params.set('marca', marca);
+    if (ubicacion) params = params.set('ubicacion', ubicacion);
+    if (estado && tab === 'activos') params = params.set('estado', estado);
+    return this.http.get(`${this.apiUrl}/exportar/excel`, {
+      params,
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
   crearElemento(elemento: any): Observable<any> {

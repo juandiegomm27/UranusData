@@ -46,7 +46,11 @@
     <div class="modulo-header-actions">
       <button class="btn-agregar" (click)="abrirCrear()">Agregar {{ tipoTab === 'activos' ? 'equipo / accesorio' :
         'repuesto / consumible' }}</button>
-      <button class="btn-agregar" (click)="abrirHistorialBajas()">Historial de Bajas</button>
+      <button class="btn-excel" (click)="exportarExcel()" [disabled]="exportando"
+        title="Descarga en Excel lo que estás viendo, con los filtros puestos">
+        {{ exportando ? 'Generando...' : 'Descargar Excel' }}
+      </button>
+      <button class="btn-historial" (click)="abrirHistorialBajas()">Historial de Bajas</button>
     </div>
   </div>
 

@@ -15,6 +15,12 @@
   --color-rojo: #B03A2E;
   --color-rojo-bg: #FDECEA;
 
+  /* Botones de inventario */
+  --btn-verde: #0B873F;
+  --btn-verde-hover: #08692F;
+  --btn-rojo: #ab2e20;
+  --btn-rojo-hover: #8F2D23;
+
   /* Superficies y bordes */
   --bg-pagina: #F4F6FA;
   --bg-tarjeta: #FFFFFF;
@@ -64,6 +70,16 @@ body.dark-mode {
 
   --color-rojo: #F87171;
   --color-rojo-bg: rgba(176, 58, 46, 0.22);
+
+  /*
+    En oscuro el relleno sube un poco y el hover aclara, igual que hace
+    --color-primario-hover. Los #34C771 y #F87171 de arriba son para texto:
+    de fondo con letra blanca encima no se leerían.
+  */
+  --btn-verde: #1E9E5A;
+  --btn-verde-hover: #27B368;
+  --btn-rojo: #CF4B3C;
+  --btn-rojo-hover: #E05C4D;
 
   --bg-pagina: #0F172A;
   --bg-tarjeta: #1E293B;

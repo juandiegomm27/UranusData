@@ -45,11 +45,11 @@ public class EquipoService {
     private final JdbcTemplate jdbc;
 
     public EquipoService(EquipoRepository equipos,
-                         TipoElementoRepository tipos,
-                         MarcaRepository marcas,
-                         EstadoElementoRepository estados,
-                         UbiElementoRepository ubicaciones,
-                         JdbcTemplate jdbc) {
+            TipoElementoRepository tipos,
+            MarcaRepository marcas,
+            EstadoElementoRepository estados,
+            UbiElementoRepository ubicaciones,
+            JdbcTemplate jdbc) {
         this.equipos = equipos;
         this.tipos = tipos;
         this.marcas = marcas;
@@ -65,9 +65,12 @@ public class EquipoService {
         TipoElemento tipo = tipos.findById(datos.codTipoElemento())
                 .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El tipo seleccionado no existe"));
         UbiElemento ubicacion = ubicaciones.findById(datos.codUbiElemento())
-                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La ubicación seleccionada no existe"));
-        Marca marca = datos.codMarca() == null ? null : marcas.findById(datos.codMarca())
-                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La marca seleccionada no existe"));
+                .orElseThrow(
+                        () -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La ubicación seleccionada no existe"));
+        Marca marca = datos.codMarca() == null ? null
+                : marcas.findById(datos.codMarca())
+                        .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                                "La marca seleccionada no existe"));
         Equipo padre = buscarPadreValido(datos.idElementoPadre(), null);
         EstadoElemento activo = estados.findById(Equipo.ACTIVO)
                 .orElseThrow(() -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "No existe el estado Activo"));
@@ -97,9 +100,12 @@ public class EquipoService {
         TipoElemento tipo = tipos.findById(datos.codTipoElemento())
                 .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El tipo seleccionado no existe"));
         UbiElemento ubicacion = ubicaciones.findById(datos.codUbiElemento())
-                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La ubicación seleccionada no existe"));
-        Marca marca = datos.codMarca() == null ? null : marcas.findById(datos.codMarca())
-                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La marca seleccionada no existe"));
+                .orElseThrow(
+                        () -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "La ubicación seleccionada no existe"));
+        Marca marca = datos.codMarca() == null ? null
+                : marcas.findById(datos.codMarca())
+                        .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                                "La marca seleccionada no existe"));
         Equipo padre = buscarPadreValido(datos.idElementoPadre(), equipo);
 
         String codigo = datos.codElemento();
@@ -123,10 +129,12 @@ public class EquipoService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Este activo ya se encuentra dado de baja.");
         }
         if (estado == Equipo.EN_PRESTAMO) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "No puedes dar de baja un activo que está en préstamo. Registra primero su devolución.");
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "No puedes dar de baja un activo que está en préstamo. Registra primero su devolución.");
         }
         if (estado == Equipo.MANTENIMIENTO) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Este equipo está en mantenimiento. Finaliza el mantenimiento antes de darlo de baja.");
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Este equipo está en mantenimiento. Finaliza el mantenimiento antes de darlo de baja.");
         }
 
         Integer reservaPendiente = jdbc.query("""
@@ -141,7 +149,8 @@ public class EquipoService {
                 """, rs -> rs.next() ? rs.getInt(1) : null, id);
         if (reservaPendiente != null) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Este equipo tiene la reserva #" + reservaPendiente + " pendiente de entrega. Entrégala o pide al docente que la cancele antes de darlo de baja.");
+                    "Este equipo tiene la reserva #" + reservaPendiente
+                            + " pendiente de entrega. Entrégala o pide al docente que la cancele antes de darlo de baja.");
         }
 
         String motivoFinal = motivo == null || motivo.isBlank() ? "Baja de activo fijo" : motivo.trim();
@@ -160,7 +169,8 @@ public class EquipoService {
         equipo.cambiarEstado(baja);
         equipos.save(equipo);
 
-        // El modelo solo permite un nivel; al retirar el principal los componentes quedan independientes.
+        // El modelo solo permite un nivel; al retirar el principal los componentes
+        // quedan independientes.
         List<Equipo> componentes = equipos.findByPadreIdElementoOrderByCodElementoAsc(id);
         for (Equipo componente : componentes) {
             componente.desvincular();
@@ -172,58 +182,76 @@ public class EquipoService {
     }
 
     @Transactional
-    public Map<String, Object> enviarMantenimiento(Integer id, Integer tipoMantenimiento, String descripcion, String documento) {
-        Equipo equipo = equipos.findById(id).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado"));
-        if (!equipo.estaActivo()) throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Solo los equipos activos pueden enviarse a mantenimiento.");
+    public Map<String, Object> enviarMantenimiento(Integer id, Integer tipoMantenimiento, String descripcion,
+            String documento) {
+        Equipo equipo = equipos.findById(id)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado"));
+        if (!equipo.estaActivo())
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Solo los equipos activos pueden enviarse a mantenimiento.");
         Integer reserva = jdbc.query("""
                 SELECT r.id_reserva FROM reserva r JOIN reserva_detalles rd ON rd.id_reserva=r.id_reserva
                 LEFT JOIN prestamo p ON p.id_reserva=r.id_reserva
                 WHERE rd.id_elemento=? AND r.num_estado=1 AND (p.id_reserva IS NULL OR p.cod_estado_prestamo=1)
                 ORDER BY r.id_reserva LIMIT 1
                 """, rs -> rs.next() ? rs.getInt(1) : null, id);
-        if (reserva != null) throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El equipo tiene la reserva #" + reserva + " pendiente de entrega.");
-        Integer tipoOk = jdbc.query("SELECT cod_tipo_mantenimiento FROM tipo_mantenimiento WHERE cod_tipo_mantenimiento=?", rs -> rs.next() ? rs.getInt(1) : null, tipoMantenimiento);
-        if (tipoOk == null) throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El tipo de mantenimiento no existe.");
-        Map<String,Object> mant = jdbc.queryForMap("""
-                INSERT INTO mantenimiento(fecha,cod_tipo_mantenimiento,documento,id_elemento,elemento,serial,descripcion,cod_estado_mantenimiento)
-                VALUES (CURRENT_DATE,?,?,?,?,?,?,1) RETURNING id_mantenimiento,fecha,cod_tipo_mantenimiento,id_elemento,descripcion,cod_estado_mantenimiento
-                """, tipoMantenimiento, documento, id, equipo.getNombreElemento(), equipo.getSerial(), descripcion);
-        EstadoElemento estado = estados.findById(Equipo.MANTENIMIENTO).orElseThrow(() -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "No existe el estado Mantenimiento"));
+        if (reserva != null)
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "El equipo tiene la reserva #" + reserva + " pendiente de entrega.");
+        Integer tipoOk = jdbc.query(
+                "SELECT cod_tipo_mantenimiento FROM tipo_mantenimiento WHERE cod_tipo_mantenimiento=?",
+                rs -> rs.next() ? rs.getInt(1) : null, tipoMantenimiento);
+        if (tipoOk == null)
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El tipo de mantenimiento no existe.");
+        Map<String, Object> mant = jdbc.queryForMap(
+                """
+                        INSERT INTO mantenimiento(fecha,cod_tipo_mantenimiento,documento,id_elemento,elemento,serial,descripcion,cod_estado_mantenimiento)
+                        VALUES (CURRENT_DATE,?,?,?,?,?,?,1) RETURNING id_mantenimiento,fecha,cod_tipo_mantenimiento,id_elemento,descripcion,cod_estado_mantenimiento
+                        """,
+                tipoMantenimiento, documento, id, equipo.getNombreElemento(), equipo.getSerial(), descripcion);
+        EstadoElemento estado = estados.findById(Equipo.MANTENIMIENTO).orElseThrow(
+                () -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "No existe el estado Mantenimiento"));
         equipo.cambiarEstado(estado);
-        registrarMovimiento(id,"mantenimiento","Equipo enviado a mantenimiento",documento,descripcion);
+        registrarMovimiento(id, "mantenimiento", "Equipo enviado a mantenimiento", documento, descripcion);
         return mant;
     }
 
     @Transactional(readOnly = true)
-    public List<Map<String,Object>> historialMantenimiento(Integer id) {
-        if (!equipos.existsById(id)) throw new ApiException(HttpStatus.NOT_FOUND,"Equipo no encontrado");
+    public List<Map<String, Object>> historialMantenimiento(Integer id) {
+        if (!equipos.existsById(id))
+            throw new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado");
         return jdbc.queryForList("""
-            SELECT m.*, tm.tipo AS tipo_mantenimiento, em.estado AS estado_mantenimiento
-            FROM mantenimiento m JOIN tipo_mantenimiento tm USING(cod_tipo_mantenimiento)
-            JOIN estado_mantenimiento em USING(cod_estado_mantenimiento)
-            WHERE id_elemento=? ORDER BY fecha DESC,id_mantenimiento DESC
-            """, id);
+                SELECT m.*, tm.tipo AS tipo_mantenimiento, em.estado AS estado_mantenimiento
+                FROM mantenimiento m JOIN tipo_mantenimiento tm USING(cod_tipo_mantenimiento)
+                JOIN estado_mantenimiento em USING(cod_estado_mantenimiento)
+                WHERE id_elemento=? ORDER BY fecha DESC,id_mantenimiento DESC
+                """, id);
     }
 
     @Transactional(readOnly = true)
-    public Map<String,Object> movimientos(Integer id, Integer page, Integer perPage) {
-        if (!equipos.existsById(id)) throw new ApiException(HttpStatus.NOT_FOUND,"Equipo no encontrado");
-        int tam = perPage == null || perPage < 1 ? 10 : Math.min(perPage,100);
+    public Map<String, Object> movimientos(Integer id, Integer page, Integer perPage) {
+        if (!equipos.existsById(id))
+            throw new ApiException(HttpStatus.NOT_FOUND, "Equipo no encontrado");
+        int tam = perPage == null || perPage < 1 ? 10 : Math.min(perPage, 100);
         int pag = page == null || page < 1 ? 1 : page;
-        long total = jdbc.queryForObject("SELECT count(*) FROM inventario_movimientos WHERE id_elemento=?", Long.class,id);
-        List<Map<String,Object>> filas = jdbc.queryForList("SELECT * FROM inventario_movimientos WHERE id_elemento=? ORDER BY fecha DESC,id_movimiento DESC LIMIT ? OFFSET ?",id,tam,(pag-1)*tam);
-        return Map.of("data",filas,"total",total,"current_page",pag,"per_page",tam,"last_page",Math.max(1,(int)Math.ceil((double)total/tam)));
+        long total = jdbc.queryForObject("SELECT count(*) FROM inventario_movimientos WHERE id_elemento=?", Long.class,
+                id);
+        List<Map<String, Object>> filas = jdbc.queryForList(
+                "SELECT * FROM inventario_movimientos WHERE id_elemento=? ORDER BY fecha DESC,id_movimiento DESC LIMIT ? OFFSET ?",
+                id, tam, (pag - 1) * tam);
+        return Map.of("data", filas, "total", total, "current_page", pag, "per_page", tam, "last_page",
+                Math.max(1, (int) Math.ceil((double) total / tam)));
     }
 
     private void validarUnicos(String codigo, String serial, Integer id) {
         if (codigo != null && !codigo.isBlank()
                 && (id == null ? equipos.existsByCodElementoIgnoreCase(codigo)
-                               : equipos.existsByCodElementoIgnoreCaseAndIdElementoNot(codigo, id))) {
+                        : equipos.existsByCodElementoIgnoreCaseAndIdElementoNot(codigo, id))) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Ya existe un elemento con ese código.");
         }
         if (serial != null && !serial.isBlank()
                 && (id == null ? equipos.existsBySerialIgnoreCase(serial)
-                               : equipos.existsBySerialIgnoreCaseAndIdElementoNot(serial, id))) {
+                        : equipos.existsBySerialIgnoreCaseAndIdElementoNot(serial, id))) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Ya existe un elemento con ese serial.");
         }
     }
@@ -233,7 +261,8 @@ public class EquipoService {
             return null;
         }
         Equipo padre = equipos.findById(idPadre)
-                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El elemento principal seleccionado no existe."));
+                .orElseThrow(() -> new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                        "El elemento principal seleccionado no existe."));
         if (actual != null && actual.getIdElemento().equals(idPadre)) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Un elemento no puede pertenecer a sí mismo.");
         }
@@ -241,11 +270,13 @@ public class EquipoService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El elemento principal está dado de baja.");
         }
         if (padre.esComponente()) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "El elemento principal ya es componente de otro. Solo se permite un nivel.");
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "El elemento principal ya es componente de otro. Solo se permite un nivel.");
         }
         if (actual != null && !actual.esComponente()
                 && !equipos.findByPadreIdElementoOrderByCodElementoAsc(actual.getIdElemento()).isEmpty()) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Este elemento tiene componentes y no puede ser un componente de otro.");
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Este elemento tiene componentes y no puede ser un componente de otro.");
         }
         return padre;
     }
@@ -263,9 +294,9 @@ public class EquipoService {
     }
 
     private void registrarMovimiento(Integer id, String tipo, String descripcion,
-                                     String documento, String motivo) {
+            String documento, String motivo) {
         jdbc.update("INSERT INTO inventario_movimientos (id_elemento, tipo, descripcion, datos, documento, usuario) "
-                        + "VALUES (?, ?, ?, jsonb_build_object('motivo', CAST(? AS TEXT)), ?, ?)",
+                + "VALUES (?, ?, ?, jsonb_build_object('motivo', CAST(? AS TEXT)), ?, ?)",
                 id, tipo, descripcion, motivo, documento, documento);
     }
 
@@ -286,7 +317,8 @@ public class EquipoService {
                         .map(u -> new OpcionesResponse.Ubicacion(u.getCodUbiElemento(), u.getUbicacion()))
                         .toList(),
                 jdbc.query("SELECT cod_tipo_mantenimiento,tipo FROM tipo_mantenimiento ORDER BY tipo",
-                        (rs,n) -> Map.of("cod_tipo_mantenimiento",rs.getInt(1),"tipo_mantenimiento",rs.getString(2))));
+                        (rs, n) -> Map.of("cod_tipo_mantenimiento", rs.getInt(1), "tipo_mantenimiento",
+                                rs.getString(2))));
     }
 
     /**
@@ -298,6 +330,25 @@ public class EquipoService {
      * equipo. El precio es traer la tabla entera, asumible con el inventario
      * de un colegio.
      */
+    /**
+     * Los mismos equipos del listado pero sin paginar y sin convertir a DTO.
+     *
+     * Es lo que necesita la exportación a Excel: el archivo lleva todas las
+     * filas que el usuario está viendo filtradas, no solo la página en
+     * pantalla, y necesita los nombres de tipo, marca, estado y ubicación,
+     * que están en la entidad y no en EquipoResponse (allí van como código,
+     * porque Angular los resuelve contra /inventario/opciones).
+     *
+     * Reutiliza el mismo predicado que el listado: si cambian los filtros,
+     * cambian los dos a la vez y no se pueden desincronizar.
+     */
+    @Transactional(readOnly = true)
+    public List<Equipo> listarSinPaginar(FiltroEquipos filtro) {
+        return equipos.findAllByOrderByCodElementoAsc().stream()
+                .filter(filtro.comoPredicado())
+                .toList();
+    }
+
     @Transactional(readOnly = true)
     public Page<EquipoResponse> listar(FiltroEquipos filtro, Integer pagina, Integer porPagina) {
         List<Equipo> todos = equipos.findAllByOrderByCodElementoAsc();
@@ -334,10 +385,10 @@ public class EquipoService {
     }
 
     private EquipoResponse conComponentes(Equipo equipo) {
-        List<EquipoResponse> componentes =
-                equipos.findByPadreIdElementoOrderByCodElementoAsc(equipo.getIdElemento()).stream()
-                        .map(c -> EquipoResponse.resumen(c, 0))
-                        .toList();
+        List<EquipoResponse> componentes = equipos.findByPadreIdElementoOrderByCodElementoAsc(equipo.getIdElemento())
+                .stream()
+                .map(c -> EquipoResponse.resumen(c, 0))
+                .toList();
 
         return EquipoResponse.detalle(equipo, componentes);
     }
@@ -347,10 +398,10 @@ public class EquipoService {
      * de vincular del boceto 09.
      *
      * Quedan fuera tres casos, y cada uno por una razón distinta:
-     *   - el propio equipo, que no puede ser componente de sí mismo;
-     *   - los que ya son componentes de alguien, para no robárselos;
-     *   - los que tienen componentes propios, porque la jerarquía es de un
-     *     solo nivel y encadenarlos dejaría nietos sin dueño al dar de baja.
+     * - el propio equipo, que no puede ser componente de sí mismo;
+     * - los que ya son componentes de alguien, para no robárselos;
+     * - los que tienen componentes propios, porque la jerarquía es de un
+     * solo nivel y encadenarlos dejaría nietos sin dueño al dar de baja.
      */
     @Transactional(readOnly = true)
     public List<EquipoResponse> candidatosAComponente(Integer idElemento) {
@@ -385,7 +436,7 @@ public class EquipoService {
 
     /** Corta la lista ya filtrada en la página pedida. */
     private static Page<EquipoResponse> paginar(List<EquipoResponse> filas,
-                                                Integer pagina, Integer porPagina) {
+            Integer pagina, Integer porPagina) {
         int tamano = (porPagina == null || porPagina < 1)
                 ? POR_PAGINA_POR_DEFECTO
                 : Math.min(porPagina, MAXIMO_POR_PAGINA);

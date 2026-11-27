@@ -49,7 +49,9 @@
 .btn-secondary,
 .btn-danger,
 .btn-success,
-.btn-agregar {
+.btn-agregar,
+.btn-excel,
+.btn-historial {
   border: none;
   padding: 10px 16px;
   border-radius: var(--radio-md, 10px);
@@ -64,15 +66,51 @@
   gap: 8px;
 }
 
+/*
+  Los tres botones de cabecera se distinguen por color, no por texto:
+  verde lo que crea, azul lo que consulta o descarga, rojo lo que lleva a
+  las bajas. Los tres salen de la misma paleta de styles.css, así que
+  combinan entre sí y cambian solos con el modo oscuro.
+*/
+
+/* Azul: la acción neutra. El primario de la marca. */
 .btn-primary,
-.btn-agregar {
+.btn-excel {
   background-color: var(--color-primario, #024F82);
   color: #fff;
 }
 .btn-primary:hover:not(:disabled),
-.btn-agregar:hover:not(:disabled) {
+.btn-excel:hover:not(:disabled) {
   background-color: var(--color-primario-hover, #013B62);
   box-shadow: var(--sombra-sm);
+}
+
+/* Verde: agregar. */
+.btn-agregar {
+  background-color: var(--btn-verde, #0B873F);
+  color: #fff;
+}
+.btn-agregar:hover:not(:disabled) {
+  background-color: var(--btn-verde-hover, #08692F);
+  box-shadow: var(--sombra-sm);
+}
+
+/* Rojo: historial de bajas. No borra nada, pero lleva a lo dado de baja. */
+.btn-historial {
+  background-color: var(--btn-rojo, #B03A2E);
+  color: #fff;
+}
+.btn-historial:hover:not(:disabled) {
+  background-color: var(--btn-rojo-hover, #8F2D23);
+  box-shadow: var(--sombra-sm);
+}
+
+/* Deshabilitado: igual para los tres, para que se vea que es el mismo estado. */
+.btn-agregar:disabled,
+.btn-excel:disabled,
+.btn-historial:disabled {
+  opacity: 0.55;
+  cursor: progress;
 }
 
 /* Secundario = outline (Exportar CSV del boceto) */

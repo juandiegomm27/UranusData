@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
@@ -42,6 +43,9 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
 
   mensaje = '';
   tipoMensaje: 'success' | 'error' = 'success';
+
+  // Bloquea el botón de Excel mientras el backend arma el archivo
+  exportando = false;
 
   // Filtros específicos (terminoBusqueda se hereda del helper)
   filtroTipo = '';
@@ -99,6 +103,77 @@ export class ListaInventarioComponent extends PaginationHelper implements OnInit
   cambiarTab(tab: 'activos' | 'accesorios'): void {
     this.tipoTab = tab;
     this.limpiarFiltrosLocal();
+  }
+
+  /**
+   * Descarga el inventario en Excel.
+   *
+   * Manda la pestaña activa y los mismos filtros de la tabla, así que el
+   * archivo trae lo que se está viendo. Lo que no manda es la página: el
+   * Excel sale completo, no solo las 10 filas en pantalla.
+   */
+  exportarExcel(): void {
+    if (this.exportando) { return; }
+    this.exportando = true;
+    this.mensaje = '';
+
+    this.inventarioService.exportarExcel(
+      this.tipoTab,
+      this.terminoBusqueda,
+      this.filtroTipo,
+      this.filtroMarca,
+      this.filtroUbicacion,
+      this.filtroEstado
+    ).subscribe({
+      next: (respuesta) => {
+        const cuerpo = respuesta.body;
+        if (!cuerpo) {
+          this.fallaExportacion('El servidor devolvió un archivo vacío.');
+          return;
+        }
+        this.descargar(cuerpo, this.nombreArchivo(respuesta));
+        this.exportando = false;
+        this.tipoMensaje = 'success';
+        this.mensaje = 'Archivo de Excel descargado.';
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar a Excel:', err);
+        this.fallaExportacion('No se pudo generar el archivo de Excel.');
+      }
+    });
+  }
+
+  private fallaExportacion(texto: string): void {
+    this.exportando = false;
+    this.tipoMensaje = 'error';
+    this.mensaje = texto;
+    this.cdr.detectChanges();
+  }
+
+  /** El nombre lo decide el backend; si no llega, uno de respaldo. */
+  private nombreArchivo(respuesta: HttpResponse<Blob>): string {
+    const cabecera = respuesta.headers.get('Content-Disposition');
+    const encontrado = cabecera?.match(/filename="?([^";]+)"?/i);
+    if (encontrado) { return encontrado[1]; }
+    const hoy = new Date().toISOString().slice(0, 10);
+    return `inventario-${this.tipoTab}-${hoy}.xlsx`;
+  }
+
+  /**
+   * Un blob no se puede "abrir" sin más: hay que darle una URL temporal al
+   * navegador, pinchar un enlace invisible y soltar la URL después, o la
+   * memoria del archivo se queda retenida en la pestaña.
+   */
+  private descargar(contenido: Blob, nombre: string): void {
+    const url = window.URL.createObjectURL(contenido);
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = nombre;
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    window.URL.revokeObjectURL(url);
   }
 
   // IMPLEMENTACIÓN OBLIGATORIA DEL HELPER
